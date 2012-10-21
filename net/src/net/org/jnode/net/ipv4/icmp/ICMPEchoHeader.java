@@ -32,7 +32,7 @@ public class ICMPEchoHeader extends ICMPExHeader {
      * @param identifier
      * @param seqNumber
      */
-    public ICMPEchoHeader(int type, int identifier, int seqNumber) {
+    public ICMPEchoHeader(ICMPType type, int identifier, int seqNumber) {
         super(type, 0, identifier, seqNumber);
     }
 
@@ -58,9 +58,9 @@ public class ICMPEchoHeader extends ICMPExHeader {
      * @return A header that is a suitable reply to this message
      */
     public ICMPEchoHeader createReplyHeader() {
-        if (getType() != ICMP_ECHO) {
+        if (getType() != ICMPType.ICMP_ECHO) {
             throw new IllegalArgumentException("Not an echo request");
         }
-        return new ICMPEchoHeader(ICMP_ECHOREPLY, getIdentifier(), getSeqNumber());
+        return new ICMPEchoHeader(ICMPType.ICMP_ECHOREPLY, getIdentifier(), getSeqNumber());
     }
 }
