@@ -36,6 +36,11 @@ public class ICMPEchoHeader extends ICMPExHeader {
         super(type, 0, identifier, seqNumber);
     }
 
+    public ICMPEchoHeader(int identifier, int seqNumber) {
+        super(ICMPType.ICMP_ECHO, 0, identifier, seqNumber);
+    }
+    
+    
     /**
      * @param skbuf
      */
