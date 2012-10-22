@@ -40,7 +40,7 @@ public class ARPHeader implements NetworkLayerHeader {
     private ProtocolAddress srcPAddress;
     private HardwareAddress targetHWAddress;
     private ProtocolAddress targetPAddress;
-    private int op;
+    private ARPOperation operation;
     private final int hwtype;
     private final int ptype;
 
@@ -56,13 +56,13 @@ public class ARPHeader implements NetworkLayerHeader {
      * @param ptype
      */
     public ARPHeader(HardwareAddress srcHWAddress, ProtocolAddress srcPAddress,
-            HardwareAddress targetHWAddress, ProtocolAddress targetPAddress, int op, int hwtype,
+            HardwareAddress targetHWAddress, ProtocolAddress targetPAddress, ARPOperation op, int hwtype,
             int ptype) {
         this.srcHWAddress = srcHWAddress;
         this.srcPAddress = srcPAddress;
         this.targetHWAddress = targetHWAddress;
         this.targetPAddress = targetPAddress;
-        this.op = op;
+        this.operation = op;
         this.hwtype = hwtype;
         this.ptype = ptype;
     }
@@ -77,7 +77,7 @@ public class ARPHeader implements NetworkLayerHeader {
         ptype = skbuf.get16(2);
         // int hwsize = skbuf.get(4);
         // int psize = skbuf.get(5);
-        op = skbuf.get16(6);
+        operation = ARPOperation.getType(skbuf.get16(6));
         if ((hwtype == 1) && (ptype == EthernetConstants.ETH_P_IP)) {
             srcHWAddress = new EthernetAddress(skbuf, 8);
             srcPAddress = new IPv4Address(skbuf, 14);
@@ -107,7 +107,7 @@ public class ARPHeader implements NetworkLayerHeader {
         skbuf.set16(ofs + 2, ptype);
         skbuf.set(ofs + 4, srcHWAddress.getLength());
         skbuf.set(ofs + 5, srcPAddress.getLength());
-        skbuf.set16(ofs + 6, op);
+        skbuf.set16(ofs + 6, operation.getId());
         ofs += 8;
         srcHWAddress.writeTo(skbuf, ofs);
         ofs += srcHWAddress.getLength();
@@ -159,8 +159,8 @@ public class ARPHeader implements NetworkLayerHeader {
     /**
      * Gets the operation
      */
-    public int getOperation() {
-        return op;
+    public ARPOperation getOperation() {
+        return operation;
     }
 
     /**
@@ -214,8 +214,8 @@ public class ARPHeader implements NetworkLayerHeader {
     /**
      * @param i
      */
-    public void setOperation(int i) {
-        op = i;
+    public void setOperation(ARPOperation operation) {
+        this.operation = operation;
     }
 
     /**

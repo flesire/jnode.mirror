@@ -149,7 +149,7 @@ public class ARPNetworkLayer implements NetworkLayer, ARPConstants {
             stat.opackets.inc();
             hdr.swapAddresses();
             hdr.setSrcHWAddress(deviceAPI.getAddress());
-            hdr.setOperation(ARP_REPLY);
+            hdr.setOperation(ARPOperation.ARP_REPLY);
             skbuf.clear();
             skbuf.setProtocolID(getProtocolID());
             hdr.prefixTo(skbuf);
@@ -315,7 +315,7 @@ public class ARPNetworkLayer implements NetworkLayer, ARPConstants {
         final NetDeviceAPI api = getAPI(device);
         final HardwareAddress srcHwAddr = api.getAddress();
         final HardwareAddress trgHwAddr = srcHwAddr.getDefaultBroadcastAddress();
-        final int op = ARP_REQUEST;
+        final ARPOperation op = ARPOperation.ARP_REQUEST;
         final int hwtype = srcHwAddr.getType();
         final int ptype = address.getType();
 
