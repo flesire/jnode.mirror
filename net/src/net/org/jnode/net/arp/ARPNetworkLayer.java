@@ -46,13 +46,17 @@ import org.jnode.vm.objects.Statistics;
  * @author epr
  */
 @SharedStatics
-public class ARPNetworkLayer implements NetworkLayer, ARPConstants {
-    private static final boolean DEBUG = false;
+public class ARPNetworkLayer implements NetworkLayer {
+	
+	/** Delay between ARP requests in millisecond */
+    public static final int ARP_REQUEST_DELAY = 1500;
 
     /**
      * My logger
      */
     private static final Logger log = Logger.getLogger(ARPNetworkLayer.class);
+    
+    private static final boolean DEBUG = false;
     
     /**
      * My statistics
