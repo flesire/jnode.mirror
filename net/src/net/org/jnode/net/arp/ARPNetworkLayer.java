@@ -48,6 +48,8 @@ import org.jnode.vm.objects.Statistics;
 @SharedStatics
 public class ARPNetworkLayer implements NetworkLayer {
 	
+	private static final int IPv4_PROTOCOL_SIZE = 4;
+
 	/** Delay between ARP requests in millisecond */
     public static final int ARP_REQUEST_DELAY = 1500;
 
@@ -323,7 +325,7 @@ public class ARPNetworkLayer implements NetworkLayer {
         final int hwtype = srcHwAddr.getType();
         final int ptype = address.getType();
 
-        final ARPHeader hdr = new ARPHeader(srcHwAddr, myAddress, trgHwAddr, address, op, hwtype, ptype);
+        final ARPHeader hdr = new ARPHeader(srcHwAddr, myAddress, trgHwAddr, address, op, hwtype, ptype,EthernetConstants.ETH_ALEN,IPv4_PROTOCOL_SIZE);
         final SocketBuffer skbuf = new SocketBuffer();
         skbuf.setProtocolID(EthernetConstants.ETH_P_ARP);
         hdr.prefixTo(skbuf);
