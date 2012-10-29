@@ -148,6 +148,20 @@ public class Ext2File extends AbstractFSFile {
 
     @Override
     public void read(long fileOffset, ByteBuffer destBuf) throws IOException {
+        if (fileOffset + destBuf.remaining() > getLength())
+            throw new IOException("Can't read past the file!");
+
+        readImpl(fileOffset, destBuf);
+    }
+
+    /**
+     * A read implementation that doesn't check the file length.
+     *
+     * @param fileOffset the offset to read from.
+     * @param destBuf the destination buffer.
+     * @throws IOException if an error occurs reading.
+     */
+    public void readImpl(long fileOffset, ByteBuffer destBuf) throws IOException {
         final int len = destBuf.remaining();
         final int off = 0;
         //TODO optimize it also to use ByteBuffer at lower level 
@@ -327,5 +341,21 @@ public class Ext2File extends AbstractFSFile {
             ioe.initCause(ex);
             throw ioe;
         }
+    }
+
+    @Override
+    public byte[] getSlackSpace() throws IOException {
+        int blockSize = ((Ext2FileSystem) getFileSystem()).getBlockSize();
+
+        int slackSpaceSize = blockSize - (int) (getLength() % blockSize);
+
+        if (slackSpaceSize == blockSize) {
+            slackSpaceSize = 0;
+        }
+
+        byte[] slackSpace = new byte[slackSpaceSize];
+        readImpl(getLength(), ByteBuffer.wrap(slackSpace));
+
+        return slackSpace;
     }
 }

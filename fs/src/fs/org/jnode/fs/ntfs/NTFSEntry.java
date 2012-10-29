@@ -128,7 +128,7 @@ public class NTFSEntry implements FSEntry {
     public FSFile getFile() {
         if (this.isFile()) {
             if (cachedFSObject == null) {
-                cachedFSObject = new NTFSFile(indexEntry);
+                cachedFSObject = new NTFSFile(fs, indexEntry);
             }
             return (FSFile) cachedFSObject;
         } else {
