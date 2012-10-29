@@ -27,7 +27,7 @@ package org.jnode.fs.ntfs;
  * @author vali
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
-final class IndexEntry extends NTFSStructure {
+public final class IndexEntry extends NTFSStructure {
 
     private final FileRecord parentFileRecord;
 
