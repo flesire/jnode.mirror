@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jnode.fs.FSFile;
 import org.jnode.fs.FSFileSlackSpace;
 import org.jnode.fs.FSFileStreams;

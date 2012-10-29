@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.jnode.fs.FSFileSlackSpace;
 import org.jnode.fs.FileSystemException;
 import org.jnode.fs.ReadOnlyFileSystemException;
 import org.jnode.fs.spi.AbstractFSFile;
@@ -33,7 +34,7 @@ import org.jnode.util.ByteBufferUtils;
 /**
  * @author Andras Nagy
  */
-public class Ext2File extends AbstractFSFile {
+public class Ext2File extends AbstractFSFile implements FSFileSlackSpace {
 
     INode iNode;
 
