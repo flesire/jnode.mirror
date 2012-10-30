@@ -199,7 +199,7 @@ public class NTFSFile implements FSFile, FSFileSlackSpace, FSFileStreams {
     /**
      * A file for reading data out of alternate streams.
      */
-    private class StreamFile implements FSFile {
+    public class StreamFile implements FSFile {
         /**
          * The name of the alternate data stream.
          */
@@ -219,6 +219,24 @@ public class NTFSFile implements FSFile, FSFileSlackSpace, FSFileStreams {
         public StreamFile(String attributeName, NTFSAttribute attribute) {
             this.attributeName = attributeName;
             this.attribute = attribute;
+        }
+
+        /**
+         * Gets the name of this stream.
+         *
+         * @return the stream name.
+         */
+        public String getStreamName() {
+            return attributeName;
+        }
+
+        /**
+         * Gets the associated file record.
+         *
+         * @return the file record.
+         */
+        public FileRecord getFileRecord() {
+            return NTFSFile.this.getFileRecord();
         }
 
         @Override
