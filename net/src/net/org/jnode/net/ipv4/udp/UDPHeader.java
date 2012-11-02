@@ -32,7 +32,9 @@ import org.jnode.util.NumberUtils;
  * 
  * @author epr
  */
-public class UDPHeader implements TransportLayerHeader, UDPConstants {
+public class UDPHeader implements TransportLayerHeader {
+		
+	public static final int UDP_HLEN = 8;
 
     /** My logger */
     private static final Logger log = Logger.getLogger(UDPHeader.class);

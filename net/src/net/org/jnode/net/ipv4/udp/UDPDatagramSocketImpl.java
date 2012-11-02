@@ -37,7 +37,7 @@ import java.net.SocketException;
  * @author Martin Husted Hartvig (hagar@jnode.org)
  */
 public class UDPDatagramSocketImpl extends AbstractDatagramSocketImpl implements IPv4Constants,
-        UDPConstants, ExSocketOptions {
+        ExSocketOptions {
     /**
      * The UDP protocol we're using
      */
@@ -92,7 +92,7 @@ public class UDPDatagramSocketImpl extends AbstractDatagramSocketImpl implements
 
         final IPv4Address dstAddress = new IPv4Address(p.getAddress());
         final IPv4Header ipHdr;
-        ipHdr = new IPv4Header(getTos(), getTimeToLive(), IPPROTO_UDP, dstAddress, p.getLength() + UDP_HLEN);
+        ipHdr = new IPv4Header(getTos(), getTimeToLive(), IPPROTO_UDP, dstAddress, p.getLength() + UDPHeader.UDP_HLEN);
         if (!getLocalAddress().isAnyLocalAddress() || (getDevice() != null)) {
             ipHdr.setSource(new IPv4Address(getLocalAddress()));
         }
