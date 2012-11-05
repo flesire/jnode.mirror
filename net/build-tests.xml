@@ -17,6 +17,7 @@ help         Output these messages
 		<junit showoutput="on" printsummary="on" fork="on">
 			<classpath refid="cp-test"/>
 			<test name="org.jnode.net.arp.ARPHeaderTest" todir="${basedir}/reports/junit"/>
+			<test name="org.jnode.net.arp.ARPNetworkLayerTest" todir="${basedir}/reports/junit"/>
 			<test name="org.jnode.test.net.ethernet.EthernetAddressTest" todir="${basedir}/reports/junit"/>
 		</junit>
 	</target>
