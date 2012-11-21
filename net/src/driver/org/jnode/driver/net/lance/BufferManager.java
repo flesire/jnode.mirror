@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 import org.apache.log4j.Logger;
@@ -35,7 +35,8 @@ public class BufferManager {
     public static final int DATA_BUFFER_SIZE = 1544;
 
     /**
-     * MemoryResource to hold initialization block, descriptor rings, and data buffers
+     * MemoryResource to hold initialization block, descriptor rings, and data
+     * buffers
      */
     private MemoryResource mem;
 
@@ -49,8 +50,9 @@ public class BufferManager {
             EthernetAddress physicalAddr, long logicalAddr, ResourceManager rm, ResourceOwner owner) {
 
         // Compute the required size for the memory resource
-        size = InitializationBlock32Bit.INIT_BLOCK_SIZE +
-                (rxRingLength + txRingLength) * (Descriptor.MESSAGE_DESCRIPTOR_SIZE + DATA_BUFFER_SIZE);
+        size =
+                InitializationBlock32Bit.INIT_BLOCK_SIZE + (rxRingLength + txRingLength) *
+                        (Descriptor.MESSAGE_DESCRIPTOR_SIZE + DATA_BUFFER_SIZE);
 
         // Get the memory
         try {
@@ -76,8 +78,9 @@ public class BufferManager {
         txRing = new TxDescriptorRing(mem, txRingOffset, txRingLength, txDataBufferOffset);
 
         // Create and initialize the initialization block
-        initBlock = new InitializationBlock32Bit(
-                mem, 0, (short) mode, physicalAddr, logicalAddr, rxRing, txRing);
+        initBlock =
+                new InitializationBlock32Bit(mem, 0, (short) mode, physicalAddr, logicalAddr,
+                        rxRing, txRing);
     }
 
     /**

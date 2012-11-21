@@ -17,18 +17,14 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
-package org.jnode.driver.net.rtl8139;
 
-import java.security.PrivilegedExceptionAction;
+package org.jnode.driver.net.rtl8139;
 
 import javax.naming.NameNotFoundException;
 
-import org.jnode.driver.Device;
 import org.jnode.driver.DriverException;
-import org.jnode.driver.bus.pci.PCIBaseAddress;
 import org.jnode.driver.bus.pci.PCIDevice;
-import org.jnode.driver.bus.pci.PCIHeaderType0;
+import org.jnode.driver.net.NetDeviceResource;
 import org.jnode.driver.net.NetworkException;
 import org.jnode.driver.net.ethernet.spi.Flags;
 import org.jnode.driver.net.spi.AbstractDeviceCore;
@@ -37,14 +33,10 @@ import org.jnode.net.HardwareAddress;
 import org.jnode.net.SocketBuffer;
 import org.jnode.net.ethernet.EthernetAddress;
 import org.jnode.net.ethernet.EthernetConstants;
-import org.jnode.system.resource.IOResource;
 import org.jnode.system.resource.IRQHandler;
-import org.jnode.system.resource.IRQResource;
 import org.jnode.system.resource.ResourceManager;
 import org.jnode.system.resource.ResourceNotFreeException;
 import org.jnode.system.resource.ResourceOwner;
-import org.jnode.util.AccessControllerUtils;
-import org.jnode.util.NumberUtils;
 import org.jnode.util.TimeoutException;
 
 /**
@@ -55,18 +47,7 @@ import org.jnode.util.TimeoutException;
 
 public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants, IRQHandler,
         EthernetConstants {
-    /**
-     * Start of IO address space
-     */
-    private final int iobase;
-    /**
-     * IO address space
-     */
-    private final IOResource io;
-    /**
-     * IRQ
-     */
-    private final IRQResource irq;
+
     /**
      * My ethernet address
      */
@@ -74,6 +55,7 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
     /**
      * flags needed to setup device
      */
+    @SuppressWarnings("unused")
     private final RTL8139Flags flags;
     /**
      * main driver this belongs to
@@ -102,48 +84,41 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
      * @param flags
      */
     public RTL8139Core(RTL8139Driver driver, ResourceOwner owner, PCIDevice device, Flags flags)
-        throws DriverException, ResourceNotFreeException {
+            throws DriverException, ResourceNotFreeException {
+
         if (!(flags instanceof RTL8139Flags))
             throw new DriverException("Wrong flags to the RTL8139 driver");
 
         this.driver = driver;
         this.flags = (RTL8139Flags) flags;
 
-        final int irq = getIRQ(device, this.flags);
+        resources = new NetDeviceResource(owner, this, device);
 
-        // Get the start of the IO address space
-        this.iobase = getIOBase(device, this.flags);
-
-        final int iolength = getIOLength(device, this.flags);
-        // log.debug("RTL8139 driver iobase "+iobase+" irq "+irq);
-
-        final ResourceManager rm;
-
-        try {
-            rm = InitialNaming.lookup(ResourceManager.NAME);
-        } catch (NameNotFoundException ex) {
-            throw new DriverException("Cannot find ResourceManager");
-        }
-
-        this.irq = rm.claimIRQ(owner, irq, this, true);
-
-        try {
-            io = claimPorts(rm, owner, iobase, iolength);
-        } catch (ResourceNotFreeException ex) {
-            this.irq.release();
-            throw ex;
-        }
-
-        this.rxRing = new RTL8139RxRing(RX_FRAMES, rm);
+        this.rxRing = new RTL8139RxRing(RX_FRAMES, resources.getResourceManager());
 
         for (int i = 0; i < txBuffers.length; i++) {
-            txBuffers[i] = new RTL8139TxBuffer(rm);
+            txBuffers[i] = new RTL8139TxBuffer(resources.getResourceManager());
             setReg32(REG_TX_ADDR0 + (4 * i), txBuffers[i].getFirstDPDAddress().toInt());
         }
 
         powerUpDevice();
+
         reset();
 
+        determineHardwareAddress();
+
+        disableMultiCast();
+
+        log.debug("Found " + flags.getName() + " " + resources + ", MAC Address=" + hwAddress);
+    }
+
+    private void disableMultiCast() {
+        // disable multicast
+        setReg32(REG_MAR0, 0);
+        setReg32(REG_MAR0 + 4, 0);
+    }
+
+    private void determineHardwareAddress() {
         byte[] adr1 = i2bsLoHi(getReg32(REG_MAC0));
         byte[] adr2 = i2bsLoHi(getReg32(REG_MAC0 + 4));
 
@@ -157,13 +132,6 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
         hwAddrArr[5] = adr2[1];
 
         this.hwAddress = new EthernetAddress(hwAddrArr, 0);
-
-        // disable multicast
-        setReg32(REG_MAR0, 0);
-        setReg32(REG_MAR0 + 4, 0);
-
-        log.debug("Found " + flags.getName() + " IRQ=" + irq + ", IOBase=0x" +
-                NumberUtils.hex(iobase) + ", MAC Address=" + hwAddress);
     }
 
     private void powerUpDevice() {
@@ -398,14 +366,6 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
     }
 
     /**
-     * Release all resources
-     */
-    public void release() {
-        io.release();
-        irq.release();
-    }
-
-    /**
      * Transmit the given buffer
      * 
      * @param buf
@@ -581,7 +541,7 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
                         driver.onReceive(skbuf);
                 } catch (NetworkException e) {
                     e.printStackTrace(); // To change body of catch statement
-                                            // use Options | File
+                                         // use Options | File
                     // Templates.
                 } finally {
                     // FIXME
@@ -633,134 +593,4 @@ public class RTL8139Core extends AbstractDeviceCore implements RTL8139Constants,
 
     }
 
-    /**
-     * Gets the first IO-Address used by the given device
-     * 
-     * @param device
-     * @param flags
-     */
-
-    protected int getIOBase(Device device, RTL8139Flags flags) throws DriverException {
-        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
-        final PCIBaseAddress[] addrs = config.getBaseAddresses();
-
-        if (addrs.length < 1) {
-            throw new DriverException("Cannot find iobase: not base addresses");
-        }
-        if (!addrs[0].isIOSpace()) {
-            throw new DriverException("Cannot find iobase: first address is not I/O");
-        }
-        return addrs[0].getIOBase();
-    }
-
-    /**
-     * Gets the number of IO-Addresses used by the given device
-     * 
-     * @param device
-     * @param flags
-     */
-    protected int getIOLength(Device device, RTL8139Flags flags) throws DriverException {
-        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
-        final PCIBaseAddress[] addrs = config.getBaseAddresses();
-
-        if (addrs.length < 1) {
-            throw new DriverException("Cannot find iobase: not base addresses");
-        }
-
-        if (!addrs[0].isIOSpace()) {
-            throw new DriverException("Cannot find iobase: first address is not I/O");
-        }
-
-        return addrs[0].getSize();
-    }
-
-    /**
-     * Gets the IRQ used by the given device
-     * 
-     * @param device
-     * @param flags
-     */
-
-    protected int getIRQ(Device device, RTL8139Flags flags) throws DriverException {
-        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
-
-        return config.getInterruptLine();
-    }
-
-    /**
-     * Reads a 8-bit NIC register
-     * 
-     * @param reg
-     */
-    protected final int getReg8(int reg) {
-        return io.inPortByte(iobase + reg);
-    }
-
-    /**
-     * Reads a 16-bit NIC register
-     * 
-     * @param reg
-     */
-    protected final int getReg16(int reg) {
-        return io.inPortWord(iobase + reg);
-    }
-
-    /**
-     * Reads a 32-bit NIC register
-     * 
-     * @param reg
-     */
-
-    protected final int getReg32(int reg) {
-        return io.inPortDword(iobase + reg);
-    }
-
-    /**
-     * Writes a 8-bit NIC register
-     * 
-     * @param reg
-     * @param value
-     */
-
-    protected final void setReg8(int reg, int value) {
-        io.outPortByte(iobase + reg, value);
-    }
-
-    /**
-     * Writes a 16-bit NIC register
-     * 
-     * @param reg
-     * @param value
-     */
-
-    protected final void setReg16(int reg, int value) {
-        io.outPortWord(iobase + reg, value);
-    }
-
-    /**
-     * Writes a 32-bit NIC register
-     * 
-     * @param reg
-     * @param value
-     */
-
-    public final void setReg32(int reg, int value) {
-        io.outPortDword(iobase + reg, value);
-    }
-
-    private IOResource claimPorts(final ResourceManager rm, final ResourceOwner owner,
-            final int low, final int length) throws ResourceNotFreeException, DriverException {
-        try {
-            return AccessControllerUtils.doPrivileged(new PrivilegedExceptionAction<IOResource>() {
-                public IOResource run() throws ResourceNotFreeException {
-                    return rm.claimIOResource(owner, low, length);
-                }
-            });
-        } catch (ResourceNotFreeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new DriverException("Unknown exception", ex);
-        }
-
-    }
 }

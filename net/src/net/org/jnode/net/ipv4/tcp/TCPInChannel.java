@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.tcp;
 
 import java.net.SocketException;
@@ -36,27 +36,27 @@ public class TCPInChannel {
      * My logger
      */
     private static final Logger log = Logger.getLogger(TCPInChannel.class);
-    
+
     /**
      * Segments that have been received, but are out of order
      */
     private final LinkedList<TCPInSegment> futureSegments = new LinkedList<TCPInSegment>();
-    
+
     /**
      * The next expected sequence number
      */
     private int rcv_next;
-    
+
     /**
      * The input data buffer
      */
     private final TCPDataBuffer dataBuffer;
-    
+
     /**
      * The control block I belong to
      */
     private final TCPControlBlock controlBlock;
-    
+
     /**
      * Has a FIN been received?
      */
@@ -73,7 +73,7 @@ public class TCPInChannel {
 
     /**
      * Initialize the initial sequence nr from the foreign side.
-     *
+     * 
      * @param hdr
      */
     public void initISN(TCPHeader hdr) {
@@ -82,12 +82,13 @@ public class TCPInChannel {
 
     /**
      * Process received data
-     *
+     * 
      * @param ipHdr
      * @param hdr
      * @param skbuf
      */
-    public void processData(IPv4Header ipHdr, TCPHeader hdr, SocketBuffer skbuf) throws SocketException {
+    public void processData(IPv4Header ipHdr, TCPHeader hdr, SocketBuffer skbuf)
+        throws SocketException {
         final int seqNr = hdr.getSequenceNr();
         // Check the seq-nr
         if (TCPUtils.SEQ_LT(seqNr, rcv_next)) {
@@ -120,15 +121,17 @@ public class TCPInChannel {
     }
 
     /**
-     * Process the given segment (that must be the next expected segment). The data will be send to
-     * the input data buffer, if there is enough space left in the buffer.
-     *
+     * Process the given segment (that must be the next expected segment). The
+     * data will be send to the input data buffer, if there is enough space left
+     * in the buffer.
+     * 
      * @param hdr
      * @param skbuf
      * @return True if the segment has been fully processed, false otherwise.
      * @throws SocketException
      */
-    private synchronized boolean processNextSegment(TCPHeader hdr, SocketBuffer skbuf) throws SocketException {
+    private synchronized boolean processNextSegment(TCPHeader hdr, SocketBuffer skbuf)
+        throws SocketException {
         final int seqNr = hdr.getSequenceNr();
         if (seqNr != rcv_next) {
             throw new IllegalArgumentException("hdr.seqNr != rcv_next");
@@ -138,7 +141,8 @@ public class TCPInChannel {
         // Sent it to the application if there is enough space
         final int dataLength = hdr.getDataLength();
         if (dataLength > dataBuffer.getFreeSize()) {
-            // Not enough free space, ignore this segment, it will be retransmitted.
+            // Not enough free space, ignore this segment, it will be
+            // retransmitted.
             log.debug("nextSegment dropped due to lack of space");
             return false;
         } else {
@@ -167,7 +171,7 @@ public class TCPInChannel {
 
     /**
      * Find the segment that has sequnce-nr equal to rcv_next.
-     *
+     * 
      * @return The segment or null if not found
      */
     private TCPInSegment findNextSegment() {
@@ -191,8 +195,9 @@ public class TCPInChannel {
     }
 
     /**
-     * Read data from the input buffer up to len bytes long. Block until there is data available.
-     *
+     * Read data from the input buffer up to len bytes long. Block until there
+     * is data available.
+     * 
      * @param dst
      * @param off
      * @param len
@@ -231,7 +236,7 @@ public class TCPInChannel {
 
     /**
      * Has the End of the InputChannel been reached?
-     *
+     * 
      * @return True if EOF has been reached, false otherwise
      */
     protected final boolean isEOF() {

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import org.apache.log4j.Logger;
@@ -53,8 +53,9 @@ public class ConfigurationProcessor implements QueueProcessor<ConfigurationQueue
     }
 
     public void start() {
-        thread = new QueueProcessorThread<ConfigurationQueueEntry>(
-                "Net configuration processor", queue, this);
+        thread =
+                new QueueProcessorThread<ConfigurationQueueEntry>("Net configuration processor",
+                        queue, this);
         thread.start();
     }
 

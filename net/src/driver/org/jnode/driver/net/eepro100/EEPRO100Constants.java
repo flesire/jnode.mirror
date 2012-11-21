@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.eepro100;
 
 /**
@@ -38,11 +38,9 @@ public interface EEPRO100Constants {
     static final int TX_TIMEOUT = (2 * HZ);
 
     /* PHY media interface chips. */
-    static final String phys[] = {
-        "None", "i82553-A/B", "i82553-C", "i82503", "DP83840", "80c240", "80c24", "i82555",
-        "Microlinear", "Level One", "DP83840A", "ICS 1890", "unknown-12", "unknown-13",
-        "unknown-14", "unknown-15"
-    };
+    static final String phys[] = {"None", "i82553-A/B", "i82553-C", "i82503", "DP83840", "80c240",
+        "80c24", "i82555", "Microlinear", "Level One", "DP83840A", "ICS 1890", "unknown-12",
+        "unknown-13", "unknown-14", "unknown-15"};
     static final int NonSuchPhy = 0;
     static final int I82553AB = 1;
     static final int I82553C = 2;
@@ -58,16 +56,47 @@ public interface EEPRO100Constants {
      * that it would be difficult to document each bit. We mostly use the
      * default or recommended settings.
      */
-    static final byte i82557ConfigCmd[] = {
-        22, 0x08, 0, 0, 0, 0, 0x32, 0x03, 1, /* 1=Use MII 0=Use AUI */
-        0, 0x2E, 0, 0x60, 0, (byte) 0xf2, 0x48, 0, 0x40, (byte) 0xf2, 
-        (byte) 0x80, /* 0x40=Force full-duplex */ 
-        0x3f, 0x05};
-    static final byte i82558ConfigCmd[] = {
-        22, 0x08, 0, 1, 0, 0, (byte) 0x22, 0x03, 1, /* 1=Use MII 0=Use AUI */
-        0, 0x2E, 0, 0x60, 0x8, (byte) 0x88, 0x68, 0, 0x40, (byte) 0xf2, 
-        (byte) 0x84, /* 0xBD->0xFD=Force full-duplex */
-        0x31, 0x05};
+    static final byte i82557ConfigCmd[] = {22, 0x08, 0, 0, 0, 0, 0x32, 0x03, 1, /*
+                                                                                 * 1
+                                                                                 * =
+                                                                                 * Use
+                                                                                 * MII
+                                                                                 * 0
+                                                                                 * =
+                                                                                 * Use
+                                                                                 * AUI
+                                                                                 */
+    0, 0x2E, 0, 0x60, 0, (byte) 0xf2, 0x48, 0, 0x40, (byte) 0xf2, (byte) 0x80, /*
+                                                                                * 0x40
+                                                                                * =
+                                                                                * Force
+                                                                                * full
+                                                                                * -
+                                                                                * duplex
+                                                                                */
+    0x3f, 0x05};
+    static final byte i82558ConfigCmd[] = {22, 0x08, 0, 1, 0, 0, (byte) 0x22, 0x03, 1, /*
+                                                                                        * 1
+                                                                                        * =
+                                                                                        * Use
+                                                                                        * MII
+                                                                                        * 0
+                                                                                        * =
+                                                                                        * Use
+                                                                                        * AUI
+                                                                                        */
+    0, 0x2E, 0, 0x60, 0x8, (byte) 0x88, 0x68, 0, 0x40, (byte) 0xf2, (byte) 0x84, /*
+                                                                                  * 0xBD
+                                                                                  * -
+                                                                                  * >
+                                                                                  * 0xFD
+                                                                                  * =
+                                                                                  * Force
+                                                                                  * full
+                                                                                  * -
+                                                                                  * duplex
+                                                                                  */
+    0x31, 0x05};
 
     /* EEPROM_Ctrl bits. */
     static final int EE_SHIFT_CLK = 0x01; /* EEPROM shift clock. */
@@ -99,7 +128,10 @@ public interface EEPRO100Constants {
     static final int CmdDiagnose = 0x70000;
     static final int CmdSuspend = 0x40000000; /* Suspend after completion. */
     static final int CmdIntr = 0x20000000; /* Interrupt after completion. */
-    static final int CmdTxFlex = 0x00080000; /* Use "Flexible mode" for CmdTx command. */
+    static final int CmdTxFlex = 0x00080000; /*
+                                              * Use "Flexible mode" for CmdTx
+                                              * command.
+                                              */
 
     /* Do atomically if possible. */
     static final int SCBMaskCmdDone = 0x8000;
@@ -119,7 +151,10 @@ public interface EEPRO100Constants {
     static final int CUShowStats = 0x0050;
     static final int CUCmdBase = 0x0060; /* CU Base address (set to zero) . */
     static final int CUDumpStats = 0x0070; /* Dump then reset stats counters. */
-    static final int CUHiPriResume = 0x00b0; /* Resume for the high priority Tx queue.,*/
+    static final int CUHiPriResume = 0x00b0; /*
+                                              * Resume for the high priority Tx
+                                              * queue.,
+                                              */
 
     static final int RxStart = 0x0001;
     static final int RxResume = 0x0002;

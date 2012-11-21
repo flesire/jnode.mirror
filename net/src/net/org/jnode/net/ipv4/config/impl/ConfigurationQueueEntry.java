@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import org.jnode.driver.Device;
@@ -34,8 +34,7 @@ final class ConfigurationQueueEntry {
      * @param device
      * @param config
      */
-    public ConfigurationQueueEntry(final Device device,
-            final NetDeviceConfig config) {
+    public ConfigurationQueueEntry(final Device device, final NetDeviceConfig config) {
         super();
         this.device = device;
         this.config = config;

@@ -17,16 +17,15 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.ethernet.spi;
 
 /**
  * Flags interface to the drivers
- *
+ * 
  * @author Martin Husted Hartvig
  */
 
 public interface Flags {
     public String getName();
 }
-

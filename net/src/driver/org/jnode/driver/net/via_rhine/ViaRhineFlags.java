@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.via_rhine;
 
 import org.jnode.driver.net.ethernet.spi.Flags;
@@ -35,7 +35,7 @@ class ViaRhineFlags implements Flags {
 
     /**
      * Create a new instance
-     *
+     * 
      * @param name
      */
     public ViaRhineFlags(String name) {

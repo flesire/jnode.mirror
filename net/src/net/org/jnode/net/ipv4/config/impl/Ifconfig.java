@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import java.net.UnknownHostException;
@@ -81,7 +81,8 @@ final class Ifconfig {
             try {
                 final NetDeviceAPI api = dev.getAPI(NetDeviceAPI.class);
                 final IPv4ProtocolAddressInfo addrInfo =
-                        (IPv4ProtocolAddressInfo) api.getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
+                        (IPv4ProtocolAddressInfo) api
+                                .getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
                 if (addrInfo != null) {
                     final IPv4Address addr = (IPv4Address) addrInfo.getDefaultAddress();
                     if (addr != null) {

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 import org.apache.log4j.Logger;
@@ -39,9 +39,9 @@ public class RxDescriptorRing extends DescriptorRing {
         super(mem, offset, length);
         rxDescriptors = new RxDescriptor[length];
         for (int i = 0; i < length; i++) {
-            rxDescriptors[i] = new RxDescriptor(
-                    mem, offset + (i * Descriptor.MESSAGE_DESCRIPTOR_SIZE),
-                    dataBufferOffset + (i * BufferManager.DATA_BUFFER_SIZE));
+            rxDescriptors[i] =
+                    new RxDescriptor(mem, offset + (i * Descriptor.MESSAGE_DESCRIPTOR_SIZE),
+                            dataBufferOffset + (i * BufferManager.DATA_BUFFER_SIZE));
         }
         currentDescriptor = 0;
     }
@@ -53,7 +53,7 @@ public class RxDescriptorRing extends DescriptorRing {
         short status = des.getStatus();
 
         if ((status & RxDescriptor.STATUS_OWN) != 0) {
-            //log.warn("Descriptor is not owned by the host");
+            // log.warn("Descriptor is not owned by the host");
             return null;
         } else if ((status & RxDescriptor.STATUS_ERR) != 0) {
             log.warn("Error");

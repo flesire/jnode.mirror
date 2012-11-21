@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.via_rhine;
 
 import java.util.Arrays;
@@ -49,7 +49,8 @@ class ViaRhineTxRing extends ViaRhineRing<ViaRhineTxRing.TxDesc> {
         }
 
         void setFrameLength(int size) {
-            descMr.setInt(descOffs + 4, ((descMr.getInt(descOffs + 4) & ~0x000007FF) | (size & 0x000007FF)));
+            descMr.setInt(descOffs + 4,
+                    ((descMr.getInt(descOffs + 4) & ~0x000007FF) | (size & 0x000007FF)));
         }
 
         void setPacket(SocketBuffer sb) {

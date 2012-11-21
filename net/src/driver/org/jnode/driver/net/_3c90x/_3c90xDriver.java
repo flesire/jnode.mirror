@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net._3c90x;
 
 import java.security.PrivilegedExceptionAction;
@@ -66,7 +66,7 @@ public class _3c90xDriver extends AbstractEthernetDriver {
 
     /**
      * Create a new instance
-     *
+     * 
      * @param flags
      */
     public _3c90xDriver(_3c90xFlags flags) {

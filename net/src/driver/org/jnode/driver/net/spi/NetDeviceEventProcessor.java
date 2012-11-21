@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.spi;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ final class NetDeviceEventProcessor implements QueueProcessor<NetDeviceEvent> {
 
     /**
      * Does this processor have any listeners.
-     *
+     * 
      * @return
      */
     final synchronized boolean isEmpty() {
@@ -69,8 +69,9 @@ final class NetDeviceEventProcessor implements QueueProcessor<NetDeviceEvent> {
         listeners.add(listener);
         this.listenerCache = null;
         if (thread == null) {
-            thread = new QueueProcessorThread<NetDeviceEvent>("NetDeviceEventProcessor",
-                eventQueue, this);
+            thread =
+                    new QueueProcessorThread<NetDeviceEvent>("NetDeviceEventProcessor", eventQueue,
+                            this);
             thread.start();
         }
     }
@@ -89,7 +90,7 @@ final class NetDeviceEventProcessor implements QueueProcessor<NetDeviceEvent> {
 
     /**
      * Post an event that will be fired (on another thread) to the listeners.
-     *
+     * 
      * @param event
      */
     final void postEvent(NetDeviceEvent event) {
@@ -107,8 +108,9 @@ final class NetDeviceEventProcessor implements QueueProcessor<NetDeviceEvent> {
             synchronized (this) {
                 final int size = this.listeners.size();
                 if (size > 0) {
-                    listeners = (NetDeviceListener[]) this.listeners
-                        .toArray(new NetDeviceListener[size]);
+                    listeners =
+                            (NetDeviceListener[]) this.listeners
+                                    .toArray(new NetDeviceListener[size]);
                     this.listenerCache = listeners;
                 }
             }

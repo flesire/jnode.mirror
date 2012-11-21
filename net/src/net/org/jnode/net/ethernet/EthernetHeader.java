@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ethernet;
 
 import org.jnode.net.HardwareAddress;
@@ -26,7 +26,7 @@ import org.jnode.net.SocketBuffer;
 
 /**
  * Wrapper class for the IEEE 802.3 header.
- *  
+ * 
  * @author epr
  */
 public class EthernetHeader implements LinkLayerHeader, EthernetConstants {
@@ -37,14 +37,12 @@ public class EthernetHeader implements LinkLayerHeader, EthernetConstants {
 
     /**
      * Create a new instance
+     * 
      * @param destination
      * @param source
      * @param lengthType
      */
-    public EthernetHeader(
-            EthernetAddress destination,
-            EthernetAddress source,
-            int lengthType) {
+    public EthernetHeader(EthernetAddress destination, EthernetAddress source, int lengthType) {
         this.destination = destination;
         this.source = source;
         this.lengthType = lengthType;
@@ -52,6 +50,7 @@ public class EthernetHeader implements LinkLayerHeader, EthernetConstants {
 
     /**
      * Create a new instance
+     * 
      * @param skbuf
      */
     public EthernetHeader(SocketBuffer skbuf) {
@@ -69,6 +68,7 @@ public class EthernetHeader implements LinkLayerHeader, EthernetConstants {
 
     /**
      * Prefix this header to the front of the given buffer
+     * 
      * @param skbuf
      */
     public void prefixTo(SocketBuffer skbuf) {
@@ -79,27 +79,27 @@ public class EthernetHeader implements LinkLayerHeader, EthernetConstants {
     }
 
     /**
-     * Finalize the header in the given buffer.
-     * This method is called when all layers have set their header data
-     * and can be used e.g. to update checksum values.
+     * Finalize the header in the given buffer. This method is called when all
+     * layers have set their header data and can be used e.g. to update checksum
+     * values.
      * 
      * @param skbuf The buffer
-     * @param offset The offset to the first byte (in the buffer) of this header 
-     *               (since low layer headers are already prefixed)
+     * @param offset The offset to the first byte (in the buffer) of this header
+     *            (since low layer headers are already prefixed)
      */
     public void finalizeHeader(SocketBuffer skbuf, int offset) {
         // Do nothing
     }
 
     /**
-     * Gets the source address of the packet described in this header 
+     * Gets the source address of the packet described in this header
      */
     public HardwareAddress getSourceAddress() {
         return source;
     }
 
     /**
-     * Gets the source address of the packet described in this header 
+     * Gets the source address of the packet described in this header
      */
     public HardwareAddress getDestinationAddress() {
         return destination;

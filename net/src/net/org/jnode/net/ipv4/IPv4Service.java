@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4;
 
 import java.net.SocketException;
@@ -36,21 +36,20 @@ public interface IPv4Service {
     public IPv4RoutingTable getRoutingTable();
 
     /**
-     * Transmit an IP packet.
-     * The given buffer must contain all packet data AND the header(s)
-     * of any IP sub-protocols, before this method is called.
+     * Transmit an IP packet. The given buffer must contain all packet data AND
+     * the header(s) of any IP sub-protocols, before this method is called.
      * <p>
-     * The following fields of the IP header must be set:
-     * tos, ttl, protocol, dstAddress.
+     * The following fields of the IP header must be set: tos, ttl, protocol,
+     * dstAddress.
      * <p>
      * All other header fields are set, unless they have been set before.
      * <p>
-     * The following fields are always set (also when set before):
-     * version, hdrlength, identification, fragmentOffset, checksum
+     * The following fields are always set (also when set before): version,
+     * hdrlength, identification, fragmentOffset, checksum
      * <p>
-     * If the device attribute of the skbuf has been set, the packet will
-     * be send to this device, otherwise a suitable route will be searched
-     * for in the routing table.
+     * If the device attribute of the skbuf has been set, the packet will be
+     * send to this device, otherwise a suitable route will be searched for in
+     * the routing table.
      * 
      * @param hdr
      * @param skbuf
@@ -60,6 +59,7 @@ public interface IPv4Service {
 
     /**
      * Gets the protocol for a given ID
+     * 
      * @param protocolID
      * @throws NoSuchProtocolException No protocol with the given ID was found.
      */

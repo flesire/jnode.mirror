@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.util;
 
 import java.net.UnknownHostException;
@@ -239,7 +239,8 @@ public class ResolverImpl implements Resolver {
             if (ex.getException() instanceof UnknownHostException) {
                 throw (UnknownHostException) ex.getException();
             } else {
-                throw (UnknownHostException) new UnknownHostException().initCause(ex.getException());
+                throw (UnknownHostException) new UnknownHostException()
+                        .initCause(ex.getException());
             }
         }
     }

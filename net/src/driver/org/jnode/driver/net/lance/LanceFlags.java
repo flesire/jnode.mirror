@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 import org.jnode.driver.net.ethernet.spi.Flags;
@@ -50,7 +50,8 @@ public class LanceFlags implements Flags {
     }
 
     public void setForVersion(int chipVersion) {
-        // TODO the flags for the different versions are not completed and the LanceCore doesn't use these
+        // TODO the flags for the different versions are not completed and the
+        // LanceCore doesn't use these
         switch (chipVersion) {
             case 0x2420:
                 chipName = "PCnet/PCI 79C970";

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net;
 
 import java.net.DatagramSocketImplFactory;
@@ -50,6 +50,7 @@ public interface TransportLayer {
 
     /**
      * Process a packet that has been received and matches getType()
+     * 
      * @param skbuf
      * @throws SocketException
      */
@@ -57,12 +58,14 @@ public interface TransportLayer {
 
     /**
      * Gets the SocketImplFactory of this protocol.
+     * 
      * @throws SocketException If this protocol is not Socket based.
      */
     public SocketImplFactory getSocketImplFactory() throws SocketException;
 
     /**
      * Gets the DatagramSocketImplFactory of this protocol.
+     * 
      * @throws SocketException If this protocol is not DatagramSocket based.
      */
     public DatagramSocketImplFactory getDatagramSocketImplFactory() throws SocketException;

@@ -17,12 +17,13 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.via_rhine;
 
 import java.security.PrivilegedExceptionAction;
 import org.jnode.driver.Device;
 import org.jnode.driver.DriverException;
+import org.jnode.driver.bus.pci.PCIDevice;
 import org.jnode.driver.net.ethernet.spi.BasicEthernetDriver;
 import org.jnode.driver.net.ethernet.spi.Flags;
 import org.jnode.plugin.ConfigurationElement;
@@ -35,7 +36,7 @@ import org.jnode.util.AccessControllerUtils;
 public class ViaRhineDriver extends BasicEthernetDriver {
     /**
      * Create a new instance
-     *
+     * 
      * @param config configuartion desc
      */
     public ViaRhineDriver(ConfigurationElement config) {
@@ -52,11 +53,13 @@ public class ViaRhineDriver extends BasicEthernetDriver {
     protected ViaRhineCore newCore(final Device device, final Flags flags)
         throws DriverException, ResourceNotFreeException {
         try {
-            return AccessControllerUtils.doPrivileged(new PrivilegedExceptionAction<ViaRhineCore>() {
-                public ViaRhineCore run() throws Exception {
-                    return new ViaRhineCore(ViaRhineDriver.this, device, device, flags);
-                }
-            });
+            return AccessControllerUtils
+                    .doPrivileged(new PrivilegedExceptionAction<ViaRhineCore>() {
+                        public ViaRhineCore run() throws Exception {
+                            return new ViaRhineCore(ViaRhineDriver.this, (PCIDevice) device,
+                                    device, flags);
+                        }
+                    });
         } catch (DriverException ex) {
             throw ex;
         } catch (ResourceNotFreeException ex) {

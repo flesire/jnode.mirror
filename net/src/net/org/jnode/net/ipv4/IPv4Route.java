@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4;
 
 import org.jnode.driver.ApiNotFoundException;
@@ -56,7 +56,7 @@ public class IPv4Route implements IPv4Constants {
      * @throws IllegalArgumentException If the device is not a network device.
      */
     public IPv4Route(IPv4Address destination, IPv4Address subnetmask, Device device)
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
         this(destination, subnetmask, null, device);
     }
 

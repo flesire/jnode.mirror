@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.icmp;
 
 import org.jnode.net.SocketBuffer;
@@ -33,7 +33,8 @@ public class ICMPAddressMaskHeader extends ICMPExHeader {
     /**
      * @param type
      */
-    public ICMPAddressMaskHeader(ICMPType type, int identifier, int seqNumber, IPv4Address subnetMask) {
+    public ICMPAddressMaskHeader(ICMPType type, int identifier, int seqNumber,
+            IPv4Address subnetMask) {
         super(type, 0, identifier, seqNumber);
         if ((type != ICMPType.ICMP_ADDRESS) && (type != ICMPType.ICMP_ADDRESSREPLY)) {
             throw new IllegalArgumentException("Invalid type " + type);

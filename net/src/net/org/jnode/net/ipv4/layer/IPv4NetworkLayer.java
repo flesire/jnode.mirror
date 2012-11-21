@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.layer;
 
 import java.net.SocketException;
@@ -255,7 +255,7 @@ public class IPv4NetworkLayer implements NetworkLayer, IPv4Constants, IPv4Servic
                     final IPv4Header phdr = (IPv4Header) pbuf.getNetworkLayerHeader();
                     stat.reassembled.inc();
                     deliver(phdr, pbuf);
-                } 
+                }
             } else {
                 // Timeout of fragmentlist, destroy it
                 fragments.remove(key);
@@ -292,8 +292,7 @@ public class IPv4NetworkLayer implements NetworkLayer, IPv4Constants, IPv4Servic
      * Gets the protocol for a given ID
      * 
      * @param protocolID
-     * @throws NoSuchProtocolException
-     *             No protocol with the given ID was found.
+     * @throws NoSuchProtocolException No protocol with the given ID was found.
      */
     public IPv4Protocol getProtocol(int protocolID) throws NoSuchProtocolException {
         final IPv4Protocol protocol;
@@ -397,7 +396,9 @@ public class IPv4NetworkLayer implements NetworkLayer, IPv4Constants, IPv4Servic
     private void updateARPCache(HardwareAddress hwAddr, ProtocolAddress pAddr) {
         if (arp == null) {
             try {
-                arp = (ARPNetworkLayer) NetUtils.getNLM().getNetworkLayer(EthernetConstants.ETH_P_ARP);
+                arp =
+                        (ARPNetworkLayer) NetUtils.getNLM().getNetworkLayer(
+                                EthernetConstants.ETH_P_ARP);
             } catch (NoSuchProtocolException ex) {
                 log.error("Cannot find ARP layer", ex);
             } catch (NetworkException ex) {

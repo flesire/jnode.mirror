@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net;
 
 import java.util.Collection;
@@ -27,8 +27,9 @@ import org.jnode.driver.net.NetworkException;
 /**
  * This interface must be implemented by the network service of the JNode
  * kernel. It contains methods to register/unregister and obtain NetworkLayers,
- * and it is used by Network drivers to deliver receive packets. <p/> The
- * implementation of this interface must be obtained by invoking a lookup of
+ * and it is used by Network drivers to deliver receive packets.
+ * <p/>
+ * The implementation of this interface must be obtained by invoking a lookup of
  * {@link #NAME} on {@link org.jnode.naming.InitialNaming}.
  * 
  * @author epr
@@ -38,7 +39,7 @@ public interface NetworkLayerManager {
 
     /** Name used to bind the ptm in the InitialNaming namespace */
     public static final Class<NetworkLayerManager> NAME = NetworkLayerManager.class;
-    
+
     /**
      * Get all register packet types.
      * 

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.udp;
 
 import org.apache.log4j.Logger;
@@ -33,8 +33,8 @@ import org.jnode.util.NumberUtils;
  * @author epr
  */
 public class UDPHeader implements TransportLayerHeader {
-		
-	public static final int UDP_HLEN = 8;
+
+    public static final int UDP_HLEN = 8;
 
     /** My logger */
     private static final Logger log = Logger.getLogger(UDPHeader.class);
@@ -42,9 +42,12 @@ public class UDPHeader implements TransportLayerHeader {
     private final int srcPort;
     /** The destination port within the context of a particular internet address */
     private final int dstPort;
-    /** The length in octet. It include the header and the data. Minimum value of the length is 8 */
+    /**
+     * The length in octet. It include the header and the data. Minimum value of
+     * the length is 8
+     */
     private final int udpLength;
-    
+
     private final boolean checksumOk;
 
     /**
@@ -164,7 +167,8 @@ public class UDPHeader implements TransportLayerHeader {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        return "UDP srcPort=" + srcPort + ", dstPort=" + dstPort + ", dataLength=" + getDataLength();
+        return "UDP srcPort=" + srcPort + ", dstPort=" + dstPort + ", dataLength=" +
+                getDataLength();
     }
 
     private int calcChecksum(SocketBuffer skbuf, int offset) {

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import org.jnode.driver.Device;
@@ -35,6 +35,7 @@ public class ConfigurationServiceImpl implements IPv4ConfigurationService {
 
     /**
      * Initialize this instance.
+     * 
      * @param config
      */
     public ConfigurationServiceImpl(ConfigurationProcessor processor, NetConfigurationData config) {
@@ -44,6 +45,7 @@ public class ConfigurationServiceImpl implements IPv4ConfigurationService {
 
     /**
      * Set a static configuration for the given device.
+     * 
      * @param device
      * @param address
      * @param netmask
@@ -59,6 +61,7 @@ public class ConfigurationServiceImpl implements IPv4ConfigurationService {
 
     /**
      * Configure the device using BOOTP.
+     * 
      * @param device
      * @param persistent
      * @throws NetworkException
@@ -73,6 +76,7 @@ public class ConfigurationServiceImpl implements IPv4ConfigurationService {
 
     /**
      * Configure the device using DHCP.
+     * 
      * @param device
      * @param persistent
      * @throws NetworkException
@@ -86,7 +90,7 @@ public class ConfigurationServiceImpl implements IPv4ConfigurationService {
     }
 
     /**
-     * @see org.jnode.net.ipv4.config.IPv4ConfigurationService#addRoute(org.jnode.net.ipv4.IPv4Address, 
+     * @see org.jnode.net.ipv4.config.IPv4ConfigurationService#addRoute(org.jnode.net.ipv4.IPv4Address,
      *      org.jnode.net.ipv4.IPv4Address, org.jnode.driver.Device, boolean)
      */
     public void addRoute(IPv4Address target, IPv4Address gateway, Device device, boolean persistent)

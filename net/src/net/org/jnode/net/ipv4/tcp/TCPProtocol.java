@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.tcp;
 
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class TCPProtocol implements IPv4Protocol, IPv4Constants, TCPConstants {
 
     /**
      * Initialize a new instance
-     *
+     * 
      * @param ipService
      */
     public TCPProtocol(IPv4Service ipService) throws NetworkException {
@@ -182,8 +182,8 @@ public class TCPProtocol implements IPv4Protocol, IPv4Constants, TCPConstants {
 
             // Find the corresponding control block
             final TCPControlBlock cb =
-                (TCPControlBlock) controlBlocks.lookup(ipHdr.getSource(), hdr.getSrcPort(),
-                    ipHdr.getDestination(), hdr.getDstPort(), true);
+                    (TCPControlBlock) controlBlocks.lookup(ipHdr.getSource(), hdr.getSrcPort(),
+                            ipHdr.getDestination(), hdr.getDstPort(), true);
             if (cb == null) {
                 final boolean ack = hdr.isFlagAcknowledgeSet();
                 final boolean rst = hdr.isFlagResetSet();
@@ -214,13 +214,13 @@ public class TCPProtocol implements IPv4Protocol, IPv4Constants, TCPConstants {
 
     /**
      * Process a segment whose destination port is unreachable
-     *
+     * 
      * @param hdr
      */
     private void processPortUnreachable(IPv4Header ipHdr, TCPHeader hdr) throws SocketException {
         final TCPHeader replyHdr =
-            new TCPHeader(hdr.getDstPort(), hdr.getSrcPort(), 0, 0, hdr.getSequenceNr() + 1, 0,
-                0);
+                new TCPHeader(hdr.getDstPort(), hdr.getSrcPort(), 0, 0, hdr.getSequenceNr() + 1, 0,
+                        0);
         replyHdr.setFlags(TCPF_ACK | TCPF_RST);
         final IPv4Header replyIpHdr = new IPv4Header(ipHdr);
         replyIpHdr.swapAddresses();
@@ -229,7 +229,7 @@ public class TCPProtocol implements IPv4Protocol, IPv4Constants, TCPConstants {
 
     /**
      * Create a binding for a local address
-     *
+     * 
      * @param lAddr
      * @param lPort
      */
@@ -239,7 +239,7 @@ public class TCPProtocol implements IPv4Protocol, IPv4Constants, TCPConstants {
 
     /**
      * Send an TCP packet
-     *
+     * 
      * @param skbuf
      */
     protected void send(IPv4Header ipHdr, TCPHeader tcpHdr, SocketBuffer skbuf)

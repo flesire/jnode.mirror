@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4;
 
 import java.io.Serializable;
@@ -54,6 +54,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Reads an address at a given offset from the given buffer
+     * 
      * @param skbuf
      * @param offset
      */
@@ -69,6 +70,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Writes an address to a given offset in the given buffer
+     * 
      * @param skbuf
      * @param skbufOffset
      * @param address
@@ -79,6 +81,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Create a new instance
+     * 
      * @param src
      * @param offset
      */
@@ -89,6 +92,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Create a new instance
+     * 
      * @param address The array that is directly used. Not copied!
      */
     private IPv4Address(byte[] address) {
@@ -97,6 +101,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Create a new instance
+     * 
      * @param skbuf
      * @param offset
      */
@@ -107,6 +112,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Create a new instance from a String representation
+     * 
      * @param addrStr
      * @throws IllegalArgumentException
      */
@@ -127,6 +133,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Create a new instance from a java.net.InetAddress
+     * 
      * @param inetAddress
      */
     public IPv4Address(InetAddress inetAddress) {
@@ -154,6 +161,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Is this address equal to the given address.
+     * 
      * @param o
      */
     public boolean equals(ProtocolAddress o) {
@@ -184,6 +192,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Gets the address-byte at a given index
+     * 
      * @param index
      */
     public final byte get(int index) {
@@ -201,6 +210,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Write this address to a given offset in the given buffer
+     * 
      * @param skbuf
      * @param skbufOffset
      */
@@ -213,7 +223,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
      */
     public String toString() {
         return "" + (address[0] & 0xFF) + '.' + (address[1] & 0xFF) + '.' + (address[2] & 0xFF) +
-            '.' + (address[3] & 0xFF);
+                '.' + (address[3] & 0xFF);
     }
 
     /**
@@ -227,72 +237,66 @@ public class IPv4Address implements ProtocolAddress, Serializable {
         return (v3 << 24) | (v2 << 16) | (v1 << 8) | v0;
     }
 
-    /** 
-     * Is this a class A address.
-     * Class A = 0.0.0.0 - 127.255.255.255
+    /**
+     * Is this a class A address. Class A = 0.0.0.0 - 127.255.255.255
      */
     public boolean isClassA() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 0) && (b0 <= 127);
     }
 
-    /** 
-     * Is this a class B address.
-     * Class B = 128.0.0.0 - 191.255.255.255
+    /**
+     * Is this a class B address. Class B = 128.0.0.0 - 191.255.255.255
      */
     public boolean isClassB() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 128) && (b0 <= 191);
     }
 
-    /** 
-     * Is this a class C address.
-     * Class C = 192.0.0.0 - 223.255.255.255
+    /**
+     * Is this a class C address. Class C = 192.0.0.0 - 223.255.255.255
      */
     public boolean isClassC() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 192) && (b0 <= 223);
     }
 
-    /** 
-     * Is this a class D (multicast) address.
-     * Class D = 224.0.0.0 - 239.255.255.255
+    /**
+     * Is this a class D (multicast) address. Class D = 224.0.0.0 -
+     * 239.255.255.255
      */
     public boolean isClassD() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 224) && (b0 <= 239);
     }
 
-    /** 
-     * Is this a class E (experimental) address.
-     * Class E = 240.0.0.0 - 247.255.255.255
+    /**
+     * Is this a class E (experimental) address. Class E = 240.0.0.0 -
+     * 247.255.255.255
      */
     public boolean isClassE() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 240) && (b0 <= 247);
     }
 
-    /** 
-     * Is this an unicast address.
-     * Unicast = 0.0.0.0 - 223.255.255.255
+    /**
+     * Is this an unicast address. Unicast = 0.0.0.0 - 223.255.255.255
      */
     public boolean isUnicast() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 0) && (b0 <= 223);
     }
 
-    /** 
-     * Is this a multicast address.
-     * Multicast = 224.0.0.0 - 239.255.255.255
+    /**
+     * Is this a multicast address. Multicast = 224.0.0.0 - 239.255.255.255
      */
     public boolean isMulticast() {
         final int b0 = address[0] & 0xFF;
         return (b0 >= 224) && (b0 <= 239);
     }
 
-    /** 
-     * Is this a broadcast address.
-     * Broadcast = hostID = -1
+    /**
+     * Is this a broadcast address. Broadcast = hostID = -1
      */
     public boolean isBroadcast() {
         final int b3 = address[3] & 0xFF;
@@ -300,8 +304,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     }
 
     /**
-     * Is this a host address.
-     * A host address has <code>hostID != 0</code>
+     * Is this a host address. A host address has <code>hostID != 0</code>
      */
     public boolean isHost() {
         final int b3 = address[3] & 0xFF;
@@ -309,8 +312,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     }
 
     /**
-     * Is this an Any address.
-     * An Any address is equal to "0.0.0.0"
+     * Is this an Any address. An Any address is equal to "0.0.0.0"
      */
     public boolean isAny() {
         for (int i = 0; i < length; i++) {
@@ -322,8 +324,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     }
 
     /**
-     * Is this a network address.
-     * A network address has <code>hostID == 0</code>
+     * Is this a network address. A network address has <code>hostID == 0</code>
      */
     public boolean isNetwork() {
         final int b3 = address[3] & 0xFF;
@@ -332,6 +333,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Does this address matches a given mask?
+     * 
      * @param mask
      */
     public boolean matches(IPv4Address otherAddress, IPv4Address mask) {
@@ -348,6 +350,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Calculate the and or this address with the given mask.
+     * 
      * @param mask
      */
     public IPv4Address and(IPv4Address mask) {
@@ -360,6 +363,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Convert to a java.net.InetAddress
+     * 
      * @see java.net.InetAddress
      * @see java.net.Inet4Address
      * @return This address as java.net.InetAddress
@@ -377,6 +381,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
 
     /**
      * Convert to a byte array.
+     * 
      * @see org.jnode.net.ProtocolAddress#toByteArray()
      */
     public byte[] toByteArray() {
@@ -386,7 +391,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     }
 
     /**
-     * Gets the default subnet mask for this address 
+     * Gets the default subnet mask for this address
      */
     public IPv4Address getDefaultSubnetmask() {
         if (isAny()) {
@@ -405,8 +410,7 @@ public class IPv4Address implements ProtocolAddress, Serializable {
     }
 
     /**
-     * Gets the type of this address.
-     * This type is used by (e.g.) ARP.
+     * Gets the type of this address. This type is used by (e.g.) ARP.
      */
     public int getType() {
         return EthernetConstants.ETH_P_IP;

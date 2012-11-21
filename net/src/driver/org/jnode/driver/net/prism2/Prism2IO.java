@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.prism2;
 
 import static org.jnode.driver.net.prism2.Prism2Constants.Register.CMD;
@@ -41,7 +41,7 @@ import org.jnode.util.TimeoutException;
 
 /**
  * Class responsible for handling the low level I/O to the prism2 device.
- *
+ * 
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
 final class Prism2IO implements Prism2Constants {
@@ -58,7 +58,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Initialize this instance.
-     *
+     * 
      * @param regs
      */
     public Prism2IO(MemoryResource regs) {
@@ -74,7 +74,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Gets a register value.
-     *
+     * 
      * @param reg
      */
     final int getReg(Register reg) {
@@ -83,7 +83,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Gets a register value.
-     *
+     * 
      * @param reg
      */
     final void setReg(Register reg, int value) {
@@ -92,7 +92,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Execute a command and wait until it has completed.
-     *
+     * 
      * @param cmd
      * @param parm0
      * @param parm1
@@ -131,7 +131,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Wait until a given event mask is reached, or a timeout occurs.
-     *
+     * 
      * @param eventMask
      * @param eventAck
      * @param wait
@@ -153,7 +153,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Wait until the device is no longer busy.
-     *
+     * 
      * @throws TimeoutException
      */
     private final void waitUntilNotBusy() throws TimeoutException {
@@ -171,7 +171,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Wait until the command is completed.
-     *
+     * 
      * @throws TimeoutException
      */
     private final void waitUntilCommandCompleted() throws TimeoutException {
@@ -190,7 +190,7 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Wait until the BAP is no longer busy.
-     *
+     * 
      * @throws TimeoutException
      */
     private final void waitUntilBapNotBusy() throws TimeoutException {
@@ -210,7 +210,7 @@ final class Prism2IO implements Prism2Constants {
     /**
      * Throw an exception depending on the given result code. No exception is
      * thrown if the result is success.
-     *
+     * 
      * @param result
      * @throws DriverException
      */
@@ -232,12 +232,12 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Copy from the BAP into the given byte buffer.
-     *
-     * @param id        FID or RID, destined for the select register (host order)
-     * @param offset    An _even_ offset into the buffer for the given FID/RID
-     * @param dst       Destination buffer
+     * 
+     * @param id FID or RID, destined for the select register (host order)
+     * @param offset An _even_ offset into the buffer for the given FID/RID
+     * @param dst Destination buffer
      * @param dstOffset Offset in destination buffer
-     * @param len       length of data to transfer in bytes
+     * @param len length of data to transfer in bytes
      * @throws DriverException
      */
     final void copyFromBAP(int id, int offset, byte[] dst, int dstOffset, int len)
@@ -260,12 +260,12 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Copy to the BAP from the given byte buffer.
-     *
-     * @param id        FID or RID, destined for the select register (host order)
-     * @param offset    An _even_ offset into the buffer for the given FID/RID
-     * @param src       Source buffer
+     * 
+     * @param id FID or RID, destined for the select register (host order)
+     * @param offset An _even_ offset into the buffer for the given FID/RID
+     * @param src Source buffer
      * @param srcOffset Offset in source buffer
-     * @param len       length of data to transfer in bytes
+     * @param len length of data to transfer in bytes
      * @throws DriverException
      */
     final void copyToBAP(int id, int offset, byte[] src, int srcOffset, int len)
@@ -290,8 +290,8 @@ final class Prism2IO implements Prism2Constants {
 
     /**
      * Prepare the BAP registers for a transfer.
-     *
-     * @param id     FID or RID, destined for the select register (host order)
+     * 
+     * @param id FID or RID, destined for the select register (host order)
      * @param offset An _even_ offset into the buffer for the given FID/RID
      * @throws DriverException
      * @throws IllegalArgumentException For an invalid offset.

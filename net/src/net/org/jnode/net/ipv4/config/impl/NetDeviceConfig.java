@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import java.security.AccessController;
@@ -62,12 +62,14 @@ abstract class NetDeviceConfig {
 
     /**
      * Load the data of this configuration from the given preferences.
+     * 
      * @param prefs
      */
     public abstract void load(Preferences prefs);
 
     /**
      * Store the data of this configuration into the given preferences.
+     * 
      * @param prefs
      */
     public abstract void store(Preferences prefs);

@@ -17,9 +17,8 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
-package org.jnode.test.net;
 
+package org.jnode.test.net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +38,7 @@ public class DnsTest {
                 System.out.println("inetAddress " + inetAddress.getHostAddress());
             } catch (UnknownHostException e) {
                 e.printStackTrace(); // To change body of catch statement use
-                                        // Options | File Templates.
+                                     // Options | File Templates.
             }
         } else {
             System.out.println("insert url as arg.");

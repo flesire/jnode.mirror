@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.rtl8139;
 
 import org.jnode.driver.Device;
@@ -44,7 +44,7 @@ public class RTL8139Driver extends BasicEthernetDriver {
 
     /**
      * Create new driver instance for this device
-     *
+     * 
      * @param flags
      */
     public RTL8139Driver(RTL8139Flags flags) {

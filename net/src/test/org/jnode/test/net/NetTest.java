@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.test.net;
 
 import org.jnode.driver.Device;
@@ -62,7 +62,7 @@ public class NetTest {
             // Set packet type
             skbuf.set16(12, 0x0806);
 
-            //api.transmit(skbuf);
+            // api.transmit(skbuf);
 
         } catch (Throwable ex) {
             ex.printStackTrace();

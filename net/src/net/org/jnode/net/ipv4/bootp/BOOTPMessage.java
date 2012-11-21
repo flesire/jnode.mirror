@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.bootp;
 
 import java.net.DatagramPacket;
@@ -33,7 +33,7 @@ public class BOOTPMessage {
 
     /** Size of the BOOTP vendor-specific area (64 bytes) */
     public static final int OPTIONS_SIZE = 64;
-    
+
     /** Size of the BOOTP message (300 bytes) */
     public static final int SIZE = BOOTPHeader.SIZE + OPTIONS_SIZE;
 
@@ -51,8 +51,8 @@ public class BOOTPMessage {
     }
 
     public BOOTPMessage(DatagramPacket packet) {
-        this(new BOOTPHeader(
-                new SocketBuffer(packet.getData(), packet.getOffset(), packet.getLength())));
+        this(new BOOTPHeader(new SocketBuffer(packet.getData(), packet.getOffset(),
+                packet.getLength())));
     }
 
     public BOOTPHeader getHeader() {

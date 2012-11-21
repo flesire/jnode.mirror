@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 /**
@@ -100,8 +100,8 @@ public interface LanceConstants {
     public static final int CSR5_SLPINT = 0x0200;
     public static final int CSR5_SINTE = 0x0400;
     public static final int CSR5_SINT = 0x0800;
-    //public static final int CSR5_RES = 0x1000;
-    //public static final int CSR5_RES = 0x2000;
+    // public static final int CSR5_RES = 0x1000;
+    // public static final int CSR5_RES = 0x2000;
     public static final int CSR5_LTINTEN = 0x4000;
     public static final int CSR5_TOKINTD = 0x8000;
 

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4;
 
 import java.net.BindException;
@@ -103,6 +103,7 @@ public abstract class IPv4ControlBlockList {
 
     /**
      * Add a block to the list
+     * 
      * @param cb
      */
     final synchronized void add(IPv4ControlBlock cb) {
@@ -111,6 +112,7 @@ public abstract class IPv4ControlBlockList {
 
     /**
      * Remove a block from the list
+     * 
      * @param cb
      */
     final synchronized void remove(IPv4ControlBlock cb) {
@@ -119,6 +121,7 @@ public abstract class IPv4ControlBlockList {
 
     /**
      * Create an iterator over all entries
+     * 
      * @return The iterator
      */
     protected Iterator<IPv4ControlBlock> iterator() {

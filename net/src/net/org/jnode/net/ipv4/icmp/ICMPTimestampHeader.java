@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.icmp;
 
 import org.jnode.net.SocketBuffer;
@@ -39,8 +39,8 @@ public class ICMPTimestampHeader extends ICMPExHeader {
      * @param receiveTimestamp
      * @param transmitTimestamp
      */
-    public ICMPTimestampHeader(ICMPType type, int identifier, int seqNumber, int originateTimestamp,
-            int receiveTimestamp, int transmitTimestamp) {
+    public ICMPTimestampHeader(ICMPType type, int identifier, int seqNumber,
+            int originateTimestamp, int receiveTimestamp, int transmitTimestamp) {
         super(type, 0, identifier, seqNumber);
         if ((type != ICMPType.ICMP_TIMESTAMP) && (type != ICMPType.ICMP_TIMESTAMPREPLY)) {
             throw new IllegalArgumentException("Invalid type " + type);

@@ -17,28 +17,25 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net._3c90x;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.naming.NameNotFoundException;
+
 import org.jnode.driver.Device;
 import org.jnode.driver.DriverException;
 import org.jnode.driver.bus.pci.PCIBaseAddress;
 import org.jnode.driver.bus.pci.PCIDevice;
 import org.jnode.driver.bus.pci.PCIHeaderType0;
+import org.jnode.driver.net.NetDeviceResource;
 import org.jnode.driver.net.NetworkException;
 import org.jnode.driver.net.spi.AbstractDeviceCore;
-import org.jnode.naming.InitialNaming;
 import org.jnode.net.HardwareAddress;
 import org.jnode.net.SocketBuffer;
 import org.jnode.net.ethernet.EthernetAddress;
 import org.jnode.net.ethernet.EthernetConstants;
-import org.jnode.system.resource.IOResource;
 import org.jnode.system.resource.IRQHandler;
-import org.jnode.system.resource.IRQResource;
-import org.jnode.system.resource.ResourceManager;
 import org.jnode.system.resource.ResourceNotFreeException;
 import org.jnode.system.resource.ResourceOwner;
 import org.jnode.util.NumberUtils;
@@ -47,20 +44,11 @@ import org.jnode.util.TimeoutException;
 /**
  * @author epr
  */
-public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, IRQHandler, EthernetConstants {
+public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, IRQHandler,
+        EthernetConstants {
 
-    /**
-     * Start of IO address space
-     */
-    private final int iobase;
-    /**
-     * IO address space
-     */
-    private final IOResource io;
-    /**
-     * IRQ
-     */
-    private final IRQResource irq;
+    private final NetDeviceResource resources;
+
     /**
      * My ethernet address
      */
@@ -96,77 +84,24 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
     /**
      * Create a new instance
-     *
+     * 
      * @param flags
      */
     public _3c90xCore(_3c90xDriver driver, ResourceOwner owner, PCIDevice device, _3c90xFlags flags)
-        throws DriverException, ResourceNotFreeException {
-        final int irq = getIRQ(device, flags);
+            throws DriverException, ResourceNotFreeException {
         this.driver = driver;
         this.flags = flags;
         this.tx_active = false;
-
-        // Get the start of the IO address space
-        this.iobase = getIOBase(device, flags);
-        final int iolength = getIOLength(device, flags);
-        final ResourceManager rm;
-        try {
-            rm = InitialNaming.lookup(ResourceManager.NAME);
-        } catch (NameNotFoundException ex) {
-            throw new DriverException("Cannot find ResourceManager");
-        }
-        this.irq = rm.claimIRQ(owner, irq, this, true);
-        try {
-            io = rm.claimIOResource(owner, iobase, iolength);
-        } catch (ResourceNotFreeException ex) {
-            this.irq.release();
-            throw ex;
-        }
-        this.rxRing = new _3c90xRxRing(RX_FRAMES, rm);
-        this.txBuffer = new _3c90xTxBuffer(rm);
-
-        // Reset the device
+        this.resources = new NetDeviceResource(owner, this, device);
+        this.rxRing = new _3c90xRxRing(RX_FRAMES, resources.getResourceManager());
+        this.txBuffer = new _3c90xTxBuffer(resources.getResourceManager());
         reset();
 
-        // Determine Brev flag
-        switch (readEEProm(0x03)) {
-            case 0x9000:/** 10 Base TPO             **/
-            case 0x9001:/** 10/100 T4               **/
-            case 0x9050:/** 10/100 TPO              **/
-            case 0x9051:/** 10 Base Combo           **/
-                //case 0x9200: /** 3Com905C-TXM            **/
-                Brev = false;
-                break;
+        this.Brev = determineBRevFlag();
 
-            case 0x9004:/** 10 Base TPO             **/
-            case 0x9005:/** 10 Base Combo           **/
-            case 0x9006:/** 10 Base TPO and Base2   **/
-            case 0x900A:/** 10 Base FL              **/
-            case 0x9055:/** 10/100 TPO              **/
-            case 0x9056:/** 10/100 T4               **/
-            case 0x905A:/** 10 Base FX              **/
-            default:
-                Brev = true;
-                break;
-        }
+        determineHardwareAddress();
 
-        // Read the eeprom
-        final int[] eeprom = new int[0x21];
-        for (int i = 0; i < 0x17; i++) {
-            eeprom[i] = readEEProm(i);
-            //Syslog.debug("eeprom[" + NumberUtils.hex(i, 2) + "]=" + NumberUtils.hex(eeprom[i], 4));
-        }
-        final byte[] hwAddrArr = new byte[ETH_ALEN];
-        hwAddrArr[0] = (byte) (eeprom[0x0a] >> 8);
-        hwAddrArr[1] = (byte) (eeprom[0x0a] & 0xFF);
-        hwAddrArr[2] = (byte) (eeprom[0x0b] >> 8);
-        hwAddrArr[3] = (byte) (eeprom[0x0b] & 0xFF);
-        hwAddrArr[4] = (byte) (eeprom[0x0c] >> 8);
-        hwAddrArr[5] = (byte) (eeprom[0x0c] & 0xFF);
-        this.hwAddress = new EthernetAddress(hwAddrArr, 0);
-
-        log.debug("Found " + flags.getName() + " IRQ=" + irq + ", IOBase=0x" +
-                NumberUtils.hex(iobase) + ", MAC Address=" + hwAddress);
+        log.debug("Found " + flags.getName() + " " + resources + ", MAC Address=" + hwAddress);
     }
 
     /**
@@ -214,7 +149,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         cfg &= ~(0xF << 20);
         cfg |= (linktype << 20);
         setReg32(regInternalConfig_3_l, cfg);
-        //log.debug("Setting linktype to 0x" + NumberUtils.hex(linktype));
+        // log.debug("Setting linktype to 0x" + NumberUtils.hex(linktype));
 
         /** Now that we set the xcvr type, reset the Tx and Rx, re-enable. **/
         issueCommand(cmdTxReset, 0x00, 10);
@@ -230,7 +165,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
         /**
          ** reset of the receiver on B-revision cards re-negotiates the link
-         ** takes several seconds (a computer eternity)
+         * takes several seconds (a computer eternity)
          **/
         if (Brev) {
             issueCommand(cmdRxReset, 0x04, 10);
@@ -243,7 +178,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
         /** Set the RX filter = receive only individual pkts & bcast. **/
         issueCommand(cmdSetRxFilter, 0x01 + 0x04, 0);
-        //issueCommand(cmdSetRxFilter, 0x1F, 0);
+        // issueCommand(cmdSetRxFilter, 0x1F, 0);
         issueCommand(cmdRxEnable, 0, 0);
         setReg32(regUpListPtr_l, rxRing.getFirstUPDAddress().toInt());
 
@@ -253,7 +188,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         final int intMask =
                 INT_HOSTERROR | INT_TXCOMPLETE | INT_RXCOMPLETE | INT_UPDATESTATS | INT_LINKEVENT |
                         INT_UPCOMPLETE | INT_INTREQUESTED;
-        issueCommand(cmdSetInterruptEnable, /*0x7FF*/intMask, 0);
+        issueCommand(cmdSetInterruptEnable, /* 0x7FF */intMask, 0);
         issueCommand(cmdSetIndicationEnable, 0x7FF, 0);
         issueCommand(cmdAcknowledgeInterrupt, 0x661, 0);
 
@@ -268,18 +203,8 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
     }
 
     /**
-     * Release all resources
-     */
-    public void release() {
-        io.release();
-        log.debug("irq.release");
-        irq.release();
-        log.debug("end of release");
-    }
-
-    /**
      * Transmit the given buffer
-     *
+     * 
      * @param buf
      * @param timeout
      * @throws InterruptedException
@@ -290,8 +215,9 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         // Set the source address
         hwAddress.writeTo(buf, 6);
 
-        //final int txStatus = getReg8(regTxStatus_b);
-        //log.debug("Waiting for transmit txStatus=0x" + NumberUtils.hex(txStatus, 2));
+        // final int txStatus = getReg8(regTxStatus_b);
+        // log.debug("Waiting for transmit txStatus=0x" +
+        // NumberUtils.hex(txStatus, 2));
 
         // Wait until we can start transmitting
         final long start = System.currentTimeMillis();
@@ -303,7 +229,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
             wait(timeout);
         }
         tx_active = true;
-        //log.debug("Going for transmit");
+        // log.debug("Going for transmit");
 
         txBuffer.initialize(buf);
 
@@ -315,7 +241,8 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
         // UnStall the download engine
         issueCommand(cmdStallCtl, 3, 1);
-        //log.debug("Leaving transmit txStatus=0x" + NumberUtils.hex(getReg8(regTxStatus_b), 2));
+        // log.debug("Leaving transmit txStatus=0x" +
+        // NumberUtils.hex(getReg8(regTxStatus_b), 2));
     }
 
     /**
@@ -326,24 +253,26 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         int intStatus = getReg16(regCommandIntStatus_w);
         int loops = 0;
         while ((intStatus & ~INT_WINDOWNUMBER) != 0) {
-            //log.debug("IntStatus flags on " + flags.getName() + ": 0x" + NumberUtils.hex(intStatus, 4));
+            // log.debug("IntStatus flags on " + flags.getName() + ": 0x" +
+            // NumberUtils.hex(intStatus, 4));
             loops++;
             if (loops > MAX_SERVICE) {
                 log.error("Too much work in intterupt, IntStatus=0x" + NumberUtils.hex(intStatus));
-                //issueCommand(cmdAcknowledgeInterrupt, intStatus & ~INT_WINDOWNUMBER, 0);
+                // issueCommand(cmdAcknowledgeInterrupt, intStatus &
+                // ~INT_WINDOWNUMBER, 0);
                 return;
             }
             if ((intStatus & INT_TXCOMPLETE) != 0) {
-                //log.debug("TxComplete on " + flags.getName());
+                // log.debug("TxComplete on " + flags.getName());
                 processTxComplete();
             } else if ((intStatus & INT_UPDATESTATS) != 0) {
                 log.debug("UpdateStats on " + flags.getName());
                 processUpdateStats();
             } else if ((intStatus & INT_LINKEVENT) != 0) {
-                //log.debug("LinkEvent on " + flags.getName());
+                // log.debug("LinkEvent on " + flags.getName());
                 processLinkEvent();
             } else if ((intStatus & INT_UPCOMPLETE) != 0) {
-                //log.debug("UpComplete on " + flags.getName());
+                // log.debug("UpComplete on " + flags.getName());
                 processUpComplete();
             } else if ((intStatus & INT_INTERRUPTLATCH) != 0) {
                 issueCommand(cmdAcknowledgeInterrupt, INT_INTERRUPTLATCH, 0);
@@ -355,9 +284,10 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
             intStatus = getReg16(regCommandIntStatus_w);
         }
 
-        //issueCommand(cmdAcknowledgeInterrupt, INT_INTERRUPTLATCH, 0);
+        // issueCommand(cmdAcknowledgeInterrupt, INT_INTERRUPTLATCH, 0);
 
-        //log.debug("Done IRQ on " + flags.getName() + ": 0x" + NumberUtils.hex(intStatus, 4));
+        // log.debug("Done IRQ on " + flags.getName() + ": 0x" +
+        // NumberUtils.hex(intStatus, 4));
     }
 
     /**
@@ -381,9 +311,9 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
      */
     private final void processLinkEvent() {
         // Read IntStatusAuto ack. the interrupt
-        //getReg16(regIntStatusAuto_w);
+        // getReg16(regIntStatusAuto_w);
         issueCommand(cmdAcknowledgeInterrupt, 0x02, 0);
-        //issueCommand(cmdRxEnable, 0, 0);
+        // issueCommand(cmdRxEnable, 0, 0);
     }
 
     /**
@@ -399,11 +329,13 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         for (int i = 0; i < nrFrames; i++) {
             final int pktStatus = rxRing.getPktStatus(i);
             if (pktStatus != 0) {
-                //log.debug("PktStatus[" + NumberUtils.hex(i, 2) + "]=0x" + NumberUtils.hex(pktStatus));
+                // log.debug("PktStatus[" + NumberUtils.hex(i, 2) + "]=0x" +
+                // NumberUtils.hex(pktStatus));
                 if ((pktStatus & upComplete) != 0) {
                     final SocketBuffer skbuf = rxRing.getPacket(i);
                     try {
-                        //log.debug("Read packet at index 0x" + NumberUtils.hex(i));
+                        // log.debug("Read packet at index 0x" +
+                        // NumberUtils.hex(i));
                         driver.onReceive(skbuf);
                     } catch (NetworkException ex) {
                         log.debug("Error in onReceive", ex);
@@ -427,8 +359,9 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
     private void reset() {
         issueCommand(cmdGlobalReset, 0xff, 10);
 
-        /** global reset command resets station mask, non-B revision cards
-         ** require explicit reset of values
+        /**
+         * global reset command resets station mask, non-B revision cards
+         * require explicit reset of values
          **/
         setWindow(winAddressing2);
         setReg16(regStationAddress_2_3w + 0, 0);
@@ -447,7 +380,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
     /**
      * Gets the first IO-Address used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -465,7 +398,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
     /**
      * Gets the number of IO-Addresses used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -482,28 +415,18 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
     }
 
     /**
-     * Gets the IRQ used by the given device
-     *
-     * @param device
-     * @param flags
-     */
-    protected int getIRQ(Device device, _3c90xFlags flags) throws DriverException {
-        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
-        return config.getInterruptLine();
-    }
-
-    /**
      * Determine which connectors are physically available on the device.
      * Determine the link type based on that.
-     *
+     * 
      * @param connectors
      */
     private final int determineLinkType(Collection<String> connectors) {
-        /** Read the media options register, print a message and set default
-         ** xcvr.
-         **
+        /**
+         * Read the media options register, print a message and set default
+         * xcvr.
+         ** 
          ** Uses Media Option command on B revision, Reset Option on non-B
-         ** revision cards -- same register address
+         * revision cards -- same register address
          **/
         setWindow(winTxRxOptions3);
         int mopt = getReg16(regResetMediaOptions_3_w);
@@ -512,7 +435,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         if (!Brev) {
             mopt &= 0x7F;
         }
-        //log.debug("mopt=0x" + NumberUtils.hex(mopt));
+        // log.debug("mopt=0x" + NumberUtils.hex(mopt));
 
         int linktype = 0x0008;
         if ((mopt & 0x01) != 0) {
@@ -551,7 +474,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
     /**
      * Execute a command on the NIC
-     *
+     * 
      * @param command
      * @param param
      */
@@ -578,12 +501,12 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
             /* loop */
             loops++;
         }
-        //log.debug("Loops=" + loops + ", cmd=0x" + NumberUtils.hex(v));
+        // log.debug("Loops=" + loops + ", cmd=0x" + NumberUtils.hex(v));
     }
 
     /**
      * Read data from the serial eeprom
-     *
+     * 
      * @param address
      */
     private int readEEProm(int address) {
@@ -611,7 +534,7 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
 
     /**
      * Sets the current register window
-     *
+     * 
      * @param w
      */
     private final void setWindow(int w) {
@@ -621,59 +544,46 @@ public class _3c90xCore extends AbstractDeviceCore implements _3c90xConstants, I
         }
     }
 
-    /**
-     * Reads a 8-bit NIC register
-     * @param reg
-     */
-    /*private final int getReg8(int reg) {
-         return io.inPortByte(iobase + reg);
-     }*/
-
-    /**
-     * Reads a 16-bit NIC register
-     *
-     * @param reg
-     */
-    private final int getReg16(int reg) {
-        return io.inPortWord(iobase + reg);
+    private void determineHardwareAddress() {
+        // Read the eeprom
+        final int[] eeprom = new int[0x21];
+        for (int i = 0; i < 0x17; i++) {
+            eeprom[i] = readEEProm(i);
+        }
+        final byte[] hwAddrArr = new byte[ETH_ALEN];
+        hwAddrArr[0] = (byte) (eeprom[0x0a] >> 8);
+        hwAddrArr[1] = (byte) (eeprom[0x0a] & 0xFF);
+        hwAddrArr[2] = (byte) (eeprom[0x0b] >> 8);
+        hwAddrArr[3] = (byte) (eeprom[0x0b] & 0xFF);
+        hwAddrArr[4] = (byte) (eeprom[0x0c] >> 8);
+        hwAddrArr[5] = (byte) (eeprom[0x0c] & 0xFF);
+        this.hwAddress = new EthernetAddress(hwAddrArr, 0);
     }
 
-    /**
-     * Reads a 32-bit NIC register
-     *
-     * @param reg
-     */
-    private final int getReg32(int reg) {
-        return io.inPortDword(iobase + reg);
-    }
+    private boolean determineBRevFlag() {
+        // Determine Brev flag
+        boolean flag;
+        switch (readEEProm(0x03)) {
+            case 0x9000:/** 10 Base TPO **/
+            case 0x9001:/** 10/100 T4 **/
+            case 0x9050:/** 10/100 TPO **/
+            case 0x9051:
+                /** 10 Base Combo **/
+                // case 0x9200: /** 3Com905C-TXM **/
+                flag = false;
+                break;
 
-    /**
-     * Writes a 8-bit NIC register
-     *
-     * @param reg
-     * @param value
-     */
-    private final void setReg8(int reg, int value) {
-        io.outPortByte(iobase + reg, value);
-    }
-
-    /**
-     * Writes a 16-bit NIC register
-     *
-     * @param reg
-     * @param value
-     */
-    private final void setReg16(int reg, int value) {
-        io.outPortWord(iobase + reg, value);
-    }
-
-    /**
-     * Writes a 32-bit NIC register
-     *
-     * @param reg
-     * @param value
-     */
-    private final void setReg32(int reg, int value) {
-        io.outPortDword(iobase + reg, value);
+            case 0x9004:/** 10 Base TPO **/
+            case 0x9005:/** 10 Base Combo **/
+            case 0x9006:/** 10 Base TPO and Base2 **/
+            case 0x900A:/** 10 Base FL **/
+            case 0x9055:/** 10/100 TPO **/
+            case 0x9056:/** 10/100 T4 **/
+            case 0x905A:/** 10 Base FX **/
+            default:
+                flag = true;
+                break;
+        }
+        return flag;
     }
 }

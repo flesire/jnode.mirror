@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.config.impl;
 
 import javax.naming.NamingException;
@@ -48,7 +48,7 @@ public class IPv4ConfigurationPlugin extends Plugin {
      */
     public IPv4ConfigurationPlugin(PluginDescriptor descriptor) {
         super(descriptor);
-    }    
+    }
 
     /**
      * @see org.jnode.plugin.Plugin#startPlugin()
@@ -84,5 +84,5 @@ public class IPv4ConfigurationPlugin extends Plugin {
         this.service = null;
         this.devMan = null;
         this.processor = null;
-    }    
+    }
 }

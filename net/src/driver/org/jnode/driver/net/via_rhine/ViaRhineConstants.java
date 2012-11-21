@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.via_rhine;
 
 /**
@@ -83,7 +83,7 @@ interface ViaRhineConstants {
     int byWOLcgClr = 0xA7;
     int byPwrcsrClr = 0xAC;
 
-/*---------------------  Exioaddr Definitions -------------------------*/
+    /*---------------------  Exioaddr Definitions -------------------------*/
 
     /*
      * Bits in the RCR register
@@ -104,50 +104,50 @@ interface ViaRhineConstants {
     int TCR_RTFT1 = 0x40;
     int TCR_RTFT0 = 0x20;
     int TCR_OFSET = 0x08;
-    int TCR_LB1 = 0x04;    /* loopback[1] */
-    int TCR_LB0 = 0x02;    /* loopback[0] */
+    int TCR_LB1 = 0x04; /* loopback[1] */
+    int TCR_LB0 = 0x02; /* loopback[0] */
 
     /*
      * Bits in the CR0 register
      */
-    int CR0_RDMD = 0x40;    /* rx descriptor polling demand */
-    int CR0_TDMD = 0x20;    /* tx descriptor polling demand */
+    int CR0_RDMD = 0x40; /* rx descriptor polling demand */
+    int CR0_TDMD = 0x20; /* tx descriptor polling demand */
     int CR0_TXON = 0x10;
     int CR0_RXON = 0x08;
-    int CR0_STOP = 0x04;    /* stop NIC, default = 1 */
-    int CR0_STRT = 0x02;    /* start NIC */
-    int CR0_INIT = 0x01;    /* start init process */
+    int CR0_STOP = 0x04; /* stop NIC, default = 1 */
+    int CR0_STRT = 0x02; /* start NIC */
+    int CR0_INIT = 0x01; /* start init process */
 
     /*
-    * Bits in the CR1 register
-    */
-    int CR1_SFRST = 0x80    /* software reset */;
-    int CR1_RDMD1 = 0x40    /* RDMD1 */;
-    int CR1_TDMD1 = 0x20    /* TDMD1 */;
-    int CR1_KEYPAG = 0x10    /* turn on par/key */;
-    int CR1_DPOLL = 0x08    /* disable rx/tx auto polling */;
-    int CR1_FDX = 0x04    /* full duplex mode */;
-    int CR1_ETEN = 0x02    /* early tx mode */;
-    int CR1_EREN = 0x01    /* early rx mode */;
+     * Bits in the CR1 register
+     */
+    int CR1_SFRST = 0x80 /* software reset */;
+    int CR1_RDMD1 = 0x40 /* RDMD1 */;
+    int CR1_TDMD1 = 0x20 /* TDMD1 */;
+    int CR1_KEYPAG = 0x10 /* turn on par/key */;
+    int CR1_DPOLL = 0x08 /* disable rx/tx auto polling */;
+    int CR1_FDX = 0x04 /* full duplex mode */;
+    int CR1_ETEN = 0x02 /* early tx mode */;
+    int CR1_EREN = 0x01 /* early rx mode */;
 
     /*
      * Bits in the CR register
      */
-    int CR_RDMD = 0x0040    /* rx descriptor polling demand */;
-    int CR_TDMD = 0x0020    /* tx descriptor polling demand */;
+    int CR_RDMD = 0x0040 /* rx descriptor polling demand */;
+    int CR_TDMD = 0x0020 /* tx descriptor polling demand */;
     int CR_TXON = 0x0010;
     int CR_RXON = 0x0008;
-    int CR_STOP = 0x0004    /* stop NIC, default = 1 */;
-    int CR_STRT = 0x0002    /* start NIC */;
-    int CR_INIT = 0x0001    /* start init process */;
-    int CR_SFRST = 0x8000    /* software reset */;
-    int CR_RDMD1 = 0x4000    /* RDMD1 */;
-    int CR_TDMD1 = 0x2000    /* TDMD1 */;
-    int CR_KEYPAG = 0x1000    /* turn on par/key */;
-    int CR_DPOLL = 0x0800    /* disable rx/tx auto polling */;
-    int CR_FDX = 0x0400    /* full duplex mode */;
-    int CR_ETEN = 0x0200    /* early tx mode */;
-    int CR_EREN = 0x0100    /* early rx mode */;
+    int CR_STOP = 0x0004 /* stop NIC, default = 1 */;
+    int CR_STRT = 0x0002 /* start NIC */;
+    int CR_INIT = 0x0001 /* start init process */;
+    int CR_SFRST = 0x8000 /* software reset */;
+    int CR_RDMD1 = 0x4000 /* RDMD1 */;
+    int CR_TDMD1 = 0x2000 /* TDMD1 */;
+    int CR_KEYPAG = 0x1000 /* turn on par/key */;
+    int CR_DPOLL = 0x0800 /* disable rx/tx auto polling */;
+    int CR_FDX = 0x0400 /* full duplex mode */;
+    int CR_ETEN = 0x0200 /* early tx mode */;
+    int CR_EREN = 0x0100 /* early rx mode */;
 
     /*
      * Bits in the IMR0 register
@@ -243,18 +243,18 @@ interface ViaRhineConstants {
     /*
      * Bits in the EECSR register;
      */
-    int EECSR_EEPR = 0x80    /* eeprom programed status, 73h means programed */;
-    int EECSR_EMBP = 0x40    /* eeprom embeded programming */;
-    int EECSR_AUTOLD = 0x20    /* eeprom content reload */;
-    int EECSR_DPM = 0x10    /* eeprom direct programming */;
-    int EECSR_CS = 0x08    /* eeprom CS pin */;
-    int EECSR_SK = 0x04    /* eeprom SK pin */;
-    int EECSR_DI = 0x02    /* eeprom DI pin */;
-    int EECSR_DO = 0x01    /* eeprom DO pin */;
+    int EECSR_EEPR = 0x80 /* eeprom programed status, 73h means programed */;
+    int EECSR_EMBP = 0x40 /* eeprom embeded programming */;
+    int EECSR_AUTOLD = 0x20 /* eeprom content reload */;
+    int EECSR_DPM = 0x10 /* eeprom direct programming */;
+    int EECSR_CS = 0x08 /* eeprom CS pin */;
+    int EECSR_SK = 0x04 /* eeprom SK pin */;
+    int EECSR_DI = 0x02 /* eeprom DI pin */;
+    int EECSR_DO = 0x01 /* eeprom DO pin */;
 
-/*
- * Bits in the BCR0 register;
- */
+    /*
+     * Bits in the BCR0 register;
+     */
 
     int BCR0_CRFT2 = 0x20;
     int BCR0_CRFT1 = 0x10;
@@ -276,7 +276,7 @@ interface ViaRhineConstants {
     /*
      * Bits in the CFGA register;
      */
-    int CFGA_EELOAD = 0x80    /* enable eeprom embeded and direct programming */;
+    int CFGA_EELOAD = 0x80 /* enable eeprom embeded and direct programming */;
     int CFGA_JUMPER = 0x40;
     int CFGA_MTGPIO = 0x08;
     int CFGA_T10EN = 0x02;
@@ -297,9 +297,9 @@ interface ViaRhineConstants {
     int CFGC_PHY1 = 0x20;
     int CFGC_PHY0 = 0x10;
     int CFGC_BTSEL = 0x08;
-    int CFGC_BPS2 = 0x04    /* bootrom select[2] */;
-    int CFGC_BPS1 = 0x02    /* bootrom select[1] */;
-    int CFGC_BPS0 = 0x01    /* bootrom select[0] */;
+    int CFGC_BPS2 = 0x04 /* bootrom select[2] */;
+    int CFGC_BPS1 = 0x02 /* bootrom select[1] */;
+    int CFGC_BPS0 = 0x01 /* bootrom select[0] */;
 
     /*
      * Bits in the CFGD register;
@@ -348,32 +348,35 @@ interface ViaRhineConstants {
     int TSR_ABNORMAL = TSR_TERR + TSR_OWC + TSR_ABT + TSR_JAB + TSR_CRS;
     int TSR_OWN_BIT = 0x80000000;
 
-    int CB_DELAY_LOOP_WAIT = 10;    /* 10ms */
+    int CB_DELAY_LOOP_WAIT = 10; /* 10ms */
 
     /* enabled mask value of irq */
-    int W_IMR_MASK_VALUE = 0x1BFF;    /* initial value of IMR */
+    int W_IMR_MASK_VALUE = 0x1BFF; /* initial value of IMR */
 
     /* Ethernet address filter type */
-    int PKT_TYPE_DIRECTED = 0x0001;    /* obsolete, directed address is always accepted */
+    int PKT_TYPE_DIRECTED = 0x0001; /*
+                                     * obsolete, directed address is always
+                                     * accepted
+                                     */
     int PKT_TYPE_MULTICAST = 0x0002;
     int PKT_TYPE_ALL_MULTICAST = 0x0004;
     int PKT_TYPE_BROADCAST = 0x0008;
     int PKT_TYPE_PROMISCUOUS = 0x0020;
     int PKT_TYPE_LONG = 0x2000;
     int PKT_TYPE_RUNT = 0x4000;
-    int PKT_TYPE_ERROR = 0x8000;    /* accept error packets, e.g. CRC error */
+    int PKT_TYPE_ERROR = 0x8000; /* accept error packets, e.g. CRC error */
 
     /* Loopback mode */
     int NIC_LB_NONE = 0x00;
     int NIC_LB_INTERNAL = 0x01;
-    int NIC_LB_PHY = 0x02;    /* MII or Internal-10BaseT loopback */
+    int NIC_LB_PHY = 0x02; /* MII or Internal-10BaseT loopback */
 
     int TX_RING_SIZE = 16;
     int RX_RING_SIZE = 16;
-    int PKT_BUF_SZ = 1536;    /* Size of each temporary Rx buffer. */
+    int PKT_BUF_SZ = 1536; /* Size of each temporary Rx buffer. */
 
     int PCI_REG_MODE3 = 0x53;
-    int MODE3_MIION = 0x04;    /* in PCI_REG_MOD3 OF PCI space */
+    int MODE3_MIION = 0x04; /* in PCI_REG_MOD3 OF PCI space */
 
     /* Offsets to the device registers. */
     int StationAddr = 0x00;
@@ -425,14 +428,13 @@ interface ViaRhineConstants {
     int IntrRxWakeUp = 0x8000;
     int IntrNormalSummary = 0x0003;
     int IntrAbnormalSummary = 0xC260;
-    int IntrTxDescRace = 0x080000;        // mapped from IntrStatus2
+    int IntrTxDescRace = 0x080000; // mapped from IntrStatus2
     int IntrTxErrSummary = 0x082218;
 
+    int DEFAULT_INTR = IntrRxDone | IntrRxErr | IntrRxEmpty | IntrRxOverflow | IntrRxDropped |
+            IntrRxNoBuf;
 
-    int DEFAULT_INTR = IntrRxDone | IntrRxErr | IntrRxEmpty |
-        IntrRxOverflow | IntrRxDropped | IntrRxNoBuf;
-
-    //enum rhine_revs
+    // enum rhine_revs
     int VT86C100A = 0x00;
     int VTunknown0 = 0x20;
     int VT6102 = 0x40;

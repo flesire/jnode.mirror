@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.nfs.nfs2;
 
 import java.io.IOException;
@@ -40,9 +40,10 @@ import org.apache.log4j.Logger;
 import org.jnode.net.nfs.Protocol;
 
 /**
- * This class access a NFS2 server . It implements all the method from NFS2 specification
- *  
- *  http://tools.ietf.org/html/rfc1094
+ * This class access a NFS2 server . It implements all the method from NFS2
+ * specification
+ * 
+ * http://tools.ietf.org/html/rfc1094
  * 
  * @author Andrei Dore
  */
@@ -119,8 +120,8 @@ public class NFS2Client {
     private boolean closed;
 
     /**
-     * Constructs a <code>NFS2Client</code> client stub proxy object from
-     * which the NFS_PROGRAM remote program can be accessed.
+     * Constructs a <code>NFS2Client</code> client stub proxy object from which
+     * the NFS_PROGRAM remote program can be accessed.
      */
     public NFS2Client(InetAddress host, Protocol protocol, int uid, int gid) {
         this.host = host;
@@ -135,7 +136,8 @@ public class NFS2Client {
         OncRpcPortmapClient portmap = new OncRpcPortmapClient(host);
         int port;
         try {
-            port = portmap.getPort(NFS_PROGRAM, NFS_VERSION,
+            port =
+                    portmap.getPort(NFS_PROGRAM, NFS_VERSION,
                             protocol == Protocol.UDP ? OncRpcProtocols.ONCRPC_UDP
                                     : OncRpcProtocols.ONCRPC_TCP);
         } finally {
@@ -147,9 +149,13 @@ public class NFS2Client {
         // 424 ( max header length)
         OncRpcClient client = null;
         if (protocol == Protocol.UDP) {
-            client = new OncRpcUdpClient(host, NFS_PROGRAM, NFS_VERSION, port, MAX_DATA + HEADER_DATA);
+            client =
+                    new OncRpcUdpClient(host, NFS_PROGRAM, NFS_VERSION, port, MAX_DATA +
+                            HEADER_DATA);
         } else if (protocol == Protocol.TCP) {
-            client = new OncRpcTcpClient(host, NFS_PROGRAM, NFS_VERSION, port, MAX_DATA + HEADER_DATA);
+            client =
+                    new OncRpcTcpClient(host, NFS_PROGRAM, NFS_VERSION, port, MAX_DATA +
+                            HEADER_DATA);
         } else {
             // TODO Do something
         }
@@ -219,7 +225,7 @@ public class NFS2Client {
                         throw new NFS2Exception(e.getMessage(), e);
                     } else {
                         LOGGER.warn("An error occurs when nfs file system try to call the rpc method. Reason: " +
-                                        e.getMessage() + " . It will try again");
+                                e.getMessage() + " . It will try again");
                         continue;
                     }
                 } else {
@@ -322,7 +328,8 @@ public class NFS2Client {
         throws NFS2Exception, IOException {
         if (count > MAX_DATA) {
             throw new IllegalArgumentException(
-                    "The number of bytes read by the nfs client can not be greater than " + MAX_DATA);
+                    "The number of bytes read by the nfs client can not be greater than " +
+                            MAX_DATA);
         }
         XdrAble nfsParameter = new NFSParameter() {
             public void xdrEncode(XdrEncodingStream xdr) throws OncRpcException, IOException {
@@ -648,8 +655,7 @@ public class NFS2Client {
     private long xdrDecodeUnsignedInt(XdrDecodingStream xdr) throws OncRpcException, IOException {
         byte[] buffer = new byte[4];
         xdr.xdrDecodeOpaque(buffer);
-        return ((buffer[0] & 0xFF) << 24 | (buffer[1] & 0xFF) << 16 | 
-                (buffer[2] & 0xFF) << 8 | (buffer[3] & 0xFF));
+        return ((buffer[0] & 0xFF) << 24 | (buffer[1] & 0xFF) << 16 | (buffer[2] & 0xFF) << 8 | (buffer[3] & 0xFF));
     }
 
     private abstract class NFSParameter implements XdrAble {

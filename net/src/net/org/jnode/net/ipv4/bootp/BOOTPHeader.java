@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.bootp;
 
 import org.jnode.net.HardwareAddress;
@@ -44,7 +44,7 @@ public class BOOTPHeader {
      * Client to server message
      */
     public static final int BOOTREQUEST = 1;
-    
+
     /**
      * Server to client message
      */
@@ -210,8 +210,8 @@ public class BOOTPHeader {
      */
     public void setServerHostName(String sname) {
         if (sname != null && sname.length() > 63)
-            throw new IllegalArgumentException(
-                    "Server host name is too long, " + sname.length() + " > 63.");
+            throw new IllegalArgumentException("Server host name is too long, " + sname.length() +
+                    " > 63.");
         serverHostName = sname;
     }
 
@@ -290,7 +290,8 @@ public class BOOTPHeader {
     }
 
     /**
-     * Gets the seconds elapsed since the client began the address acquisition or renewal process
+     * Gets the seconds elapsed since the client began the address acquisition
+     * or renewal process
      */
     public int getTimeElapsedSecs() {
         return secondsElapsed;

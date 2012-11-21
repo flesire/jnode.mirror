@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net._3c90x;
 
 /**
@@ -25,100 +25,100 @@ package org.jnode.driver.net._3c90x;
  */
 public interface _3c90xConstants {
 
-    /* Register definitions for the 3c905 ***/
+    /* Register definitions for the 3c905 ** */
     public static final int regPowerMgmtCtrl_w = 0x7c;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regUpMaxBurst_w = 0x7a;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDnMaxBurst_w = 0x78;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDebugControl_w = 0x74;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDebugData_l = 0x70;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regRealTimeCnt_l = 0x40;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regUpBurstThresh_b = 0x3e;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regUpPoll_b = 0x3d;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regUpPriorityThresh_b = 0x3c;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regUpListPtr_l = 0x38;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regCountdown_w = 0x36;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regFreeTimer_w = 0x34;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regUpPktStatus_l = 0x30;
     /**
-     * Universal with Exception; pg 130   *
+     * Universal with Exception; pg 130 *
      */
     public static final int regTxFreeThresh_b = 0x2f;
     /**
-     * 90X Revision Only                  *
+     * 90X Revision Only *
      */
     public static final int regDnPoll_b = 0x2d;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDnPriorityThresh_b = 0x2c;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDnBurstThresh_b = 0x2a;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regDnListPtr_l = 0x24;
     /**
-     * Universal with Exception; pg 107   *
+     * Universal with Exception; pg 107 *
      */
     public static final int regDmaCtrl_l = 0x20;
-    /** Universal with Exception; pg 106   **/
+    /** Universal with Exception; pg 106 **/
     /**                                    **/
     public static final int regIntStatusAuto_w = 0x1e;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regTxStatus_b = 0x1b;
     /**
-     * Universal with Exception; pg 113   *
+     * Universal with Exception; pg 113 *
      */
     public static final int regTimer_b = 0x1a;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regTxPktId_b = 0x18;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regCommandIntStatus_w = 0x0e;
-    /** Universal (Command Variations)     **/
+    /** Universal (Command Variations) **/
 
     /**
      * following are windowed registers *
@@ -126,190 +126,190 @@ public interface _3c90xConstants {
     // Registers7
     public static final int regPowerMgmtEvent_7_w = 0x0c;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regVlanEtherType_7_w = 0x04;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regVlanMask_7_w = 0x00;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
 
     // Registers6
     public static final int regBytesXmittedOk_6_w = 0x0c;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regBytesRcvdOk_6_w = 0x0a;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regUpperFramesOk_6_b = 0x09;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regFramesDeferred_6_b = 0x08;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regFramesRecdOk_6_b = 0x07;
     /**
-     * Universal with Exceptions; pg 142  *
+     * Universal with Exceptions; pg 142 *
      */
     public static final int regFramesXmittedOk_6_b = 0x06;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regRxOverruns_6_b = 0x05;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regLateCollisions_6_b = 0x04;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regSingleCollisions_6_b = 0x03;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regMultipleCollisions_6_b = 0x02;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regSqeErrors_6_b = 0x01;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regCarrierLost_6_b = 0x00;
     /**
-     * Universal                          *
+     * Universal *
      */
 
     // Registers5
     public static final int regIndicationEnable_5_w = 0x0c;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regInterruptEnable_5_w = 0x0a;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regTxReclaimThresh_5_b = 0x09;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regRxFilter_5_b = 0x08;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regRxEarlyThresh_5_w = 0x06;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regTxStartThresh_5_w = 0x00;
     /**
-     * Universal                          *
+     * Universal *
      */
 
     // Registers4
     public static final int regUpperBytesOk_4_b = 0x0d;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regBadSSD_4_b = 0x0c;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regMediaStatus_4_w = 0x0a;
     /**
-     * Universal with Exceptions; pg 201  *
+     * Universal with Exceptions; pg 201 *
      */
     public static final int regPhysicalMgmt_4_w = 0x08;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regNetworkDiagnostic_4_w = 0x06;
     /**
-     * Universal with Exceptions; pg 203  *
+     * Universal with Exceptions; pg 203 *
      */
     public static final int regFifoDiagnostic_4_w = 0x04;
     /**
-     * Universal with Exceptions; pg 196  *
+     * Universal with Exceptions; pg 196 *
      */
     public static final int regVcoDiagnostic_4_w = 0x02;
     /**
-     * Undocumented?                      *
+     * Undocumented? *
      */
 
     // Registers3
     public static final int regTxFree_3_w = 0x0c;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regRxFree_3_w = 0x0a;
     /**
-     * Universal with Exceptions; pg 125  *
+     * Universal with Exceptions; pg 125 *
      */
     public static final int regResetMediaOptions_3_w = 0x08;
-    /** Media Options on B Revision;       **/
+    /** Media Options on B Revision; **/
     /**
-     * Reset Options on Non-B Revision    *
+     * Reset Options on Non-B Revision *
      */
     public static final int regMacControl_3_w = 0x06;
     /**
-     * Universal with Exceptions; pg 199  *
+     * Universal with Exceptions; pg 199 *
      */
     public static final int regMaxPktSize_3_w = 0x04;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regInternalConfig_3_l = 0x00;
-    /** Universal; different bit           **/
+    /** Universal; different bit **/
     /**
-     * definitions; pg 59                 *
+     * definitions; pg 59 *
      */
 
     // Registers2
     public static final int regResetOptions_2_w = 0x0c;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regStationMask_2_3w = 0x06;
     /**
-     * Universal with Exceptions; pg 127  *
+     * Universal with Exceptions; pg 127 *
      */
     public static final int regStationAddress_2_3w = 0x00;
     /**
-     * Universal with Exceptions; pg 127  *
+     * Universal with Exceptions; pg 127 *
      */
 
     // Registers1
     public static final int regRxStatus_1_w = 0x0a;
     /**
-     * 90X Revision Only; Pg 126          *
+     * 90X Revision Only; Pg 126 *
      */
 
     // Registers0
     public static final int regEepromData_0_w = 0x0c;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regEepromCommand_0_w = 0x0a;
     /**
-     * Universal                          *
+     * Universal *
      */
     public static final int regBiosRomData_0_b = 0x08;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
     public static final int regBiosRomAddr_0_l = 0x04;
     /**
-     * 905B Revision Only                 *
+     * 905B Revision Only *
      */
 
-    /* The names for the eight register windows ***/
+    /* The names for the eight register windows ** */
     public static final int winPowerVlan7 = 0x07;
     public static final int winStatistics6 = 0x06;
     public static final int winTxRxControl5 = 0x05;
@@ -319,14 +319,14 @@ public interface _3c90xConstants {
     public static final int winUnused1 = 0x01;
     public static final int winEepromBios0 = 0x00;
 
-    /* Command definitions for the 3c90X ***/
+    /* Command definitions for the 3c90X ** */
     public static final int cmdGlobalReset = 0x00;
     /**
      * Universal with Exceptions; pg 151 *
      */
     public static final int cmdSelectRegisterWindow = 0x01;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdEnableDcConverter = 0x02;
     /**                                   **/
@@ -334,43 +334,43 @@ public interface _3c90xConstants {
     /**                                   **/
     public static final int cmdRxEnable = 0x04;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdRxReset = 0x05;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdStallCtl = 0x06;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdTxEnable = 0x09;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdTxDisable = 0x0A;
     /**                                   **/
     public static final int cmdTxReset = 0x0B;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdRequestInterrupt = 0x0C;
     /**                                   **/
     public static final int cmdAcknowledgeInterrupt = 0x0D;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdSetInterruptEnable = 0x0E;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdSetIndicationEnable = 0x0F;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdSetRxFilter = 0x10;
     /**
-     * Universal                         *
+     * Universal *
      */
     public static final int cmdSetRxEarlyThresh = 0x11;
     /**                                   **/
@@ -387,7 +387,7 @@ public interface _3c90xConstants {
     public static final int cmdSetHashFilterBit = 0x19;
     /**                                   **/
 
-    /* Values for int status register bitmask **/
+    /* Values for int status register bitmask * */
     public static final int INT_INTERRUPTLATCH = (1 << 0);
     public static final int INT_HOSTERROR = (1 << 1);
     public static final int INT_TXCOMPLETE = (1 << 2);

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 import org.jnode.system.resource.IOResource;
@@ -43,28 +43,28 @@ public abstract class IOAccess {
 
     /**
      * Gets the contents of a Control and Status Register.
-     *
+     * 
      * @param csrnr
      */
     public abstract int getCSR(int csrnr);
 
     /**
      * Sets the contents of a Control and Status Register.
-     *
+     * 
      * @param csrnr
      */
     public abstract void setCSR(int csrnr, int value);
 
     /**
      * Gets the contents of a Bus Configuration Register.
-     *
+     * 
      * @param bcrnr
      */
     public abstract int getBCR(int bcrnr);
 
     /**
      * Sets the contents of a Bus Configuration Register.
-     *
+     * 
      * @param bcrnr
      * @param value
      */

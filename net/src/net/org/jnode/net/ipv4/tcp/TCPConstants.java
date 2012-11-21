@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.tcp;
 
 /**
@@ -70,9 +70,8 @@ public interface TCPConstants {
     public static final int TCPS_CLOSING = 0x000a;
     public static final int TCPS_TIME_WAIT = 0x000b;
 
-    public static final String TCP_STATE_NAMES[] = {
-        "?", "CLOSED", "LISTEN", "SYN_RECV", "SYN_SENT", "ESTABLISHED", "CLOSE_WAIT",
-        "LAST_ACK", "FIN_WAIT_1", "FIN_WAIT_2", "CLOSING", "TIME_WAIT"
-    };
+    public static final String TCP_STATE_NAMES[] = {"?", "CLOSED", "LISTEN", "SYN_RECV",
+        "SYN_SENT", "ESTABLISHED", "CLOSE_WAIT", "LAST_ACK", "FIN_WAIT_1", "FIN_WAIT_2", "CLOSING",
+        "TIME_WAIT"};
 
 }

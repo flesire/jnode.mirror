@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.ethernet.spi;
 
 import org.apache.log4j.Logger;
@@ -53,9 +53,11 @@ public abstract class BasicEthernetDriver extends AbstractEthernetDriver {
     private AbstractDeviceCore abstractDeviceCore;
 
     /**
-     * @see org.jnode.driver.net.spi.AbstractNetDriver#doTransmit(SocketBuffer, HardwareAddress)
+     * @see org.jnode.driver.net.spi.AbstractNetDriver#doTransmit(SocketBuffer,
+     *      HardwareAddress)
      */
-    protected void doTransmitEthernet(SocketBuffer skbuf, HardwareAddress destination) throws NetworkException {
+    protected void doTransmitEthernet(SocketBuffer skbuf, HardwareAddress destination)
+        throws NetworkException {
         try {
             // Pad
             if (skbuf.getSize() < ETH_ZLEN) {
@@ -116,7 +118,7 @@ public abstract class BasicEthernetDriver extends AbstractEthernetDriver {
 
     /**
      * Get the flags for this device
-     *
+     * 
      * @return The flags
      */
     public Flags getFlags() {

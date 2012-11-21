@@ -10,12 +10,12 @@ import org.mockito.Mockito;
 
 public class DHCPMessageTest {
 
-	@Test
-	public void testToDatagramPacket() {
-		BOOTPHeader header = Mockito.mock(BOOTPHeader.class);
-		DHCPMessage message = new DHCPMessage(header, DHCPMessage.DHCPDISCOVER);
-		DatagramPacket packet = message.toDatagramPacket();
-		assertNotNull(packet);
-	}
+    @Test
+    public void testToDatagramPacket() {
+        BOOTPHeader header = Mockito.mock(BOOTPHeader.class);
+        DHCPMessage message = new DHCPMessage(header, DHCPMessage.DHCPDISCOVER);
+        DatagramPacket packet = message.toDatagramPacket();
+        assertNotNull(packet);
+    }
 
 }

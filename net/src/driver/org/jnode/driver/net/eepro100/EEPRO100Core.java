@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.eepro100;
 
 import java.security.PrivilegedExceptionAction;
@@ -69,14 +69,14 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
      * IRQ
      */
     private final IRQResource irq;
- 
+
     private ResourceManager rm;
 
     /**
      * My ethernet address
      */
     private EthernetAddress hwAddress;
- 
+
     private int[] eeprom;
 
     /**
@@ -98,13 +98,13 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
      * RX/TX
      */
     private EEPRO100Buffer buffers;
- 
+
     @SuppressWarnings("unused")
-    private int phy[]; 
+    private int phy[];
     @SuppressWarnings("unused")
-    private int eeReadCmd; 
+    private int eeReadCmd;
     @SuppressWarnings("unused")
-    private int eeSize; 
+    private int eeSize;
     @SuppressWarnings("unused")
     private int eeAddress;
 
@@ -117,7 +117,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
 
     /**
      * Create a new instance and allocate all resources
-     *
+     * 
      * @throws ResourceNotFreeException
      */
     public EEPRO100Core(EEPRO100Driver driver, ResourceOwner owner, PCIDevice device,
@@ -227,8 +227,12 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
         }
 
         if (option != 0) {
-            mdioWrite(eeprom[6] & 0x1f, 0, ((option & 0x20) != 0 ? 0x2000 : 0) | /* 100mbps? */
-                      ((option & 0x10) != 0 ? 0x0100 : 0)); /* Full duplex? */
+            mdioWrite(eeprom[6] & 0x1f, 0, ((option & 0x20) != 0 ? 0x2000 : 0) | /*
+                                                                                  * 100
+                                                                                  * mbps
+                                                                                  * ?
+                                                                                  */
+            ((option & 0x10) != 0 ? 0x0100 : 0)); /* Full duplex? */
         }
 
         /* reset adapter to default state */
@@ -283,7 +287,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
 
     /**
      * Gets the first IO-Address used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -311,7 +315,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
 
     /**
      * Gets the number of IO-Addresses used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -329,7 +333,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
 
     /**
      * Gets the IRQ used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -413,7 +417,8 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
      */
     final void systemDelay(int delay) {
         int i = 100;
-        while (i-- > 0);
+        while (i-- > 0)
+            ;
     }
 
     // --- MD IO METHODS
@@ -459,7 +464,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
         } while ((val & 0x10000000) == 0);
         return val & 0xffff;
     }
- 
+
     public void setupInterrupt() {
 
         if ((buffers.getCurRx() - buffers.getDirtyRx()) > 15) {
@@ -482,8 +487,7 @@ public class EEPRO100Core extends AbstractDeviceCore implements IRQHandler, EEPR
                         status = buffers.txRing[entry].getStatus();
                         if ((status & StatusComplete) == 0) {
                             if ((buffers.getCurTx() - dirtyTx0) > 0 &&
-                                    (buffers.txRing[(dirtyTx0 + 1) & TX_RING_SIZE - 1].
-                                            getStatus() & StatusComplete) != 0) {
+                                    (buffers.txRing[(dirtyTx0 + 1) & TX_RING_SIZE - 1].getStatus() & StatusComplete) != 0) {
                                 log.debug("Command unit failed to mark command." +
                                         NumberUtils.hex(status) + "as complete at " +
                                         buffers.getDirtyTx());

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.udp;
 
 import org.jnode.net.SocketBuffer;
@@ -92,7 +92,9 @@ public class UDPDatagramSocketImpl extends AbstractDatagramSocketImpl implements
 
         final IPv4Address dstAddress = new IPv4Address(p.getAddress());
         final IPv4Header ipHdr;
-        ipHdr = new IPv4Header(getTos(), getTimeToLive(), IPPROTO_UDP, dstAddress, p.getLength() + UDPHeader.UDP_HLEN);
+        ipHdr =
+                new IPv4Header(getTos(), getTimeToLive(), IPPROTO_UDP, dstAddress, p.getLength() +
+                        UDPHeader.UDP_HLEN);
         if (!getLocalAddress().isAnyLocalAddress() || (getDevice() != null)) {
             ipHdr.setSource(new IPv4Address(getLocalAddress()));
         }

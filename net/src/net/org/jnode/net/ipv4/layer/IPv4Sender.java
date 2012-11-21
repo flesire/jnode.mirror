@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.layer;
 
 import java.net.NoRouteToHostException;
@@ -71,12 +71,16 @@ public class IPv4Sender implements IPv4Constants, EthernetConstants {
      * the header(s) of any IP sub-protocols, before this method is called.
      * 
      * The following fields of the IP header must be set: tos, ttl, protocol,
-     * dstAddress. <p/> All other header fields are set, unless they have been
-     * set before. <p/> The following fields are always set (also when set
-     * before): version, hdrlength, identification, fragmentOffset, checksum
-     * <p/> If the device attribute of the skbuf has been set, the packet will
-     * be send to this device, otherwise a suitable route will be searched for
-     * in the routing table.
+     * dstAddress.
+     * <p/>
+     * All other header fields are set, unless they have been set before.
+     * <p/>
+     * The following fields are always set (also when set before): version,
+     * hdrlength, identification, fragmentOffset, checksum
+     * <p/>
+     * If the device attribute of the skbuf has been set, the packet will be
+     * send to this device, otherwise a suitable route will be searched for in
+     * the routing table.
      * 
      * @param hdr
      * @param skbuf
@@ -297,12 +301,14 @@ public class IPv4Sender implements IPv4Constants, EthernetConstants {
 
     /**
      * Gets the ARP service
+     * 
      * @return
      */
     private ARPNetworkLayer getARP() throws NetworkException {
         if (arp == null) {
             try {
-                arp = (ARPNetworkLayer) NetUtils.getNLM().getNetworkLayer(
+                arp =
+                        (ARPNetworkLayer) NetUtils.getNLM().getNetworkLayer(
                                 EthernetConstants.ETH_P_ARP);
             } catch (NoSuchProtocolException ex) {
                 throw new NetworkException("Cannot find ARP layer", ex);
@@ -313,6 +319,7 @@ public class IPv4Sender implements IPv4Constants, EthernetConstants {
 
     /**
      * Gets a unique identification number
+     * 
      * @return
      */
     private synchronized int getNextID() {

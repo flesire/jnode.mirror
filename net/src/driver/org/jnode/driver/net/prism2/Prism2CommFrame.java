@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.prism2;
 
 import org.jnode.net.ethernet.EthernetAddress;
@@ -26,7 +26,7 @@ import org.jnode.util.LittleEndian;
 
 /**
  * Access class for communication frames.
- *
+ * 
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
 public class Prism2CommFrame implements Prism2Constants {
@@ -54,9 +54,8 @@ public class Prism2CommFrame implements Prism2Constants {
     /**
      * Maximum length of a transmit buffer
      */
-    static final int MAX_TXBUF_LEN =
-            HDR_LENGTH + WirelessConstants.WLAN_DATA_MAXLEN - WirelessConstants.WLAN_WEP_IV_LEN -
-                    WirelessConstants.WLAN_WEP_ICV_LEN + 2;
+    static final int MAX_TXBUF_LEN = HDR_LENGTH + WirelessConstants.WLAN_DATA_MAXLEN -
+            WirelessConstants.WLAN_WEP_IV_LEN - WirelessConstants.WLAN_WEP_ICV_LEN + 2;
 
     /**
      * Gets the status field of a comm frame.

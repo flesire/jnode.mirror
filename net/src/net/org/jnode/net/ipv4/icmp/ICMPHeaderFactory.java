@@ -5,8 +5,8 @@ import java.net.SocketException;
 import org.jnode.net.SocketBuffer;
 
 public class ICMPHeaderFactory {
-	
-	/**
+
+    /**
      * Create a type specific ICMP header. The type is read from the first first
      * in the skbuf.
      * 

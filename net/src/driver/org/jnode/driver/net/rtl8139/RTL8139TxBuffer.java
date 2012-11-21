@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.rtl8139;
 
 import org.jnode.net.SocketBuffer;
@@ -58,7 +58,7 @@ public class RTL8139TxBuffer implements RTL8139Constants {
 
     /**
      * Create a new instance
-     *
+     * 
      * @param rm
      */
 

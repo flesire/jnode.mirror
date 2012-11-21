@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.spi;
 
 import java.io.PrintWriter;
@@ -48,8 +48,8 @@ import org.jnode.util.QueueProcessorThread;
 /**
  * @author epr
  */
-public abstract class AbstractNetDriver extends Driver
-    implements NetDeviceAPI, DeviceInfoAPI, QueueProcessor<Object[]> {
+public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, DeviceInfoAPI,
+        QueueProcessor<Object[]> {
 
     /**
      * My logger
@@ -75,7 +75,8 @@ public abstract class AbstractNetDriver extends Driver
     /**
      * Mapping between protocol id and protocol address
      */
-    private final HashMap<Integer, ProtocolAddressInfo> protocolAddresses = new HashMap<Integer, ProtocolAddressInfo>();
+    private final HashMap<Integer, ProtocolAddressInfo> protocolAddresses =
+            new HashMap<Integer, ProtocolAddressInfo>();
     /**
      * Queue used to store frames ready for transmission
      */
@@ -126,7 +127,8 @@ public abstract class AbstractNetDriver extends Driver
     }
 
     /**
-     * @see org.jnode.driver.net.NetDeviceAPI#transmit(SocketBuffer, HardwareAddress)
+     * @see org.jnode.driver.net.NetDeviceAPI#transmit(SocketBuffer,
+     *      HardwareAddress)
      */
     public final void transmit(SocketBuffer skbuf, HardwareAddress destination)
         throws NetworkException {
@@ -136,8 +138,8 @@ public abstract class AbstractNetDriver extends Driver
         offset = updateLayerHeader(skbuf, skbuf.getNetworkLayerHeader(), offset);
         offset = updateLayerHeader(skbuf, skbuf.getTransportLayerHeader(), offset);
 
-        //log.debug("Adding to transmit queue");
-        txQueue.add(new Object[]{skbuf, destination});
+        // log.debug("Adding to transmit queue");
+        txQueue.add(new Object[] {skbuf, destination});
     }
 
     private final int updateLayerHeader(SocketBuffer skbuf, LayerHeader hdr, int offset) {
@@ -172,7 +174,7 @@ public abstract class AbstractNetDriver extends Driver
 
     /**
      * Post an event that will be fired (on another thread) to the listeners.
-     *
+     * 
      * @param event
      */
     public void postEvent(NetDeviceEvent event) {
@@ -187,36 +189,37 @@ public abstract class AbstractNetDriver extends Driver
      */
     public void process(Object[] object) {
         try {
-            //log.debug("<transmit dev=" + getDevice().getId() + ">");
+            // log.debug("<transmit dev=" + getDevice().getId() + ">");
             final Object[] data = (Object[]) object;
             final SocketBuffer skbuf = (SocketBuffer) data[0];
             final HardwareAddress destination = (HardwareAddress) data[1];
             tx_count += skbuf.getSize();
             doTransmit(skbuf, destination);
-            //log.debug("</transmit dev=" + getDevice().getId() + ">");
+            // log.debug("</transmit dev=" + getDevice().getId() + ">");
         } catch (NetworkException ex) {
             log.error("Cannot transmit packet", ex);
         }
     }
 
     /**
-     * @see org.jnode.driver.net.NetDeviceAPI#transmit(SocketBuffer, HardwareAddress)
+     * @see org.jnode.driver.net.NetDeviceAPI#transmit(SocketBuffer,
+     *      HardwareAddress)
      */
     protected abstract void doTransmit(SocketBuffer skbuf, HardwareAddress destination)
         throws NetworkException;
 
     /**
      * Gets the prefix for the device name
-     *
+     * 
      * @see #ETH_DEVICE_PREFIX
      */
     protected abstract String getDevicePrefix();
 
     /**
-     * If this method returns true, the rename of the device id will be set
-     * to a devicePrefix with an auto-number, if false, the device id will be renamed
+     * If this method returns true, the rename of the device id will be set to a
+     * devicePrefix with an auto-number, if false, the device id will be renamed
      * to devicePrefix "-" old-deviceid.
-     *
+     * 
      * @see #getDevicePrefix()
      */
     protected boolean renameToDevicePrefixOnly() {
@@ -225,11 +228,10 @@ public abstract class AbstractNetDriver extends Driver
 
     /**
      * Pass a received frame onto the PacketTypeManager.
-     *
+     * 
      * @param skbuf
      */
-    protected void onReceive(SocketBuffer skbuf)
-        throws NetworkException {
+    protected void onReceive(SocketBuffer skbuf) throws NetworkException {
         skbuf.setDevice(getDevice());
         rx_count += skbuf.getSize();
         NetUtils.sendToPTM(skbuf);
@@ -237,7 +239,7 @@ public abstract class AbstractNetDriver extends Driver
 
     /**
      * Gets the protocol address information for a given protocol.
-     *
+     * 
      * @param protocolID
      * @return The protocol address information, or null if not found.
      */
@@ -247,7 +249,7 @@ public abstract class AbstractNetDriver extends Driver
 
     /**
      * Sets the protocol address information for a given protocol.
-     *
+     * 
      * @param protocolID
      */
     public void setProtocolAddressInfo(int protocolID, ProtocolAddressInfo addressInfo) {
@@ -261,9 +263,9 @@ public abstract class AbstractNetDriver extends Driver
         if (!protocolAddresses.isEmpty()) {
             out.println("Protocol addresses:");
             for (int protId : protocolAddresses.keySet()) {
-                out.println("    0x" + NumberUtils.hex(protId, 4) + ' '
-                        + getProtocolAddressInfo(protId));
+                out.println("    0x" + NumberUtils.hex(protId, 4) + ' ' +
+                        getProtocolAddressInfo(protId));
             }
         }
-    }    
+    }
 }

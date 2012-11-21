@@ -17,33 +17,8 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
-package org.jnode.driver.net.via_rhine;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import javax.naming.NameNotFoundException;
-import org.jnode.driver.Device;
-import org.jnode.driver.DriverException;
-import org.jnode.driver.bus.pci.PCIBaseAddress;
-import org.jnode.driver.bus.pci.PCIDevice;
-import org.jnode.driver.bus.pci.PCIHeaderType0;
-import org.jnode.driver.net.ethernet.spi.Flags;
-import org.jnode.driver.net.spi.AbstractDeviceCore;
-import org.jnode.naming.InitialNaming;
-import org.jnode.net.HardwareAddress;
-import org.jnode.net.SocketBuffer;
-import org.jnode.net.ethernet.EthernetAddress;
-import org.jnode.system.resource.IOResource;
-import org.jnode.system.resource.IRQHandler;
-import org.jnode.system.resource.IRQResource;
-import org.jnode.system.resource.ResourceManager;
-import org.jnode.system.resource.ResourceNotFreeException;
-import org.jnode.system.resource.ResourceOwner;
-import org.jnode.util.NumberUtils;
-import org.jnode.util.TimeoutException;
+package org.jnode.driver.net.via_rhine;
 
 import static org.jnode.driver.net.via_rhine.ViaRhineConstants.CFGD_CFDX;
 import static org.jnode.driver.net.via_rhine.ViaRhineConstants.CR1_SFRST;
@@ -98,91 +73,92 @@ import static org.jnode.driver.net.via_rhine.ViaRhineConstants.dwCurrentTxDescAd
 import static org.jnode.driver.net.via_rhine.ViaRhineConstants.wMIIDATA;
 import static org.jnode.net.ethernet.EthernetConstants.ETH_ALEN;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.naming.NameNotFoundException;
+
+import org.jnode.driver.Device;
+import org.jnode.driver.DriverException;
+import org.jnode.driver.bus.pci.PCIBaseAddress;
+import org.jnode.driver.bus.pci.PCIDevice;
+import org.jnode.driver.bus.pci.PCIHeaderType0;
+import org.jnode.driver.net.NetDeviceResource;
+import org.jnode.driver.net.ethernet.spi.Flags;
+import org.jnode.driver.net.spi.AbstractDeviceCore;
+import org.jnode.naming.InitialNaming;
+import org.jnode.net.HardwareAddress;
+import org.jnode.net.SocketBuffer;
+import org.jnode.net.ethernet.EthernetAddress;
+import org.jnode.system.resource.IRQHandler;
+import org.jnode.system.resource.ResourceManager;
+import org.jnode.system.resource.ResourceNotFreeException;
+import org.jnode.system.resource.ResourceOwner;
+import org.jnode.util.NumberUtils;
+import org.jnode.util.TimeoutException;
+
 /**
  * @author Levente S\u00e1ntha
  */
 class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
-    private final int ioBase;
-    private final IOResource io;
-    private final IRQResource irq;
     private EthernetAddress hwAddress;
     private ViaRhineDriver driver;
     private ViaRhineRxRing rxRing;
     private ViaRhineTxRing txRing;
 
     /*
-   // temporary Rx buffers.
+     * // temporary Rx buffers.
+     * 
+     * int chip_id; int chip_revision;
+     * 
+     * unsigned int dirty_rx, dirty_tx; // The saved address of a sent-in-place
+     * packet/buffer, for skfree(). struct sk_buff *tx_skbuff[TX_RING_SIZE];
+     * unsigned char mc_filter[8]; // Current multicast filter. char phys[4]; //
+     * MII device addresses.
+     */
 
-   int chip_id;
-   int chip_revision;
-
-   unsigned int dirty_rx, dirty_tx;
-   // The saved address of a sent-in-place packet/buffer, for skfree().
-   struct sk_buff *tx_skbuff[TX_RING_SIZE];
-   unsigned char mc_filter[8];  // Current multicast filter.
-   char phys[4];        // MII device addresses.
-
-    */
-
-    //ViaRhineRxDescriptor[] rx_ring = new ViaRhineRxDescriptor[RX_RING_SIZE];
-    //ViaRhineTxDescriptor[] tx_ring = new ViaRhineTxDescriptor[TX_RING_SIZE];
+    // ViaRhineRxDescriptor[] rx_ring = new ViaRhineRxDescriptor[RX_RING_SIZE];
+    // ViaRhineTxDescriptor[] tx_ring = new ViaRhineTxDescriptor[TX_RING_SIZE];
     byte[] rx_buffs = new byte[RX_RING_SIZE];
     byte[] tx_buffs = new byte[TX_RING_SIZE];
 
     int chip_id;
     int chip_revision;
     short ioaddr;
-    int cur_rx, cur_tx;    // The next free and used entries
+    int cur_rx, cur_tx; // The next free and used entries
     int dirty_rx, dirty_tx;
     // The saved address of a sent-in-place packet/buffer, for skfree().
     SocketBuffer[] tx_skbuff = new SocketBuffer[TX_RING_SIZE];
-    char[] mc_filter = new char[8];    // Current multicast filter.
-    char[] phys = new char[4];        // MII device addresses.
-    int tx_full = 1;    // The Tx queue is full.
-    int full_duplex = 1;    // Full-duplex operation requested.
-    int default_port = 4;    // Last dev->if_port value.
-    int media2 = 4;    // Secondary monitored media port.
-    int medialock = 1;    // Don't sense media type.
-    int mediasense = 1;    // Media sensing in progress.
+    char[] mc_filter = new char[8]; // Current multicast filter.
+    char[] phys = new char[4]; // MII device addresses.
+    int tx_full = 1; // The Tx queue is full.
+    int full_duplex = 1; // Full-duplex operation requested.
+    int default_port = 4; // Last dev->if_port value.
+    int media2 = 4; // Secondary monitored media port.
+    int medialock = 1; // Don't sense media type.
+    int mediasense = 1; // Media sensing in progress.
 
     public ViaRhineCore(ViaRhineDriver driver, Device device, ResourceOwner owner, Flags flags)
-        throws DriverException, ResourceNotFreeException {
+            throws DriverException, ResourceNotFreeException {
         this.driver = driver;
-        final int irq_nr = getIRQ(device, flags);
-        PCIBaseAddress addr = getIOBaseAddress(device, flags);
-        this.ioBase = addr.getIOBase();
-        int io_length = addr.getSize();
-        final ResourceManager rm;
+        this.resources = new NetDeviceResource(owner, this, (PCIDevice) device);
 
-        try {
-            rm = InitialNaming.lookup(ResourceManager.NAME);
-        } catch (NameNotFoundException ex) {
-            throw new DriverException("Cannot find ResourceManager");
-        }
+        determineHardwareAddress();
 
-        this.irq = rm.claimIRQ(owner, irq_nr, this, true);
+        log.debug("Found " + flags.getName() + " " + resources + ", MAC Address = " + hwAddress);
+    }
 
-        try {
-            io = rm.claimIOResource(owner, ioBase, io_length);
-        } catch (ResourceNotFreeException ex) {
-            this.irq.release();
-            throw ex;
-        }
-
+    private void determineHardwareAddress() {
         final byte[] hwAddrArr = new byte[ETH_ALEN];
         for (int i = 0; i < ETH_ALEN; i++)
             hwAddrArr[i] = (byte) getReg8(byPAR0 + i);
 
         this.hwAddress = new EthernetAddress(hwAddrArr, 0);
-
-        log.debug("Found " + flags.getName() + " IRQ = " + irq.getIRQ()
-            + ", IO Base = 0x" + NumberUtils.hex(ioBase)
-            + ", IO Length = " + io_length
-            + ", MAC Address = " + hwAddress);
     }
 
-    protected PCIBaseAddress getIOBaseAddress(Device device, Flags flags)
-        throws DriverException {
+    protected PCIBaseAddress getIOBaseAddress(Device device, Flags flags) throws DriverException {
         final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
         final PCIBaseAddress[] addrs = config.getBaseAddresses();
         if (addrs.length < 1) {
@@ -196,7 +172,7 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
 
     /**
      * Gets the IRQ used by the given device
-     *
+     * 
      * @param device
      * @param flags
      */
@@ -212,11 +188,11 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         setIRQEnabled(false);
 
         int intr_status = getIntrStatus();
-        if ((intr_status & (IntrRxDone | IntrRxNoBuf | IntrRxOverflow |
-            IntrRxDropped | IntrRxEarly | IntrRxEmpty | IntrRxErr | IntrRxWakeUp)) != 0) {
+        if ((intr_status & (IntrRxDone | IntrRxNoBuf | IntrRxOverflow | IntrRxDropped |
+                IntrRxEarly | IntrRxEmpty | IntrRxErr | IntrRxWakeUp)) != 0) {
             /* Acknowledge all of the current interrupt sources ASAP. */
-            //outw(DEFAULT_INTR & ~IntrRxDone, nic->ioaddr + IntrStatus);
-            //IOSYNC;
+            // outw(DEFAULT_INTR & ~IntrRxDone, nic->ioaddr + IntrStatus);
+            // IOSYNC;
             try {
 
                 Thread.sleep(50);
@@ -234,12 +210,12 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
             } catch (Exception e) {
                 log.error("error in irq handler", e);
             }
-            //setReg16(IntrStatus, DEFAULT_INTR & ~IntrRxDone);
+            // setReg16(IntrStatus, DEFAULT_INTR & ~IntrRxDone);
             setReg16(IntrStatus, DEFAULT_INTR);
         }
 
-        if ((intr_status & (IntrTxDone | IntrTxAborted | IntrTxDescRace |
-            IntrTxError | IntrTxErrSummary | IntrTxUnderrun)) != 0) {
+        if ((intr_status & (IntrTxDone | IntrTxAborted | IntrTxDescRace | IntrTxError |
+                IntrTxErrSummary | IntrTxUnderrun)) != 0) {
             try {
 
                 if ((intr_status & IntrTxError) != 0) {
@@ -255,7 +231,6 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
             setReg16(IntrStatus, DEFAULT_INTR | my_INTR);
 
         }
-
 
         setIRQEnabled(true);
     }
@@ -333,10 +308,13 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         /* On Rhine-II, Bit 3 indicates Tx descriptor write-back race. */
 
         /* added comment by guard */
-        /* For supporting VT6107, please use revision id to recognize different chips in driver */
+        /*
+         * For supporting VT6107, please use revision id to recognize different
+         * chips in driver
+         */
         // if (tp->chip_id == 0x3065)
 
-        //if( tp->chip_revision < 0x80 && tp->chip_revision >=0x40 )
+        // if( tp->chip_revision < 0x80 && tp->chip_revision >=0x40 )
         intr_status |= getReg8(IntrStatus2) << 16;
 
         return intr_status;
@@ -369,10 +347,10 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         setReg8(byCR1, CR1_SFRST);
         MIIDelay();
 
-        //init ring
+        // init ring
         initRing();
 
-        /*write TD RD Descriptor to MAC */
+        /* write TD RD Descriptor to MAC */
         setReg32(dwCurrentRxDescAddr, rxRing.ringAddr);
         setReg32(dwCurrentTxDescAddr, txRing.ringAddr);
 
@@ -380,14 +358,14 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         setReg16(byIMR0, 0x0000);
 
         /* Setup Multicast */
-        //set_rx_mode(nic);
+        // set_rx_mode(nic);
         setRxMode();
 
-        /* set TCR RCR threshold to store and forward*/
-        //outb (0x3e, byBCR0);
-        //outb (0x38, byBCR1);
-        //outb (0x2c, byRCR);
-        //outb (0x60, byTCR);
+        /* set TCR RCR threshold to store and forward */
+        // outb (0x3e, byBCR0);
+        // outb (0x38, byBCR1);
+        // outb (0x2c, byRCR);
+        // outb (0x60, byTCR);
         setReg8(byBCR0, 0x3e);
         setReg8(byBCR1, 0x38);
         setReg8(byRCR, 0x2c);
@@ -401,28 +379,28 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         }
 
         /* KICK NIC to WORK */
-        //CRbak = inw (byCR0);
-        //CRbak = CRbak & 0xFFFB;   /* not CR_STOP */
-        //outw ((CRbak | CR_STRT | CR_TXON | CR_RXON | CR_DPOLL), byCR0);
+        // CRbak = inw (byCR0);
+        // CRbak = CRbak & 0xFFFB; /* not CR_STOP */
+        // outw ((CRbak | CR_STRT | CR_TXON | CR_RXON | CR_DPOLL), byCR0);
         int cr = getReg8(byCR0);
         cr = cr & 0xFFFB;
         setReg16(byCR0, cr | CR_STRT | CR_TXON | CR_RXON | CR_DPOLL);
 
         /* disable all known interrupt */
-        //outw (0, byIMR0);
-        //setReg16(byIMR0, 0);
+        // outw (0, byIMR0);
+        // setReg16(byIMR0, 0);
 
-        //--------------------
-        //outw (IMRShadow, byIMR0);
+        // --------------------
+        // outw (IMRShadow, byIMR0);
         setReg16(byIMR0, IMRShadow);
     }
 
     private void setRxMode() {
         /* ! IFF_PROMISC */
-        //outl(0xffffffff, byMAR0);
-        //outl(0xffffffff, byMAR4);
-        //rx_mode = 0x0C;
-        //outb(0x60 /* thresh */ | rx_mode, byRCR );
+        // outl(0xffffffff, byMAR0);
+        // outl(0xffffffff, byMAR4);
+        // rx_mode = 0x0C;
+        // outb(0x60 /* thresh */ | rx_mode, byRCR );
         setReg32(byMAR0, 0xffffffff);
         setReg32(byMAR4, 0xffffffff);
         int rx_mode = 0x0C;
@@ -514,7 +492,6 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         int byMIICRbak;
         int byMIItemp;
 
-
         byMIIAdrbak = getReg8(byMIIAD);
 
         byMIICRbak = getReg8(byMIICR);
@@ -537,7 +514,6 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         ReadMIItmp = getReg16(wMIIDATA);
         MIIMask = 0x0001;
         MIIMask = MIIMask << byMIISetBit;
-
 
         if (byMIIOP == 0) {
             MIIMask = ~MIIMask;
@@ -581,13 +557,14 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         int FDXFlag;
         int byMIIvalue, LineSpeed, MIICRbak;
 
-        //if (rhine_debug > 0 && did_version++ == 0)
-        //    printf (version);
+        // if (rhine_debug > 0 && did_version++ == 0)
+        // printf (version);
         reloadEEPROM();
         /* Perhaps this should be read from the EEPROM? */
-        //--for (i = 0; i < ETH_ALEN; i++)
-        //--nic->node_addr[i] = inb (byPAR0 + i);
-        //--printf ("IO address %hX Ethernet Address: %!\n", ioaddr, nic->node_addr);
+        // --for (i = 0; i < ETH_ALEN; i++)
+        // --nic->node_addr[i] = inb (byPAR0 + i);
+        // --printf ("IO address %hX Ethernet Address: %!\n", ioaddr,
+        // nic->node_addr);
 
         /* restart MII auto-negotiation */
         WriteMII(0, 9, 1);
@@ -598,7 +575,7 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
             try {
                 Thread.sleep(70);
             } catch (InterruptedException x) {
-                //ignore
+                // ignore
             }
 
             if ((ReadMII(1) & 0x0020) != 0)
@@ -607,26 +584,20 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         log.info("OK\n");
 
         /*
-    #if 0
-        //* JJM : for Debug
-        printf("MII : Address %hhX ",inb(ioaddr+0x6c));
-        {
-         unsigned char st1,st2,adv1,adv2,l1,l2;
-
-         st1=ReadMII(1,ioaddr)>>8;
-         st2=ReadMII(1,ioaddr)&0xFF;
-         adv1=ReadMII(4,ioaddr)>>8;
-         adv2=ReadMII(4,ioaddr)&0xFF;
-         l1=ReadMII(5,ioaddr)>>8;
-         l2=ReadMII(5,ioaddr)&0xFF;
-         printf(" status 0x%hhX%hhX, advertising 0x%hhX%hhX, link 0x%hhX%hhX\n", st1,st2,adv1,adv2,l1,l2);
-        }
-    #endif
-        */
+         * #if 0 //* JJM : for Debug
+         * printf("MII : Address %hhX ",inb(ioaddr+0x6c)); { unsigned char
+         * st1,st2,adv1,adv2,l1,l2;
+         * 
+         * st1=ReadMII(1,ioaddr)>>8; st2=ReadMII(1,ioaddr)&0xFF;
+         * adv1=ReadMII(4,ioaddr)>>8; adv2=ReadMII(4,ioaddr)&0xFF;
+         * l1=ReadMII(5,ioaddr)>>8; l2=ReadMII(5,ioaddr)&0xFF;
+         * printf(" status 0x%hhX%hhX, advertising 0x%hhX%hhX, link 0x%hhX%hhX\n"
+         * , st1,st2,adv1,adv2,l1,l2); } #endif
+         */
         /* query MII to know LineSpeed,duplex mode */
         byMIIvalue = getReg8(0x6d);
         LineSpeed = byMIIvalue & MIISR_SPEED;
-        if (LineSpeed != 0) {                        //JJM
+        if (LineSpeed != 0) { // JJM
             log.info("Linespeed=10Mbs");
         } else {
             log.info("Linespeed=100Mbs");
@@ -662,19 +633,11 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         }
     }
 
-    public void release() {
-        log.debug("release()");
-        io.release();
-        log.debug("irq.release");
-        irq.release();
-        log.debug("end of release");
-    }
-
     public void transmit(SocketBuffer buf, HardwareAddress destination, long timeout)
         throws InterruptedException, TimeoutException {
         log.debug("transmit(): to " + destination);
-//        destination.writeTo(buf, 0);
-//        hwAddress.writeTo(buf, 6);        
+        // destination.writeTo(buf, 0);
+        // hwAddress.writeTo(buf, 6);
         txRing.currentDesc().setOwnBit();
         txRing.currentDesc().setPacket(buf);
         log.debug('\n' + hexDump(buf.toByteArray()) + '\n');
@@ -684,7 +647,7 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
         CR1bak = CR1bak | CR1_TDMD1;
         setReg8(byCR1, CR1bak);
 
-//        do {
+        // do {
 
         int i = 0;
         while (txRing.currentDesc().isOwnBit()) {
@@ -693,48 +656,23 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
             } catch (InterruptedException x) {
                 //
             }
-            if (i++ > 5) break;
+            if (i++ > 5)
+                break;
         }
 
-//            if(tp->tx_ring[entry].tx_status.bits.terr == 0)
-//                break;
+        // if(tp->tx_ring[entry].tx_status.bits.terr == 0)
+        // break;
 
-//            if(tp->tx_ring[entry].tx_status.bits.abt == 1)
-//            {
-//                // turn on TX
-//                int CR0bak = getReg8(byCR0);
-//                CR0bak = CR0bak | CR_TXON;
-//                setReg8(byCR0, CR0bak);
-//            }
-        //      } while(true);
+        // if(tp->tx_ring[entry].tx_status.bits.abt == 1)
+        // {
+        // // turn on TX
+        // int CR0bak = getReg8(byCR0);
+        // CR0bak = CR0bak | CR_TXON;
+        // setReg8(byCR0, CR0bak);
+        // }
+        // } while(true);
         txRing.next();
     }
-
-    private int getReg8(int reg) {
-        return io.inPortByte(ioBase + reg);
-    }
-
-    private int getReg16(int reg) {
-        return io.inPortWord(ioBase + reg);
-    }
-
-    @SuppressWarnings("unused")
-    private int getReg32(int reg) {
-        return io.inPortDword(ioBase + reg);
-    }
-
-    private void setReg8(int reg, int value) {
-        io.outPortByte(ioBase + reg, value);
-    }
-
-    private void setReg16(int reg, int value) {
-        io.outPortWord(ioBase + reg, value);
-    }
-
-    private void setReg32(int reg, int value) {
-        io.outPortDword(ioBase + reg, value);
-    }
-
 
     String hexDump(byte[] data) {
         try {
@@ -796,7 +734,6 @@ class ViaRhineCore extends AbstractDeviceCore implements IRQHandler {
             out.flush();
             out.close();
             is.close();
-
 
             return swriter.toString();
         } catch (Exception e) {

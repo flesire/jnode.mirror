@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.wireless.spi;
 
 import org.jnode.driver.DriverException;
@@ -32,38 +32,33 @@ public abstract class WirelessDeviceCore extends AbstractDeviceCore {
     /**
      * Start a scan for available networks.
      */
-    public abstract void startScan()
-        throws DriverException;
+    public abstract void startScan() throws DriverException;
 
     /**
      * Gets the current authentication mode.
-     *
+     * 
      * @return the authentication mode
      */
-    protected abstract AuthenticationMode getAuthenticationMode()
-        throws DriverException;
+    protected abstract AuthenticationMode getAuthenticationMode() throws DriverException;
 
     /**
      * Sets the current authentication mode.
-     *
+     * 
      * @param mode
      */
-    protected abstract void setAuthenticationMode(AuthenticationMode mode)
-        throws DriverException;
+    protected abstract void setAuthenticationMode(AuthenticationMode mode) throws DriverException;
 
     /**
      * Gets the current ESS ID.
-     *
+     * 
      * @return A valid ESSID, or null if not ESSID is present.
      */
-    protected abstract String getESSID()
-        throws DriverException;
+    protected abstract String getESSID() throws DriverException;
 
     /**
      * Sets the current ESSID.
-     *
+     * 
      * @param essid A valid ESSID, or null for any ESS.
      */
-    protected abstract void setESSID(String essid)
-        throws DriverException;
+    protected abstract void setESSID(String essid) throws DriverException;
 }

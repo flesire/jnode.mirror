@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.protocol.nfs.nfs2;
 
 import java.io.IOException;
@@ -40,8 +40,8 @@ import org.jnode.net.nfs.nfs2.mount.MountException;
 import org.jnode.net.nfs.nfs2.mount.MountResult;
 
 public class NFS2OutputStream extends OutputStream {
-    private static final boolean DEFAULT_PERMISSION[] =
-            new boolean[] {true, true, false, true, false, false, true, false, false};
+    private static final boolean DEFAULT_PERMISSION[] = new boolean[] {true, true, false, true,
+        false, false, true, false, false};
     private static final int DEFAULT_BUFFER_SIZE = NFS2Client.MAX_DATA;
     private Mount1Client mountClient;
     private NFS2Client nfsClient;
@@ -69,7 +69,8 @@ public class NFS2OutputStream extends OutputStream {
             throw new IOException("The url doesn't contains the uid and guid.");
         }
 
-        mountClient = new Mount1Client(InetAddress.getByName(url.getHost()), Protocol.TCP, uid, gid);
+        mountClient =
+                new Mount1Client(InetAddress.getByName(url.getHost()), Protocol.TCP, uid, gid);
         nfsClient = new NFS2Client(InetAddress.getByName(url.getHost()), Protocol.TCP, uid, gid);
         String path = url.getPath();
         List<ExportEntry> exportList;

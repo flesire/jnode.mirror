@@ -35,132 +35,129 @@ import org.jnode.net.ipv4.dhcp.DHCPClient;
  */
 public class IPv4RoutingTable {
 
-	private static final Logger log = Logger.getLogger(IPv4RoutingTable.class);
+    private static final Logger log = Logger.getLogger(IPv4RoutingTable.class);
 
-	/** All entries as instanceof IPv4Route */
-	private final Vector<IPv4Route> entries = new Vector<IPv4Route>();
+    /** All entries as instanceof IPv4Route */
+    private final Vector<IPv4Route> entries = new Vector<IPv4Route>();
 
-	/**
-	 * Create a new instance
-	 */
-	public IPv4RoutingTable() {
-	}
+    /**
+     * Create a new instance
+     */
+    public IPv4RoutingTable() {
+    }
 
-	/**
-	 * Gets the number of entries
-	 */
-	public int getSize() {
-		return entries.size();
-	}
+    /**
+     * Gets the number of entries
+     */
+    public int getSize() {
+        return entries.size();
+    }
 
-	/**
-	 * Get an entry at a given index
-	 * 
-	 * @param index
-	 */
-	public IPv4Route get(int index) {
-		return (IPv4Route) entries.get(index);
-	}
+    /**
+     * Get an entry at a given index
+     * 
+     * @param index
+     */
+    public IPv4Route get(int index) {
+        return (IPv4Route) entries.get(index);
+    }
 
-	/**
-	 * Add an entry
-	 * 
-	 * @param entry
-	 */
-	public void add(IPv4Route entry) {
-		entries.add(entry);
-	}
+    /**
+     * Add an entry
+     * 
+     * @param entry
+     */
+    public void add(IPv4Route entry) {
+        entries.add(entry);
+    }
 
-	/**
-	 * Remove a given entry
-	 * 
-	 * @param entry
-	 */
-	public void remove(IPv4Route entry) {
-		entries.remove(entry);
-	}
+    /**
+     * Remove a given entry
+     * 
+     * @param entry
+     */
+    public void remove(IPv4Route entry) {
+        entries.remove(entry);
+    }
 
-	/**
-	 * Get all entries
-	 * 
-	 * @see IPv4Route
-	 * @return a list of IPv4Route entries.
-	 */
-	public List<IPv4Route> entries() {
-		return new ArrayList<IPv4Route>(entries);
-	}
+    /**
+     * Get all entries
+     * 
+     * @see IPv4Route
+     * @return a list of IPv4Route entries.
+     */
+    public List<IPv4Route> entries() {
+        return new ArrayList<IPv4Route>(entries);
+    }
 
-	/**
-	 * Search for a route to the given destination
-	 * 
-	 * @param destination
-	 * @throws NoRouteToHostException
-	 *             No route has been found
-	 * @return The route that has been selected.
-	 */
-	public IPv4Route search(IPv4Address destination)
-			throws NoRouteToHostException {
-		while (true) {
-			try {
-				log.debug("# of route registred : " + entries.size());
-				Vector<IPv4Route> up = getRouteUp(entries);
-				log.debug("# of route up : " + up.size());
-				// First search for a matching host-address route
-				if (up.size() > 0) {
-					for (IPv4Route route : up) {
-						if (route.isHost()) {
-							if (route.getDestination().equals(destination)) {
-								return route;
-							}
-						}
-					}
-					// No direct host found, search through the networks
-					for (IPv4Route r : up) {
-						if (r.isNetwork()) {
-							if (r.getDestination().matches(destination,
-									r.getSubnetmask())) {
-								return r;
-							}
-						}
-					}
+    /**
+     * Search for a route to the given destination
+     * 
+     * @param destination
+     * @throws NoRouteToHostException No route has been found
+     * @return The route that has been selected.
+     */
+    public IPv4Route search(IPv4Address destination) throws NoRouteToHostException {
+        while (true) {
+            try {
+                log.debug("# of route registred : " + entries.size());
+                Vector<IPv4Route> up = getRouteUp(entries);
+                log.debug("# of route up : " + up.size());
+                // First search for a matching host-address route
+                if (up.size() > 0) {
+                    for (IPv4Route route : up) {
+                        if (route.isHost()) {
+                            if (route.getDestination().equals(destination)) {
+                                return route;
+                            }
+                        }
+                    }
+                    // No direct host found, search through the networks
+                    for (IPv4Route r : up) {
+                        if (r.isNetwork()) {
+                            if (r.getDestination().matches(destination, r.getSubnetmask())) {
+                                return r;
+                            }
+                        }
+                    }
 
-					// No network found, search for the default gateway
-					for (IPv4Route r : up) {
-						if (r.isGateway()) {
-							return r;
-						}
-					}
-				}
-				// No route found
-				throw new NoRouteToHostException(destination.toString());
-			} catch (ConcurrentModificationException ex) {
-				// The list of entries was modified, while we are searching,
-				// Just loop and try it again
-			}
-		}
-	}
+                    // No network found, search for the default gateway
+                    for (IPv4Route r : up) {
+                        if (r.isGateway()) {
+                            return r;
+                        }
+                    }
+                }
+                // No route found
+                throw new NoRouteToHostException(destination.toString());
+            } catch (ConcurrentModificationException ex) {
+                // The list of entries was modified, while we are searching,
+                // Just loop and try it again
+            }
+        }
+    }
 
-	private Vector<IPv4Route> getRouteUp(Vector<IPv4Route> routes) {
-		Vector<IPv4Route> filtered = new Vector<IPv4Route>();
-		for (IPv4Route route : entries) {
-			if (route.isUp()) {
-				filtered.add(route);
-			}
-		}
-		return filtered;
-	}
+    private Vector<IPv4Route> getRouteUp(Vector<IPv4Route> routes) {
+        Vector<IPv4Route> filtered = new Vector<IPv4Route>();
+        for (IPv4Route route : entries) {
+            if (route.isUp()) {
+                filtered.add(route);
+            }
+        }
+        return filtered;
+    }
 
-	/**
-	 * Convert to a String representation
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		final StringBuilder b = new StringBuilder();
-		for (IPv4Route r : entries) {
-			b.append(r);
-			b.append('\n');
-		}
-		return b.toString();
-	}
+    /**
+     * Convert to a String representation
+     * 
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        final StringBuilder b = new StringBuilder();
+        for (IPv4Route r : entries) {
+            b.append(r);
+            b.append('\n');
+        }
+        return b.toString();
+    }
 }

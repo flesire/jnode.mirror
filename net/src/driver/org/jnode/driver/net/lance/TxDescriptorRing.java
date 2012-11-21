@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.net.lance;
 
 import org.apache.log4j.Logger;
@@ -35,11 +35,7 @@ public class TxDescriptorRing extends DescriptorRing {
 
     private TxDescriptor[] txDescriptors;
 
-    public TxDescriptorRing(
-        MemoryResource mem,
-        int offset,
-        int length,
-        int dataBufferOffset) {
+    public TxDescriptorRing(MemoryResource mem, int offset, int length, int dataBufferOffset) {
 
         super(mem, offset, length);
 
@@ -47,10 +43,8 @@ public class TxDescriptorRing extends DescriptorRing {
 
         for (int i = 0; i < length; i++) {
             txDescriptors[i] =
-                new TxDescriptor(
-                    mem,
-                    offset + (i * Descriptor.MESSAGE_DESCRIPTOR_SIZE),
-                    dataBufferOffset + (i * BufferManager.DATA_BUFFER_SIZE));
+                    new TxDescriptor(mem, offset + (i * Descriptor.MESSAGE_DESCRIPTOR_SIZE),
+                            dataBufferOffset + (i * BufferManager.DATA_BUFFER_SIZE));
         }
 
     }
@@ -62,19 +56,18 @@ public class TxDescriptorRing extends DescriptorRing {
             currentDescriptor += 1;
             if (currentDescriptor == length)
                 currentDescriptor = 0;
-            //log.info("Setup transmit descriptor with data of size " + skbuf.getSize());
+            // log.info("Setup transmit descriptor with data of size " +
+            // skbuf.getSize());
         } else {
             log.error("Not owner of descriptor index " + currentDescriptor);
         }
     }
 
-    /*private TxDescriptor getAvailableDescriptor() {
-         for (int i = 0; i < length; i++) {
-             if (txDescriptors[i].isOwnerSelf())
-                 return txDescriptors[i];
-         }
-         return null;
-     }*/
+    /*
+     * private TxDescriptor getAvailableDescriptor() { for (int i = 0; i <
+     * length; i++) { if (txDescriptors[i].isOwnerSelf()) return
+     * txDescriptors[i]; } return null; }
+     */
 
     public void dumpData(Logger out) {
         out.debug("Transmit Ring Descriptors - Software Style 2");

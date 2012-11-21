@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.tcp;
 
 import org.apache.log4j.Logger;
@@ -360,8 +360,7 @@ public class TCPHeader implements TransportLayerHeader, TCPConstants {
     }
 
     /**
-     * @param sequenceNr
-     *            The sequenceNr to set.
+     * @param sequenceNr The sequenceNr to set.
      */
     protected final void setSequenceNr(int sequenceNr) {
         this.sequenceNr = sequenceNr;

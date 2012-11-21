@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.udp;
 
 import org.jnode.vm.objects.Counter;
@@ -47,15 +47,18 @@ public class UDPStatistics implements Statistics {
     /** #received datagrams with no process on destination port */
     protected final Counter noport = new Counter("noport");
 
-    /** #received broadcast/multicast datagrams with no process on destination port */
+    /**
+     * #received broadcast/multicast datagrams with no process on destination
+     * port
+     */
     protected final Counter noportbcast = new Counter("nopoartbcast");
 
     /** total #output datagrams */
     protected final Counter opackets = new Counter("opackets");
 
     /** The list of statistics */
-    protected final Statistic[] list = new Statistic[] {
-        badlen, badsum, fullsock, hdrops, ipackets, noport, noportbcast, opackets};
+    protected final Statistic[] list = new Statistic[] {badlen, badsum, fullsock, hdrops, ipackets,
+        noport, noportbcast, opackets};
 
     /**
      * Gets all statistics

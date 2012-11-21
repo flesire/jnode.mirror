@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.bootp;
 
 import java.io.IOException;
@@ -31,9 +31,8 @@ import org.jnode.net.HardwareAddress;
 import org.jnode.net.ipv4.IPv4Address;
 
 /**
- * System independent base class.
- * Implementations should override doConfigure.
- *
+ * System independent base class. Implementations should override doConfigure.
+ * 
  * @author markhale
  */
 public class AbstractBOOTPClient {
@@ -51,7 +50,7 @@ public class AbstractBOOTPClient {
 
     /**
      * Configure the given device using BOOTP
-     *
+     * 
      * @param deviceName network interface
      */
     protected final void configureDevice(final String deviceName, final HardwareAddress hwAddress)
@@ -100,7 +99,7 @@ public class AbstractBOOTPClient {
 
     /**
      * Process a BOOTP response
-     *
+     * 
      * @param packet
      * @return true if the device has been configured, false otherwise
      */

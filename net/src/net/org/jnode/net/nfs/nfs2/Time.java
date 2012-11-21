@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.nfs.nfs2;
 
 import java.util.Date;
@@ -34,7 +34,7 @@ public class Time {
 
     /**
      * Constructs the time from a Java date object.
-     *
+     * 
      * @param date the date.
      */
     public Time(Date date) {
@@ -43,12 +43,11 @@ public class Time {
 
     /**
      * Constructs the time from milliseconds since 1970.
-     *
+     * 
      * @param javaMillis the time in milliseconds since 1970.
      */
     public Time(long javaMillis) {
-        this((int) (javaMillis / 1000L),
-             (int) (1000 * (javaMillis % 1000)));
+        this((int) (javaMillis / 1000L), (int) (1000 * (javaMillis % 1000)));
     }
 
     public Time(int seconds, int microSeconds) {
@@ -74,7 +73,7 @@ public class Time {
 
     /**
      * Converts the time to milliseconds since 1970.
-     *
+     * 
      * @return the time in milliseconds since 1970.
      */
     public long toJavaMillis() {

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.udp;
 
 import gnu.java.net.PlainDatagramSocketImpl;
@@ -257,7 +257,7 @@ public class UDPProtocol implements IPv4Protocol, IPv4Constants {
 
     /**
      * Send an UDP packet
-     *
+     * 
      * @param skbuf
      */
     protected void send(IPv4Header ipHdr, UDPHeader udpHdr, SocketBuffer skbuf)

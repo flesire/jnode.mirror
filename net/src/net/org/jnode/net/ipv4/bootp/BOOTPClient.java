@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.bootp;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class BOOTPClient extends AbstractBOOTPClient {
 
     /**
      * Configure the given device using BOOTP
-     *
+     * 
      * @param device
      */
     public final void configureDevice(final Device device) throws IOException {

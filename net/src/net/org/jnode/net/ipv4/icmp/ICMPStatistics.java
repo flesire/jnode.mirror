@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4.icmp;
 
 import org.jnode.vm.objects.Counter;
@@ -29,8 +29,8 @@ import org.jnode.vm.objects.Statistics;
  */
 public class ICMPStatistics implements Statistics {
 
-    protected final Counter badlen =
-            new Counter("badlen", "#received packets with datalength larger then packet");
+    protected final Counter badlen = new Counter("badlen",
+            "#received packets with datalength larger then packet");
     protected final Counter badsum = new Counter("badsum", "#received packets with checksum error");
     protected final Counter ipackets = new Counter("ipackets", "total #received packets");
     protected final Counter opackets = new Counter("opackets", "total #output packets");

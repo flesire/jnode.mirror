@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.nfs.nfs2.mount;
 
 import java.io.IOException;
@@ -70,12 +70,9 @@ public class Mount1Client {
      * Constructs a <code>Mount1Client</code> client stub proxy object from
      * which the MOUNTPROG remote program can be accessed.
      * 
-     * @param host
-     *                Internet address of host where to contact the remote
-     *                program.
-     * @param protocol
-     *                {@link org.acplt.oncrpc.OncRpcProtocols Protocol} to be
-     *                used for ONC/RPC calls.
+     * @param host Internet address of host where to contact the remote program.
+     * @param protocol {@link org.acplt.oncrpc.OncRpcProtocols Protocol} to be
+     *            used for ONC/RPC calls.
      */
     public Mount1Client(InetAddress host, Protocol protocol, int uid, int gid) {
         this.host = host;
@@ -149,9 +146,8 @@ public class Mount1Client {
                     if (countCall > 5) {
                         throw new MountException(e.getMessage(), e);
                     } else {
-                        LOGGER
-                                .warn("An error occurs when nfs file system try to call the rpc method. Reason : " +
-                                        e.getMessage() + ". It will try again");
+                        LOGGER.warn("An error occurs when nfs file system try to call the rpc method. Reason : " +
+                                e.getMessage() + ". It will try again");
                         continue;
                     }
 
@@ -174,10 +170,8 @@ public class Mount1Client {
     /**
      * Call remote procedure test.
      * 
-     * @throws OncRpcException
-     *                 if an ONC/RPC error occurs.
-     * @throws IOException
-     *                 if an I/O error occurs.
+     * @throws OncRpcException if an ONC/RPC error occurs.
+     * @throws IOException if an I/O error occurs.
      * @throws MountException
      */
     public void test() throws IOException, MountException {
@@ -189,10 +183,8 @@ public class Mount1Client {
      * 
      * @param path parameter (of type DirPath) to the remote procedure call.
      * @return Result from remote procedure call (of type MountResult).
-     * @throws OncRpcException
-     *                 if an ONC/RPC error occurs.
-     * @throws IOException
-     *                 if an I/O error occurs.
+     * @throws OncRpcException if an ONC/RPC error occurs.
+     * @throws IOException if an I/O error occurs.
      * @throws MountException
      */
     public MountResult mount(final String path) throws IOException, MountException {

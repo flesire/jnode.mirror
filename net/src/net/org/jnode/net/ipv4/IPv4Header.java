@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.net.ipv4;
 
 import org.jnode.net.NetworkLayerHeader;
@@ -31,34 +31,34 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /** IP version */
     private int version;
-    
+
     /** Length of header in bytes */
     private int hdrlength;
-    
+
     /** Type of service */
     private int tos;
-    
+
     /** Length of message data in bytes (without this IP header) */
     private int dataLength;
-    
+
     /** Identification */
     private int identification;
-    
+
     /** Fragment offset */
     private int fragmentOffset;
-    
+
     /** Time to live */
     private int ttl;
-    
+
     /** Protocol ID */
     private int protocol;
-    
+
     /** Source address */
     private IPv4Address srcAddress;
-    
+
     /** Destination address */
     private IPv4Address dstAddress;
-    
+
     /** Checksum is ok */
     private final boolean checksumOk;
 
@@ -336,6 +336,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the identification number
+     * 
      * @param i
      */
     public void setIdentification(int i) {
@@ -344,6 +345,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the length of the data in bytes
+     * 
      * @param i
      */
     public void setDataLength(int i) {
@@ -352,6 +354,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the protocol
+     * 
      * @param i
      */
     public void setProtocol(int i) {
@@ -360,6 +363,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the source address
+     * 
      * @param address
      */
     public void setSource(IPv4Address address) {
@@ -368,6 +372,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the type of service
+     * 
      * @param i
      */
     public void setTos(int i) {
@@ -376,6 +381,7 @@ public class IPv4Header implements NetworkLayerHeader, IPv4Constants {
 
     /**
      * Sets the time to live
+     * 
      * @param i
      */
     public void setTtl(int i) {
