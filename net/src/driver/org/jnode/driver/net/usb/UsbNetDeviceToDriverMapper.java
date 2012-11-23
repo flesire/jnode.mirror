@@ -51,7 +51,7 @@ public class UsbNetDeviceToDriverMapper implements DeviceToDriverMapper, UsbNetC
         if (descr.getInterfaceClass() != USB_CLASS_WIRELESS) {
             return null;
         }
-        log.debug("Found USB wireless device.");
+        log.info("Found USB wireless device.");
         if (descr.getInterfaceSubClass() == US_SC_RF) {
             log.debug("Subclass " + descr.getInterfaceSubClass());
             return new UsbBluetoothDriver();
