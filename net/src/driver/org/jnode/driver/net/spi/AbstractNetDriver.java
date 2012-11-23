@@ -22,7 +22,10 @@ package org.jnode.driver.net.spi;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
+
 import javax.naming.NameNotFoundException;
+
 import org.apache.log4j.Logger;
 import org.jnode.driver.Device;
 import org.jnode.driver.DeviceAlreadyRegisteredException;
@@ -75,7 +78,7 @@ public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, 
     /**
      * Mapping between protocol id and protocol address
      */
-    private final HashMap<Integer, ProtocolAddressInfo> protocolAddresses =
+    private final Map<Integer, ProtocolAddressInfo> protocolAddresses =
             new HashMap<Integer, ProtocolAddressInfo>();
     /**
      * Queue used to store frames ready for transmission
@@ -95,21 +98,7 @@ public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, 
      */
     protected void startDevice() throws DriverException {
         final Device device = getDevice();
-        try {
-            final DeviceManager dm = InitialNaming.lookup(DeviceManager.NAME);
-            if (renameToDevicePrefixOnly()) {
-                dm.rename(device, getDevicePrefix(), true);
-            } else {
-                final String prefix = getDevicePrefix() + '-';
-                if (!device.getId().startsWith(prefix)) {
-                    dm.rename(device, getDevicePrefix() + '-' + device.getId(), false);
-                }
-            }
-        } catch (DeviceAlreadyRegisteredException ex) {
-            log.error("Cannot rename device", ex);
-        } catch (NameNotFoundException ex) {
-            throw new DriverException("Cannot find DeviceManager", ex);
-        }
+        renameDevice(device);
         device.registerAPI(DeviceInfoAPI.class, this);
         device.registerAPI(NetDeviceAPI.class, this);
         txThread = new QueueProcessorThread<Object[]>(device.getId() + "-tx", txQueue, this);
@@ -137,8 +126,6 @@ public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, 
         offset = updateLayerHeader(skbuf, skbuf.getLinkLayerHeader(), offset);
         offset = updateLayerHeader(skbuf, skbuf.getNetworkLayerHeader(), offset);
         offset = updateLayerHeader(skbuf, skbuf.getTransportLayerHeader(), offset);
-
-        // log.debug("Adding to transmit queue");
         txQueue.add(new Object[] {skbuf, destination});
     }
 
@@ -189,13 +176,11 @@ public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, 
      */
     public void process(Object[] object) {
         try {
-            // log.debug("<transmit dev=" + getDevice().getId() + ">");
             final Object[] data = (Object[]) object;
             final SocketBuffer skbuf = (SocketBuffer) data[0];
             final HardwareAddress destination = (HardwareAddress) data[1];
             tx_count += skbuf.getSize();
             doTransmit(skbuf, destination);
-            // log.debug("</transmit dev=" + getDevice().getId() + ">");
         } catch (NetworkException ex) {
             log.error("Cannot transmit packet", ex);
         }
@@ -266,6 +251,24 @@ public abstract class AbstractNetDriver extends Driver implements NetDeviceAPI, 
                 out.println("    0x" + NumberUtils.hex(protId, 4) + ' ' +
                         getProtocolAddressInfo(protId));
             }
+        }
+    }
+
+    private void renameDevice(final Device device) throws DriverException {
+        try {
+            final DeviceManager dm = InitialNaming.lookup(DeviceManager.NAME);
+            if (renameToDevicePrefixOnly()) {
+                dm.rename(device, getDevicePrefix(), true);
+            } else {
+                final String prefix = getDevicePrefix() + '-';
+                if (!device.getId().startsWith(prefix)) {
+                    dm.rename(device, getDevicePrefix() + '-' + device.getId(), false);
+                }
+            }
+        } catch (DeviceAlreadyRegisteredException ex) {
+            log.error("Cannot rename device", ex);
+        } catch (NameNotFoundException ex) {
+            throw new DriverException("Cannot find DeviceManager", ex);
         }
     }
 }
