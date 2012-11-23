@@ -158,7 +158,7 @@ public class USBStorageSCSIHostDriver extends Driver
         public int executeCommand(CDB cdb, byte[] data, int dataOffset, long timeout)
             throws SCSIException, TimeoutException, InterruptedException {
             log.debug("*** execute command ***");
-            ITransport t = storageDeviceData.getTransport();
+            UsbStorageTransport t = storageDeviceData.getTransport();
             t.transport(cdb, timeout);
             return 0;
         }
@@ -181,7 +181,7 @@ public class USBStorageSCSIHostDriver extends Driver
             log.info("*** INQUIRY ***");
             final byte[] inqData = new byte[96];
 
-            ITransport t = storageDeviceData.getTransport();
+            UsbStorageTransport t = storageDeviceData.getTransport();
             t.transport(new CDBInquiry(inqData.length), 50000);
 
             inquiryResult = new InquiryData(inqData);

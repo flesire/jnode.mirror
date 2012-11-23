@@ -23,7 +23,7 @@ package org.jnode.driver.block.usb.storage;
 import org.jnode.driver.bus.scsi.CDB;
 import org.jnode.driver.bus.usb.USBException;
 
-public interface ITransport {
+public interface UsbStorageTransport {
     /**
      * @param cdb
      * @param timeout

@@ -42,7 +42,7 @@ final class USBStorageDeviceData implements USBStorageConstants {
     /** */
     private int subClass;
     /** */
-    private ITransport transport;
+    private UsbStorageTransport transport;
     /** */
     private USBDataPipe sendControlPipe;
     /** */
@@ -230,14 +230,14 @@ final class USBStorageDeviceData implements USBStorageConstants {
     /**
      * @return Returns the transport.
      */
-    public ITransport getTransport() {
+    public UsbStorageTransport getTransport() {
         return transport;
     }
 
     /**
      * @param transport The transport to set.
      */
-    public void setTransport(ITransport transport) {
+    public void setTransport(UsbStorageTransport transport) {
         this.transport = transport;
     }
 

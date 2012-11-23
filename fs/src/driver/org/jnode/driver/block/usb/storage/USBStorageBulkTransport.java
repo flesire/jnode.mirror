@@ -31,7 +31,7 @@ import org.jnode.driver.bus.usb.USBPacket;
 import org.jnode.driver.bus.usb.USBRequest;
 import org.jnode.util.NumberUtils;
 
-final class USBStorageBulkTransport implements ITransport, USBStorageConstants {
+final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageConstants {
 
     /**
      * My logger
