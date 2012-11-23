@@ -17,13 +17,12 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.block.usb.storage;
 
 import org.apache.log4j.Logger;
 import org.jnode.driver.bus.scsi.CDB;
 import org.jnode.driver.bus.usb.SetupPacket;
-import org.jnode.driver.bus.usb.USBControlPipe;
 import org.jnode.driver.bus.usb.USBDataPipe;
 import org.jnode.driver.bus.usb.USBDevice;
 import org.jnode.driver.bus.usb.USBException;
@@ -33,10 +32,9 @@ import org.jnode.util.NumberUtils;
 
 final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageConstants {
 
-    /**
-     * My logger
-     */
     private static final Logger log = Logger.getLogger(USBStorageBulkTransport.class);
+
+    private static final int US_BULK_RESET_REQUEST = 0xFF;
     /** */
     private final USBStorageDeviceData storageDeviceData;
 
@@ -49,21 +47,16 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
 
     /*
      * (non-Javadoc)
-     * @see org.jnode.driver.block.usb.storage.ITransport#transport(org.jnode.driver.bus.scsi.CDB, int)
+     * 
+     * @see
+     * org.jnode.driver.block.usb.storage.ITransport#transport(org.jnode.driver
+     * .bus.scsi.CDB, int)
      */
     public void transport(CDB cdb, long timeout) {
         try {
             byte[] scsiCmd = cdb.toByteArray();
-            // Setup command wrapper 
-            CBW cbw = new CBW();
-            cbw.setSignature(US_BULK_CB_SIGN);
-            cbw.setTag(1);
-            cbw.setDataTransferLength((byte) cdb.getDataTransfertCount());
-            cbw.setFlags((byte) 0);
-            cbw.setLun((byte) 0);
-            cbw.setLength((byte) scsiCmd.length);
-            cbw.setCdb(scsiCmd);
-            log.debug(cbw.toString());
+            // Setup command wrapper
+            CBW cbw = getCBW(cdb, scsiCmd);
             // Sent CBW to device
             USBDataPipe outPipe = ((USBDataPipe) storageDeviceData.getBulkOutEndPoint().getPipe());
             USBRequest req = outPipe.createRequest(cbw);
@@ -73,8 +66,7 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
                 outPipe.syncSubmit(req, timeout);
             }
             //
-            CSW csw = new CSW();
-            csw.setSignature(US_BULK_CS_SIGN);
+            CSW csw = getCSW();
             USBDataPipe inPipe = ((USBDataPipe) storageDeviceData.getBulkInEndPoint().getPipe());
             USBRequest resp = inPipe.createRequest(csw);
             if (timeout <= 0) {
@@ -91,24 +83,45 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
      * Bulk-Only mass storage reset.
      */
     public void reset() throws USBException {
-        final USBControlPipe pipe = storageDeviceData.getDevice().getDefaultControlPipe();
-        final USBRequest req = pipe.createRequest(new SetupPacket(USB_DIR_OUT
-            | USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0xFF, 0, 0, 0), null);
-        pipe.syncSubmit(req, GET_TIMEOUT);
+        SetupPacket setupPacket =
+                new SetupPacket(US_BULK_RESET_REQUEST, USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0, 0,
+                        0);
+        final USBRequest req = storageDeviceData.getSendControlPipe().createRequest(setupPacket);
+        storageDeviceData.getSendControlPipe().syncSubmit(req, GET_TIMEOUT);
+    }
+
+    private CSW getCSW() {
+        CSW csw = new CSW();
+        csw.setSignature(US_BULK_CS_SIGN);
+        return csw;
+    }
+
+    private CBW getCBW(CDB cdb, byte[] scsiCmd) {
+        CBW cbw = new CBW();
+        cbw.setSignature(US_BULK_CB_SIGN);
+        cbw.setTag(1);
+        cbw.setDataTransferLength((byte) cdb.getDataTransfertCount());
+        cbw.setFlags((byte) 0);
+        cbw.setLun((byte) 0);
+        cbw.setLength((byte) scsiCmd.length);
+        cbw.setCdb(scsiCmd);
+        log.debug(cbw.toString());
+        return cbw;
     }
 
     /**
-     * Get max logical unit allowed by device. Device not support multiple LUN <i>may</i> stall.
-     *
+     * Get max logical unit allowed by device. Device not support multiple LUN
+     * <i>may</i> stall.
+     * 
      * @param usbDev
      * @throws USBException
      */
     public void getMaxLun(USBDevice usbDev) throws USBException {
         log.info("*** Get max lun ***");
-        final USBControlPipe pipe = usbDev.getDefaultControlPipe();
         final USBPacket packet = new USBPacket(1);
-        final USBRequest req = pipe.createRequest(new SetupPacket(USB_DIR_IN
-            | USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0xFE, 0, 0, 1), packet);
+        SetupPacket setupP = new SetupPacket(0xFE, USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0, 0, 1);
+        USBDataPipe pipe = storageDeviceData.getReceiveControlPipe();
+        final USBRequest req = pipe.createRequest(setupP);
         pipe.syncSubmit(req, GET_TIMEOUT);
         log.debug("*** Request data     : " + req.toString());
         log.debug("*** Request status   : 0x" + NumberUtils.hex(req.getStatus(), 4));
