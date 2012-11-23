@@ -20,21 +20,17 @@
 
 package org.jnode.driver.net.rtl8139;
 
-import javax.naming.NameNotFoundException;
-
 import org.jnode.driver.DriverException;
 import org.jnode.driver.bus.pci.PCIDevice;
 import org.jnode.driver.net.NetDeviceResource;
 import org.jnode.driver.net.NetworkException;
 import org.jnode.driver.net.ethernet.spi.Flags;
 import org.jnode.driver.net.spi.AbstractDeviceCore;
-import org.jnode.naming.InitialNaming;
 import org.jnode.net.HardwareAddress;
 import org.jnode.net.SocketBuffer;
 import org.jnode.net.ethernet.EthernetAddress;
 import org.jnode.net.ethernet.EthernetConstants;
 import org.jnode.system.resource.IRQHandler;
-import org.jnode.system.resource.ResourceManager;
 import org.jnode.system.resource.ResourceNotFreeException;
 import org.jnode.system.resource.ResourceOwner;
 import org.jnode.util.TimeoutException;
