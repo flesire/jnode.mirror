@@ -26,11 +26,12 @@ import org.jnode.driver.bus.usb.SetupPacket;
 import org.jnode.driver.bus.usb.USBDataPipe;
 import org.jnode.driver.bus.usb.USBDevice;
 import org.jnode.driver.bus.usb.USBException;
-import org.jnode.driver.bus.usb.USBPacket;
 import org.jnode.driver.bus.usb.USBRequest;
 import org.jnode.util.NumberUtils;
 
 final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageConstants {
+
+    private static final int US_BULK_GET_MAX_LUN = 0xFE;
 
     private static final Logger log = Logger.getLogger(USBStorageBulkTransport.class);
 
@@ -49,8 +50,8 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
      * (non-Javadoc)
      * 
      * @see
-     * org.jnode.driver.block.usb.storage.ITransport#transport(org.jnode.driver
-     * .bus.scsi.CDB, int)
+     * org.jnode.driver.block.usb.storage.UsbStorageTransport#transport(org.
+     * jnode.driver.bus.scsi.CDB, long)
      */
     public void transport(CDB cdb, long timeout) {
         try {
@@ -60,19 +61,23 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
             // Sent CBW to device
             USBDataPipe outPipe = ((USBDataPipe) storageDeviceData.getBulkOutEndPoint().getPipe());
             USBRequest req = outPipe.createRequest(cbw);
-            if (timeout <= 0) {
-                outPipe.asyncSubmit(req);
-            } else {
-                outPipe.syncSubmit(req, timeout);
-            }
+            outPipe.syncSubmit(req, timeout);
             //
             CSW csw = getCSW();
             USBDataPipe inPipe = ((USBDataPipe) storageDeviceData.getBulkInEndPoint().getPipe());
             USBRequest resp = inPipe.createRequest(csw);
-            if (timeout <= 0) {
-                inPipe.asyncSubmit(resp);
-            } else {
-                inPipe.syncSubmit(resp, timeout);
+            inPipe.syncSubmit(resp, timeout);
+            log.debug(csw.toString());
+            switch (csw.getStatus()) {
+                case 0:
+                    // OK
+                    break;
+                case 1:
+                    // FAIL
+                    break;
+                case 2:
+                    // PHASE
+                    break;
             }
         } catch (USBException e) {
             e.printStackTrace();
@@ -118,15 +123,16 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
      */
     public void getMaxLun(USBDevice usbDev) throws USBException {
         log.info("*** Get max lun ***");
-        final USBPacket packet = new USBPacket(1);
-        SetupPacket setupP = new SetupPacket(0xFE, USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0, 0, 1);
+        SetupPacket setupPacket =
+                new SetupPacket(USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
+                        US_BULK_GET_MAX_LUN, 0, 0, 1);
         USBDataPipe pipe = storageDeviceData.getReceiveControlPipe();
-        final USBRequest req = pipe.createRequest(setupP);
+        final USBRequest req = pipe.createRequest(setupPacket);
         pipe.syncSubmit(req, GET_TIMEOUT);
         log.debug("*** Request data     : " + req.toString());
         log.debug("*** Request status   : 0x" + NumberUtils.hex(req.getStatus(), 4));
         if (req.getStatus() == USBREQ_ST_COMPLETED) {
-            storageDeviceData.setMaxLun(packet.getData()[0]);
+            storageDeviceData.setMaxLun(setupPacket.getData()[0]);
         } else if (req.getStatus() == USBREQ_ST_STALLED) {
             storageDeviceData.setMaxLun((byte) 0);
         } else {

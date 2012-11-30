@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.driver.block.usb.storage;
 
 import org.jnode.driver.bus.usb.USBPacket;
@@ -43,6 +43,10 @@ public class CSW extends USBPacket {
 
     public void setStatus(byte status) {
         setByte(12, status);
+    }
+
+    public int getStatus() {
+        return getByte(12);
     }
 
     @Override
