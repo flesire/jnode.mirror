@@ -34,7 +34,7 @@ import org.jnode.util.BigEndian;
  * @author Fabien Lesire
  * 
  */
-public class CatalogFile {
+public class CatalogFileRecord {
     
     public static final int RECORD_TYPE_FILE = 0x0002;
     public static final int RECORD_TYPE_FILE_THREAD = 0x0004;
@@ -73,7 +73,7 @@ public class CatalogFile {
      * 
      * @param src
      */
-    public CatalogFile(final byte[] src) {
+    public CatalogFileRecord(final byte[] src) {
         byte[] data = new byte[CATALOG_FILE_SIZE];
         System.arraycopy(src, 0, data, 0, 248);
         recordType = BigEndian.getInt16(data, 0);
@@ -93,7 +93,7 @@ public class CatalogFile {
      * @param datas
      * @param resources
      */
-    public CatalogFile(int flags, CatalogNodeId fileId, HfsPlusForkData datas, HfsPlusForkData resources) {
+    public CatalogFileRecord(int flags, CatalogNodeId fileId, HfsPlusForkData datas, HfsPlusForkData resources) {
         this.recordType = RECORD_TYPE_FILE;
         this.flags = flags;
         this.fileId = fileId;

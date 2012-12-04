@@ -27,8 +27,8 @@ import org.jnode.fs.FSDirectory;
 import org.jnode.fs.FSEntry;
 import org.jnode.fs.FSFile;
 import org.jnode.fs.FileSystem;
-import org.jnode.fs.hfsplus.catalog.CatalogFile;
-import org.jnode.fs.hfsplus.catalog.CatalogFolder;
+import org.jnode.fs.hfsplus.catalog.CatalogFileRecord;
+import org.jnode.fs.hfsplus.catalog.CatalogFolderRecord;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
 import org.jnode.fs.spi.AbstractFSEntry;
 import org.jnode.fs.spi.UnixFSAccessRights;
@@ -68,9 +68,9 @@ public class HfsPlusEntry implements FSEntry {
         int mode = record.getType();
         if ("/".equals(name)) {
             return AbstractFSEntry.ROOT_ENTRY;
-        } else if (mode == CatalogFolder.RECORD_TYPE_FOLDER) {
+        } else if (mode == CatalogFolderRecord.RECORD_TYPE_FOLDER) {
             return AbstractFSEntry.DIR_ENTRY;
-        } else if (mode == CatalogFile.RECORD_TYPE_FILE) {
+        } else if (mode == CatalogFileRecord.RECORD_TYPE_FILE) {
             return AbstractFSEntry.FILE_ENTRY;
         } else {
             return AbstractFSEntry.OTHER_ENTRY;

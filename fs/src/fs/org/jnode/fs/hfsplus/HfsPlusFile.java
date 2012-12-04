@@ -28,17 +28,17 @@ import org.jnode.fs.FSFile;
 import org.jnode.fs.FSFileSlackSpace;
 import org.jnode.fs.FSFileStreams;
 import org.jnode.fs.FileSystem;
-import org.jnode.fs.hfsplus.catalog.CatalogFile;
+import org.jnode.fs.hfsplus.catalog.CatalogFileRecord;
 
 public class HfsPlusFile implements FSFile, FSFileSlackSpace, FSFileStreams {
 
     private HfsPlusEntry entry;
 
-    private CatalogFile file;
+    private CatalogFileRecord file;
 
     public HfsPlusFile(HfsPlusEntry entry) {
         this.entry = entry;
-        this.file = new CatalogFile(entry.getData());
+        this.file = new CatalogFileRecord(entry.getData());
     }
 
     @Override

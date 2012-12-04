@@ -146,14 +146,14 @@ public class Catalog {
         // First record (folder)
         HfsUnicodeString name = new HfsUnicodeString(params.getVolumeName());
         CatalogKey ck = new CatalogKey(CatalogNodeId.HFSPLUS_POR_CNID, name);
-        CatalogFolder folder =
-                new CatalogFolder(params.isJournaled() ? 2 : 0, CatalogNodeId.HFSPLUS_ROOT_CNID);
+        CatalogFolderRecord folder =
+                new CatalogFolderRecord(params.isJournaled() ? 2 : 0, CatalogNodeId.HFSPLUS_ROOT_CNID);
         LeafRecord record = new LeafRecord(ck, folder.getBytes());
         rootNode.addNodeRecord(record);
         // Second record (thread)
         CatalogKey tck = new CatalogKey(CatalogNodeId.HFSPLUS_POR_CNID, name);
         CatalogThread ct =
-                new CatalogThread(CatalogFolder.RECORD_TYPE_FOLDER_THREAD,
+                new CatalogThread(CatalogFolderRecord.RECORD_TYPE_FOLDER_THREAD,
                         CatalogNodeId.HFSPLUS_ROOT_CNID, new HfsUnicodeString(""));
         record = new LeafRecord(tck, ct.getBytes());
         rootNode.addNodeRecord(record);
@@ -181,8 +181,8 @@ public class Catalog {
             node = new CatalogLeafNode(nd, 8192);
             // Normal record
             CatalogKey key = new CatalogKey(parentId, name);
-            if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
-                CatalogFolder folder = new CatalogFolder(0, parentId);
+            if (nodeType == CatalogFolderRecord.RECORD_TYPE_FOLDER) {
+                CatalogFolderRecord folder = new CatalogFolderRecord(0, parentId);
                 key = new CatalogKey(parentId, name);
                 record = new LeafRecord(key, folder.getBytes());
                 node.addNodeRecord(record);
@@ -192,10 +192,10 @@ public class Catalog {
             // Thread record
             key = new CatalogKey(parentId, name);
             int threadType;
-            if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
-                threadType = CatalogFolder.RECORD_TYPE_FOLDER_THREAD;
+            if (nodeType == CatalogFolderRecord.RECORD_TYPE_FOLDER) {
+                threadType = CatalogFolderRecord.RECORD_TYPE_FOLDER_THREAD;
             } else {
-                threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
+                threadType = CatalogFileRecord.RECORD_TYPE_FILE_THREAD;
             }
             CatalogThread thread = new CatalogThread(threadType, nodeId, name);
             record = new LeafRecord(key, thread.getBytes());

@@ -32,8 +32,8 @@ import org.jnode.fs.FSEntry;
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.ReadOnlyFileSystemException;
 import org.jnode.fs.hfsplus.catalog.Catalog;
-import org.jnode.fs.hfsplus.catalog.CatalogFile;
-import org.jnode.fs.hfsplus.catalog.CatalogFolder;
+import org.jnode.fs.hfsplus.catalog.CatalogFileRecord;
+import org.jnode.fs.hfsplus.catalog.CatalogFolderRecord;
 import org.jnode.fs.hfsplus.catalog.CatalogKey;
 import org.jnode.fs.hfsplus.catalog.CatalogLeafNode;
 import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
@@ -51,11 +51,11 @@ public class HfsPlusDirectory implements FSDirectory {
     private FSEntryTable entries;
 
     /** The catalog directory record */
-    private CatalogFolder folder;
+    private CatalogFolderRecord folder;
 
     public HfsPlusDirectory(HfsPlusEntry entry) {
         this.entry = entry;
-        this.folder = new CatalogFolder(entry.getData());
+        this.folder = new CatalogFolderRecord(entry.getData());
         this.entries = FSEntryTable.EMPTY_TABLE;
     }
 
@@ -200,8 +200,8 @@ public class HfsPlusDirectory implements FSDirectory {
         if (fs.getVolumeHeader().getFolderCount() > 0) {
             LeafRecord[] records = fs.getCatalog().getRecords(folder.getFolderId());
             for (LeafRecord rec : records) {
-                if (rec.getType() == CatalogFolder.RECORD_TYPE_FOLDER ||
-                        rec.getType() == CatalogFile.RECORD_TYPE_FILE) {
+                if (rec.getType() == CatalogFolderRecord.RECORD_TYPE_FOLDER ||
+                        rec.getType() == CatalogFileRecord.RECORD_TYPE_FILE) {
                     String name = ((CatalogKey) rec.getKey()).getNodeName().getUnicodeString();
                     HfsPlusEntry e = new HfsPlusEntry(fs, this, name, rec);
                     pathList.add(e);
@@ -230,7 +230,7 @@ public class HfsPlusDirectory implements FSDirectory {
         CatalogLeafNode node =
                 catalog.createNode(name, this.folder.getFolderId(),
                         new CatalogNodeId(volumeHeader.getNextCatalogId()),
-                        CatalogFolder.RECORD_TYPE_FOLDER_THREAD);
+                        CatalogFolderRecord.RECORD_TYPE_FOLDER_THREAD);
         folder.incrementValence();
 
         HfsPlusEntry newEntry = new HfsPlusEntry((HfsPlusFileSystem) getFileSystem(), this, name, node.getNodeRecord(0));

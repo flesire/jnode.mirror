@@ -23,7 +23,7 @@ package org.jnode.fs.hfsplus.catalog;
 import org.jnode.fs.hfsplus.HfsUtils;
 import org.jnode.util.BigEndian;
 
-public class CatalogFolder {
+public class CatalogFolderRecord {
     /* Types */
     public static final int RECORD_TYPE_FOLDER = 0x0001;
     public static final int RECORD_TYPE_FOLDER_THREAD = 0x0003;
@@ -41,7 +41,7 @@ public class CatalogFolder {
      * 
      * @param src
      */
-    public CatalogFolder(final byte[] src) {
+    public CatalogFolderRecord(final byte[] src) {
         byte[] data = new byte[88];
         System.arraycopy(src, 0, data, 0, CATALOG_FOLDER_SIZE);
         recordType = BigEndian.getInt16(data, 0);
@@ -57,7 +57,7 @@ public class CatalogFolder {
      * @param valence
      * @param folderID
      */
-    public CatalogFolder(int valence, CatalogNodeId folderID) {
+    public CatalogFolderRecord(int valence, CatalogNodeId folderID) {
         this.recordType = RECORD_TYPE_FOLDER;
         this.valence = valence;
         this.folderId = folderID;
