@@ -17,10 +17,11 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.jnode.driver.Device;
 import org.jnode.fs.FSDirectory;
@@ -52,14 +53,16 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
     public HfsPlusFileSystem(final Device device, final boolean readOnly,
             final HfsPlusFileSystemType type) throws FileSystemException {
         super(device, readOnly, type);
+        this.volumeHeader = new SuperBlock(this);
     }
 
     /**
-     *
+     * 
      * @throws FileSystemException
      */
     public final void read() throws FileSystemException {
-        volumeHeader = new SuperBlock(this, false);
+
+        volumeHeader.read();
         log.debug(volumeHeader.toString());
         if (!volumeHeader.isAttribute(SuperBlock.HFSPLUS_VOL_UNMNT_BIT)) {
             log.info(getDevice().getId() +
@@ -71,9 +74,8 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
             setReadOnly(true);
         }
         if (volumeHeader.isAttribute(SuperBlock.HFSPLUS_VOL_JOURNALED_BIT)) {
-            log
-                    .info(getDevice().getId() +
-                            " Filesystem is journaled, write access is not supported. Mounting it readonly");
+            log.info(getDevice().getId() +
+                    " Filesystem is journaled, write access is not supported. Mounting it readonly");
             setReadOnly(true);
         }
         try {
@@ -138,7 +140,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
      * @throws FileSystemException
      */
     public void create(HFSPlusParams params) throws FileSystemException {
-        volumeHeader = new SuperBlock(this, true);
+        volumeHeader = new SuperBlock(this);
         try {
             params.initializeDefaultsValues(this);
             volumeHeader.create(params);

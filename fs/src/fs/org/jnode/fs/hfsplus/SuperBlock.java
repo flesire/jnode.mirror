@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
@@ -64,35 +64,33 @@ public class SuperBlock extends HfsPlusObject {
     private byte[] data;
 
     /**
-     * Create the volume header and load information for the file system passed
-     * as parameter.
+     * Create the volume header.
      * 
      * @param fs The file system contains HFS+ partition.
      * 
      * @throws FileSystemException If magic number (0X482B) is incorrect or not
      *             available.
      */
-    public SuperBlock(final HfsPlusFileSystem fs, boolean create) throws FileSystemException {
+    public SuperBlock(final HfsPlusFileSystem fs) throws FileSystemException {
         super(fs);
         log.setLevel(Level.INFO);
         data = new byte[SUPERBLOCK_LENGTH];
-        try {
-            if (!create) {
-                log.info("load HFS+ volume header.");
-                // skip the first 1024 bytes (boot sector) and read the volume
-                // header.
-                ByteBuffer b = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
-                fs.getApi().read(1024, b);
-                data = new byte[SUPERBLOCK_LENGTH];
-                System.arraycopy(b.array(), 0, data, 0, SUPERBLOCK_LENGTH);
-                if (getMagic() != HFSPLUS_SUPER_MAGIC) {
-                    throw new FileSystemException("Not hfs+ volume header (" + getMagic() +
-                            ": bad magic)");
-                }
+    }
 
-            }
+    public void read() throws FileSystemException {
+        log.info("Read HFS+ volume header.");
+        // skip the first 1024 bytes (boot sector) and read the volume
+        // header.
+        ByteBuffer buffer = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
+        try {
+            fs.getApi().read(1024, buffer);
         } catch (IOException e) {
             throw new FileSystemException(e);
+        }
+        data = new byte[SUPERBLOCK_LENGTH];
+        System.arraycopy(buffer.array(), 0, data, 0, SUPERBLOCK_LENGTH);
+        if (getMagic() != HFSPLUS_SUPER_MAGIC) {
+            throw new FileSystemException("Not hfs+ volume header (" + getMagic() + ": bad magic)");
         }
     }
 
@@ -426,11 +424,10 @@ public class SuperBlock extends HfsPlusObject {
     public final boolean isAttribute(final int maskBit) {
         return (((getAttributes() >> maskBit) & 0x1) != 0);
     }
-    
-    public void incrementFolderCount(){
-    	this.setFolderCount(this.getFolderCount() + 1);
+
+    public void incrementFolderCount() {
+        this.setFolderCount(this.getFolderCount() + 1);
     }
-    		
 
     public byte[] getBytes() {
         return data;
@@ -444,17 +441,20 @@ public class SuperBlock extends HfsPlusObject {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Magic: 0x").append(NumberUtils.hex(getMagic(), 4)).append("\n");
         buffer.append("Version: ").append(getVersion()).append("\n").append("\n");
-        buffer.append("Attributes: ").append(getAttributesAsString()).append(" (").append(
-                getAttributes()).append(")").append("\n").append("\n");
-        buffer.append("Create date: ").append(
-                HfsUtils.printDate(getCreateDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Modify date: ").append(
-                HfsUtils.printDate(getModifyDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Backup date: ").append(
-                HfsUtils.printDate(getBackupDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Checked date: ").append(
-                HfsUtils.printDate(getCheckedDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n")
+        buffer.append("Attributes: ").append(getAttributesAsString()).append(" (")
+                .append(getAttributes()).append(")").append("\n").append("\n");
+        buffer.append("Create date: ")
+                .append(HfsUtils.printDate(getCreateDate(), "EEE MMM d HH:mm:ss yyyy"))
                 .append("\n");
+        buffer.append("Modify date: ")
+                .append(HfsUtils.printDate(getModifyDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n");
+        buffer.append("Backup date: ")
+                .append(HfsUtils.printDate(getBackupDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n");
+        buffer.append("Checked date: ")
+                .append(HfsUtils.printDate(getCheckedDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n").append("\n");
         buffer.append("File count: ").append(getFileCount()).append("\n");
         buffer.append("Folder count: ").append(getFolderCount()).append("\n").append("\n");
         buffer.append("Block size: ").append(getBlockSize()).append("\n");

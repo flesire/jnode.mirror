@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.jnode.fs.hfsplus.HFSPlusParams;
 import org.jnode.fs.hfsplus.HfsPlusFileSystem;
@@ -67,9 +68,10 @@ public class Catalog {
         this.fs = fs;
         SuperBlock sb = fs.getVolumeHeader();
         catalogFile = sb.getCatalogFile();
-        
-        if(!catalogFile.getExtent(0).isEmpty()) {
-            buffer = ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH +
+
+        if (!catalogFile.getExtent(0).isEmpty()) {
+            buffer =
+                    ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH +
                             BTHeaderRecord.BT_HEADER_RECORD_LENGTH);
             catalogFile.read(fs, 0, buffer);
             buffer.rewind();
@@ -111,7 +113,7 @@ public class Catalog {
                                 BTHeaderRecord.BT_BIG_KEYS_MASK);
         log.debug(bthr.toString());
         bufferLength += BTHeaderRecord.BT_HEADER_RECORD_LENGTH;
-        
+
         log.info("Create root node.");
         int rootNodePosition = bthr.getRootNode() * nodeSize;
         bufferLength += (rootNodePosition - bufferLength);
@@ -131,13 +133,13 @@ public class Catalog {
      */
     public void update() throws IOException {
         SuperBlock vh = fs.getVolumeHeader();
-        long offset = vh.getCatalogFile().getExtent(0).getStartOffset(vh.getBlockSize());
+        long offset = catalogFile.getExtent(0).getStartOffset(vh.getBlockSize());
         fs.getApi().write(offset, this.getBytes());
     }
-    
-    private CatalogLeafNode createRootNode(HFSPlusParams params){
-    	int nodeSize = params.getCatalogNodeSize();
-    	NodeDescriptor nd =
+
+    private CatalogLeafNode createRootNode(HFSPlusParams params) {
+        int nodeSize = params.getCatalogNodeSize();
+        NodeDescriptor nd =
                 new NodeDescriptor(0, 0, NodeDescriptor.BT_LEAF_NODE, 1,
                         params.getInitializeNumRecords());
         CatalogLeafNode rootNode = new CatalogLeafNode(nd, nodeSize);
@@ -168,9 +170,9 @@ public class Catalog {
      * @param nodeType
      * @return the new node instance
      */
-    public CatalogLeafNode createNode(String filename, CatalogNodeId parentId, CatalogNodeId nodeId,
-            int nodeType) throws IOException {
-    	CatalogLeafNode node;
+    public CatalogLeafNode createNode(String filename, CatalogNodeId parentId,
+            CatalogNodeId nodeId, int nodeType) throws IOException {
+        CatalogLeafNode node;
         HfsUnicodeString name = new HfsUnicodeString(filename);
         // find parent leaf record.
         LeafRecord record = this.getRecord(parentId, name);
@@ -191,16 +193,17 @@ public class Catalog {
             key = new CatalogKey(parentId, name);
             int threadType;
             if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
-            	threadType = CatalogFolder.RECORD_TYPE_FOLDER_THREAD;
+                threadType = CatalogFolder.RECORD_TYPE_FOLDER_THREAD;
             } else {
-            	threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
+                threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
             }
             CatalogThread thread = new CatalogThread(threadType, nodeId, name);
             record = new LeafRecord(key, thread.getBytes());
             node.addNodeRecord(record);
-            
+
         } else {
-            throw new IOException("Leaf record for parent (" + parentId.getId() + ") doesn't exist.");
+            throw new IOException("Leaf record for parent (" + parentId.getId() +
+                    ") doesn't exist.");
         }
         return node;
     }
@@ -215,7 +218,7 @@ public class Catalog {
         LeafRecord lr = null;
         int nodeSize = bthr.getNodeSize();
         ByteBuffer nodeData = ByteBuffer.allocate(nodeSize);
-        catalogFile.read(fs, (bthr.getRootNode()*nodeSize), nodeData);
+        catalogFile.read(fs, (bthr.getRootNode() * nodeSize), nodeData);
         nodeData.rewind();
         byte[] data = ByteBufferUtils.toArray(nodeData);
         NodeDescriptor nd = new NodeDescriptor(nodeData.array(), 0);
