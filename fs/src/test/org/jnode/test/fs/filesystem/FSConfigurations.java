@@ -17,19 +17,16 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.test.fs.filesystem;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.Formatter;
-import org.jnode.fs.ext2.BlockSize;
-import org.jnode.fs.ext2.Ext2FileSystemFormatter;
-import org.jnode.fs.fat.FatFileSystemFormatter;
-import org.jnode.fs.fat.FatType;
 import org.jnode.fs.hfsplus.HFSPlusParams;
 import org.jnode.fs.hfsplus.HfsPlusFileSystemFormatter;
 import org.jnode.test.fs.filesystem.config.DeviceParam;
@@ -54,55 +51,57 @@ public class FSConfigurations implements Iterable<FSTestConfig> {
         String tempDir = System.getProperty("java.io.tmpdir");
         final String diskFileName = tempDir + File.separatorChar + "diskimg.WRK";
 
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.EXT2,
-            FSAccessMode.BOTH, new Ext2FileSystemFormatter(BlockSize._1Kb), diskFileName, "1M"));
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.EXT2,
+        // FSAccessMode.BOTH, new Ext2FileSystemFormatter(BlockSize._1Kb),
+        // diskFileName, "1M"));
+        //
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.EXT2,
+        // FSAccessMode.BOTH, new Ext2FileSystemFormatter(BlockSize._4Kb),
+        // diskFileName, "1M"));
 
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.EXT2,
-            FSAccessMode.BOTH, new Ext2FileSystemFormatter(BlockSize._4Kb), diskFileName, "1M"));
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.NTFS,
+        // FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
 
-//        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.NTFS,
-//                FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
+        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.HFS_PLUS, FSAccessMode.BOTH,
+                new HfsPlusFileSystemFormatter(new HFSPlusParams()), diskFileName, "64M"));
 
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.HFS_PLUS,
-                FSAccessMode.BOTH, new HfsPlusFileSystemFormatter(new HFSPlusParams()), diskFileName, "1M"));
-        
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
-            FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT12), diskFileName, "1M"));
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
+        // FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT12),
+        // diskFileName, "1M"));
+        //
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
+        // FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT16),
+        // diskFileName, "1M"));
+        //
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
+        // FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT32),
+        // diskFileName, "1M"));
+        //
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.JFAT,
+        // FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT32),
+        // diskFileName, "1M"));
 
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
-            FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT16), diskFileName, "1M"));
+        // configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.ISO9660,
+        // FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
 
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.FAT,
-            FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT32), diskFileName, "1M"));
-
-        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.JFAT,
-                FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT32), diskFileName, "1M"));
-
-//        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.ISO9660,
-//                FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
-
-/*
-        configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
-                FSAccessMode.BOTH, "1", DO_FORMAT));
-        //<workDevice name="hdb5" />
-
-        configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
-                FSAccessMode.BOTH, null, DO_NOT_FORMAT));
-        //<workRamdisk size="1M" />
-*/
+        /*
+         * configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
+         * FSAccessMode.BOTH, "1", DO_FORMAT)); //<workDevice name="hdb5" />
+         * 
+         * configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
+         * FSAccessMode.BOTH, null, DO_NOT_FORMAT)); //<workRamdisk size="1M" />
+         */
     }
 
     private List<FSTestConfig> createFileConfigs(OsType osType, FSType fsType,
-                                                 FSAccessMode accessMode, Formatter<? extends FileSystem<?>> formatter,
-                                                 String fileName, String fileSize) {
+            FSAccessMode accessMode, Formatter<? extends FileSystem<?>> formatter, String fileName,
+            String fileSize) {
         FileParam fp = new FileParam(fileName, fileSize);
-        return createConfigs(osType, fsType,
-            accessMode, formatter, fp);
+        return createConfigs(osType, fsType, accessMode, formatter, fp);
     }
 
-    private List<FSTestConfig> createConfigs(OsType osType, FSType fsType,
-                                             FSAccessMode accessMode, Formatter<? extends FileSystem<?>> formatter,
-                                             DeviceParam device) {
+    private List<FSTestConfig> createConfigs(OsType osType, FSType fsType, FSAccessMode accessMode,
+            Formatter<? extends FileSystem<?>> formatter, DeviceParam device) {
         List<FSTestConfig> configs = new ArrayList<FSTestConfig>();
 
         if (osType.isCurrentOS()) {

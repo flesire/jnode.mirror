@@ -73,7 +73,7 @@ public class SuperBlock extends HfsPlusObject {
      */
     public SuperBlock(final HfsPlusFileSystem fs) throws FileSystemException {
         super(fs);
-        log.setLevel(Level.INFO);
+        log.setLevel(Level.DEBUG);
         data = new byte[SUPERBLOCK_LENGTH];
     }
 
@@ -427,6 +427,10 @@ public class SuperBlock extends HfsPlusObject {
 
     public void incrementFolderCount() {
         this.setFolderCount(this.getFolderCount() + 1);
+    }
+
+    public CatalogNodeId getNewCatalogNodeId() {
+        return new CatalogNodeId(this.getNextCatalogId());
     }
 
     public byte[] getBytes() {

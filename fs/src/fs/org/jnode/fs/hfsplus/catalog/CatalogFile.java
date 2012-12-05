@@ -45,7 +45,7 @@ import org.jnode.util.ByteBufferUtils;
 public class CatalogFile {
 
     private final Logger log = Logger.getLogger(getClass());
-    
+
     private HfsPlusFileSystem fs;
 
     /**
@@ -68,14 +68,14 @@ public class CatalogFile {
      * @param fs HFS+ file system that contains catalog informations.
      * @throws IOException
      */
-    public CatalogFile(final HfsPlusFileSystem fs) {    
+    public CatalogFile(final HfsPlusFileSystem fs) {
         this.fs = fs;
     }
-    
+
     public void read(HfsPlusForkData forkData) throws IOException {
-    	log.info("Load B-Tree catalog file.");
-    	catalogFile = forkData;
-    	if (!forkData.getExtent(0).isEmpty()) {
+        log.info("Load B-Tree catalog file.");
+        catalogFile = forkData;
+        if (!forkData.getExtent(0).isEmpty()) {
             buffer =
                     ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH +
                             BTHeaderRecord.BT_HEADER_RECORD_LENGTH);
@@ -91,9 +91,9 @@ public class CatalogFile {
 
         }
     }
-    
+
     public void create(HFSPlusParams params) {
-    	int nodeSize = params.getCatalogNodeSize();
+        int nodeSize = params.getCatalogNodeSize();
         int bufferLength = 0;
         log.info("Create catalog node descriptor.");
         btnd = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
@@ -124,7 +124,7 @@ public class CatalogFile {
         buffer.put(rootNode.getBytes());
         buffer.rewind();
     }
-    
+
     /**
      * Save catalog file to disk.
      * 
@@ -132,6 +132,7 @@ public class CatalogFile {
      */
     public void update() throws IOException {
         SuperBlock vh = fs.getVolumeHeader();
+        catalogFile = vh.getCatalogFile();
         long offset = catalogFile.getExtent(0).getStartOffset(vh.getBlockSize());
         fs.getApi().write(offset, this.getBytes());
     }
@@ -146,7 +147,8 @@ public class CatalogFile {
         HfsUnicodeString name = new HfsUnicodeString(params.getVolumeName());
         CatalogKey ck = new CatalogKey(CatalogNodeId.HFSPLUS_POR_CNID, name);
         CatalogFolderRecord folder =
-                new CatalogFolderRecord(params.isJournaled() ? 2 : 0, CatalogNodeId.HFSPLUS_ROOT_CNID);
+                new CatalogFolderRecord(params.isJournaled() ? 2 : 0,
+                        CatalogNodeId.HFSPLUS_ROOT_CNID);
         LeafRecord record = new LeafRecord(ck, folder.getBytes());
         rootNode.addNodeRecord(record);
         // Second record (thread)
