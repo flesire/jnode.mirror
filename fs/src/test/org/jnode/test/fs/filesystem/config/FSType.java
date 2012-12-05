@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.test.fs.filesystem.config;
 
 import java.io.IOException;
@@ -43,21 +43,16 @@ import org.jnode.fs.ntfs.NTFSFileSystemType;
  * @author Fabien DUMINY
  */
 public enum FSType {
-    EXT2("ext2", Ext2FileSystem.class, Ext2FileSystemType.class,
-        new String[]{".", "..", "lost+found"}),
-    FAT("fat", FatFileSystem.class, FatFileSystemType.class,
-        null),
-    JFAT("jfat", org.jnode.fs.jfat.FatFileSystem.class, org.jnode.fs.jfat.FatFileSystemType.class,
-            null),
+    EXT2("ext2", Ext2FileSystem.class, Ext2FileSystemType.class, new String[] {".", "..",
+        "lost+found"}), FAT("fat", FatFileSystem.class, FatFileSystemType.class, null), JFAT(
+            "jfat", org.jnode.fs.jfat.FatFileSystem.class,
+            org.jnode.fs.jfat.FatFileSystemType.class, null),
 
-    ISO9660("iso9660", ISO9660FileSystem.class, ISO9660FileSystemType.class,
-        new String[]{".", ".."}),
-    NTFS("ntfs", NTFSFileSystem.class, NTFSFileSystemType.class,
-        new String[]{"."}),
+    ISO9660("iso9660", ISO9660FileSystem.class, ISO9660FileSystemType.class, new String[] {".",
+        ".."}), NTFS("ntfs", NTFSFileSystem.class, NTFSFileSystemType.class, new String[] {"."}),
 
-    HFS_PLUS("HFS+", HfsPlusFileSystem.class, HfsPlusFileSystemType.class,
-            new String[]{"."});
-    
+    HFS_PLUS("HFS+", HfsPlusFileSystem.class, HfsPlusFileSystemType.class, null);
+
     private final Class<? extends FileSystem<?>> fsClass;
 
     private final Class<? extends FileSystemType<?>> fsTypeClass;
@@ -66,8 +61,7 @@ public enum FSType {
     private final String[] emptyDirNames;
 
     private FSType(String name, Class<? extends FileSystem<?>> fsClass,
-                   Class<? extends FileSystemType<?>> fsTypeClass,
-                   String[] emptyDirNames) {
+            Class<? extends FileSystemType<?>> fsTypeClass, String[] emptyDirNames) {
         this.name = name;
         this.fsClass = fsClass;
         this.fsTypeClass = fsTypeClass;
@@ -79,7 +73,8 @@ public enum FSType {
     }
 
     public FileSystem<?> mount(Device device, boolean readOnly)
-        throws IOException, FileSystemException, NameNotFoundException, InstantiationException, IllegalAccessException {
+        throws IOException, FileSystemException, NameNotFoundException, InstantiationException,
+        IllegalAccessException {
 
         // mount the device
         FileSystemType<?> type = fsTypeClass.newInstance();

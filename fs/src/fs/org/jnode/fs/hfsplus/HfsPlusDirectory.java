@@ -216,7 +216,6 @@ public class HfsPlusDirectory implements FSDirectory {
     }
 
     private void writeEntries(final FSEntryTable entries) throws IOException {
-        // TODO Auto-generated method stub
     }
 
     /**

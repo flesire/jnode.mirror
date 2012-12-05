@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.tree;
 
 import org.jnode.util.BigEndian;
@@ -94,8 +94,8 @@ public class NodeDescriptor {
     }
 
     public final String toString() {
-        return ("FLink:  " + getFLink() + "\n" + "BLink:  " + getBLink() + "\n" + "Kind:   " +
-                getKind() + "\n" + "height: " + getHeight() + "\n" + "#rec:   " + getNumRecords() + "\n");
+        return ("FLink:  " + getFLink() + " " + "BLink:  " + getBLink() + " " + "Kind:   " +
+                getKind() + " " + "height: " + getHeight() + " " + "#rec:   " + getNumRecords() + " ");
     }
 
     public int getFLink() {

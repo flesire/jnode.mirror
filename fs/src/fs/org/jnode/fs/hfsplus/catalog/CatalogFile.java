@@ -188,7 +188,10 @@ public class CatalogFile {
                 record = new LeafRecord(key, folder.getBytes());
                 node.addNodeRecord(record);
             } else {
-                // Catalog file
+                CatalogFileRecord file = new CatalogFileRecord(0, parentId, null, null);
+                key = new CatalogKey(parentId, name);
+                record = new LeafRecord(key, file.getBytes());
+                node.addNodeRecord(record);
             }
             // Thread record
             key = new CatalogKey(parentId, name);

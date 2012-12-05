@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import org.jnode.fs.hfsplus.ExtendedFileInfo;
@@ -35,7 +35,7 @@ import org.jnode.util.BigEndian;
  * 
  */
 public class CatalogFileRecord {
-    
+
     public static final int RECORD_TYPE_FILE = 0x0002;
     public static final int RECORD_TYPE_FILE_THREAD = 0x0004;
 
@@ -93,7 +93,8 @@ public class CatalogFileRecord {
      * @param datas
      * @param resources
      */
-    public CatalogFileRecord(int flags, CatalogNodeId fileId, HfsPlusForkData datas, HfsPlusForkData resources) {
+    public CatalogFileRecord(int flags, CatalogNodeId fileId, HfsPlusForkData datas,
+            HfsPlusForkData resources) {
         this.recordType = RECORD_TYPE_FILE;
         this.flags = flags;
         this.fileId = fileId;
@@ -109,19 +110,26 @@ public class CatalogFileRecord {
      * @return a serious case of nothing much at all
      */
     public byte[] getBytes() {
-        return null;
+        byte[] data = new byte[CATALOG_FILE_SIZE];
+        BigEndian.setInt16(data, 0, recordType);
+        BigEndian.setInt16(data, 2, flags);
+        System.arraycopy(fileId.getBytes(), 0, data, 8, fileId.getBytes().length);
+        BigEndian.setInt32(data, 12, createDate);
+        BigEndian.setInt32(data, 16, contentModDate);
+        BigEndian.setInt32(data, 20, attrModDate);
+        return data;
     }
 
     public final String toString() {
         StringBuffer s = new StringBuffer();
         s.append("Record type:").append(recordType).append("\t");
         s.append("File ID  :").append(fileId.getId()).append("\n");
-        s.append("Creation Date :").append(
-                HfsUtils.printDate(createDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        s.append("Content Mod Date  :").append(
-                HfsUtils.printDate(contentModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        s.append("Attr Mod Date  :").append(
-                HfsUtils.printDate(attrModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Creation Date :")
+                .append(HfsUtils.printDate(createDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Content Mod Date  :")
+                .append(HfsUtils.printDate(contentModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Attr Mod Date  :")
+                .append(HfsUtils.printDate(attrModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
         return s.toString();
     }
 

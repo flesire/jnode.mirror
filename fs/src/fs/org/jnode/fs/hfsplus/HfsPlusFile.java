@@ -17,13 +17,14 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jnode.fs.FSFile;
 import org.jnode.fs.FSFileSlackSpace;
 import org.jnode.fs.FSFileStreams;
@@ -59,12 +60,13 @@ public class HfsPlusFile implements FSFile, FSFileSlackSpace, FSFileStreams {
     @Override
     public final void read(final long fileOffset, final ByteBuffer dest) throws IOException {
         HfsPlusFileSystem fs = (HfsPlusFileSystem) getFileSystem();
-        file.getDatas().read(fs,fileOffset,dest);
+        file.getDatas().read(fs, fileOffset, dest);
     }
 
     @Override
     public void write(final long fileOffset, final ByteBuffer src) throws IOException {
         // TODO Auto-generated method stub
+        System.out.println(fileOffset);
 
     }
 
