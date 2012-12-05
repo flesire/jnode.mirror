@@ -31,7 +31,7 @@ import org.jnode.fs.FSDirectory;
 import org.jnode.fs.FSEntry;
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.ReadOnlyFileSystemException;
-import org.jnode.fs.hfsplus.catalog.Catalog;
+import org.jnode.fs.hfsplus.catalog.CatalogFile;
 import org.jnode.fs.hfsplus.catalog.CatalogFileRecord;
 import org.jnode.fs.hfsplus.catalog.CatalogFolderRecord;
 import org.jnode.fs.hfsplus.catalog.CatalogKey;
@@ -225,7 +225,7 @@ public class HfsPlusDirectory implements FSDirectory {
         if (getFileSystem().isReadOnly()) {
             throw new ReadOnlyFileSystemException();
         }
-        Catalog catalog = ((HfsPlusFileSystem) getFileSystem()).getCatalog();
+        CatalogFile catalog = ((HfsPlusFileSystem) getFileSystem()).getCatalog();
         SuperBlock volumeHeader = ((HfsPlusFileSystem) getFileSystem()).getVolumeHeader();
         CatalogLeafNode node =
                 catalog.createNode(name, this.folder.getFolderId(),

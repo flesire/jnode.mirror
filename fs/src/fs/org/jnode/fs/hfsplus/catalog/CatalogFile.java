@@ -20,6 +20,10 @@
 
 package org.jnode.fs.hfsplus.catalog;
 
+import static org.jnode.fs.hfsplus.catalog.CatalogFileRecord.RECORD_TYPE_FILE_THREAD;
+import static org.jnode.fs.hfsplus.catalog.CatalogFolderRecord.RECORD_TYPE_FOLDER;
+import static org.jnode.fs.hfsplus.catalog.CatalogFolderRecord.RECORD_TYPE_FOLDER_THREAD;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -38,9 +42,10 @@ import org.jnode.fs.hfsplus.tree.LeafRecord;
 import org.jnode.fs.hfsplus.tree.NodeDescriptor;
 import org.jnode.util.ByteBufferUtils;
 
-public class Catalog {
+public class CatalogFile {
 
     private final Logger log = Logger.getLogger(getClass());
+    
     private HfsPlusFileSystem fs;
 
     /**
@@ -63,17 +68,18 @@ public class Catalog {
      * @param fs HFS+ file system that contains catalog informations.
      * @throws IOException
      */
-    public Catalog(final HfsPlusFileSystem fs) throws IOException {
-        log.info("Load B-Tree catalog file.");
+    public CatalogFile(final HfsPlusFileSystem fs) {    
         this.fs = fs;
-        SuperBlock sb = fs.getVolumeHeader();
-        catalogFile = sb.getCatalogFile();
-
-        if (!catalogFile.getExtent(0).isEmpty()) {
+    }
+    
+    public void read(HfsPlusForkData forkData) throws IOException {
+    	log.info("Load B-Tree catalog file.");
+    	catalogFile = forkData;
+    	if (!forkData.getExtent(0).isEmpty()) {
             buffer =
                     ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH +
                             BTHeaderRecord.BT_HEADER_RECORD_LENGTH);
-            catalogFile.read(fs, 0, buffer);
+            forkData.read(fs, 0, buffer);
             buffer.rewind();
             byte[] data = ByteBufferUtils.toArray(buffer);
             log.info("Load catalog node descriptor.");
@@ -85,16 +91,9 @@ public class Catalog {
 
         }
     }
-
-    /**
-     * Create new Catalog
-     * 
-     * @param params
-     */
-    public Catalog(HFSPlusParams params, HfsPlusFileSystem fs) {
-        log.info("Create B-Tree catalog file.");
-        this.fs = fs;
-        int nodeSize = params.getCatalogNodeSize();
+    
+    public void create(HFSPlusParams params) {
+    	int nodeSize = params.getCatalogNodeSize();
         int bufferLength = 0;
         log.info("Create catalog node descriptor.");
         btnd = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
@@ -125,7 +124,7 @@ public class Catalog {
         buffer.put(rootNode.getBytes());
         buffer.rewind();
     }
-
+    
     /**
      * Save catalog file to disk.
      * 
@@ -181,7 +180,7 @@ public class Catalog {
             node = new CatalogLeafNode(nd, 8192);
             // Normal record
             CatalogKey key = new CatalogKey(parentId, name);
-            if (nodeType == CatalogFolderRecord.RECORD_TYPE_FOLDER) {
+            if (nodeType == RECORD_TYPE_FOLDER) {
                 CatalogFolderRecord folder = new CatalogFolderRecord(0, parentId);
                 key = new CatalogKey(parentId, name);
                 record = new LeafRecord(key, folder.getBytes());
@@ -192,10 +191,10 @@ public class Catalog {
             // Thread record
             key = new CatalogKey(parentId, name);
             int threadType;
-            if (nodeType == CatalogFolderRecord.RECORD_TYPE_FOLDER) {
-                threadType = CatalogFolderRecord.RECORD_TYPE_FOLDER_THREAD;
+            if (nodeType == RECORD_TYPE_FOLDER) {
+                threadType = RECORD_TYPE_FOLDER_THREAD;
             } else {
-                threadType = CatalogFileRecord.RECORD_TYPE_FILE_THREAD;
+                threadType = RECORD_TYPE_FILE_THREAD;
             }
             CatalogThread thread = new CatalogThread(threadType, nodeId, name);
             record = new LeafRecord(key, thread.getBytes());
