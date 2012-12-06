@@ -93,7 +93,7 @@ public class HfsPlusForkData {
         s.append("Clump size : ").append(clumpSize).append("\n");
         s.append("Total Blocks : ").append(totalBlock).append("\n");
         for (int i = 0; i < extents.length; i++) {
-            s.append("Extent[" + i + "]: " + extents[i].toString());
+            s.append("Extent[").append(i).append("]: ").append(extents[i].toString());
         }
         return s.toString();
     }
