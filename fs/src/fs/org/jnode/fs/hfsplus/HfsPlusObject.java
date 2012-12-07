@@ -23,7 +23,9 @@ package org.jnode.fs.hfsplus;
 import org.jnode.fs.FSObject;
 
 public class HfsPlusObject implements FSObject {
-    protected HfsPlusFileSystem fs;
+    private HfsPlusFileSystem fs;
+
+    private boolean valid;
 
     public HfsPlusObject(final HfsPlusFileSystem fileSystem) {
         this.fs = fileSystem;

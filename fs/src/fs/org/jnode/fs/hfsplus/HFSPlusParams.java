@@ -255,10 +255,6 @@ public class HFSPlusParams {
         return catalogNodeSize;
     }
 
-    public long getBlockCount() {
-        return blockDeviceSize / blockSize;
-    }
-
     public int getCatalogClumpSize() {
         return catalogClumpSize;
     }
@@ -301,6 +297,10 @@ public class HFSPlusParams {
 
     public int getInitializeNumRecords() {
         return journaled ? 6 : 2;
+    }
+
+    public long getBlockCount() {
+        return blockDeviceSize / blockSize;
     }
 
 }

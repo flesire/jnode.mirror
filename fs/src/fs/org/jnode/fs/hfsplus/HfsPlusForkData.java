@@ -88,7 +88,7 @@ public class HfsPlusForkData {
     }
 
     public final String toString() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("Total size : ").append(totalSize).append("\n");
         s.append("Clump size : ").append(clumpSize).append("\n");
         s.append("Total Blocks : ").append(totalBlock).append("\n");
