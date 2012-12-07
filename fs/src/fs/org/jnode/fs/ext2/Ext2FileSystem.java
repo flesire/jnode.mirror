@@ -77,9 +77,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
         blockCache = new BlockCache(50, (float) 0.75);
         inodeCache = new INodeCache(50, (float) 0.75);
-
-        // groupDescriptorLock = new Object();
-        // superblockLock = new Object();
+        superblock = new Superblock();
     }
 
     public void read() throws FileSystemException {
@@ -87,12 +85,9 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
         try {
             data = ByteBuffer.allocate(Superblock.SUPERBLOCK_LENGTH);
-
             // skip the first 1024 bytes (bootsector) and read the superblock
             // TODO: the superblock should read itself
             getApi().read(1024, data);
-            // superblock = new SuperBlock(data, this);
-            superblock = new Superblock();
             superblock.read(data.array(), this);
 
             // read the group descriptors
@@ -100,11 +95,10 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             groupDescriptors = new GroupDescriptor[groupCount];
             iNodeTables = new INodeTable[groupCount];
 
+            GroupDescriptor groupDescriptor = new GroupDescriptor();
             for (int i = 0; i < groupCount; i++) {
-                // groupDescriptors[i]=new GroupDescriptor(i, this);
-                groupDescriptors[i] = new GroupDescriptor();
+                groupDescriptors[i] = groupDescriptor;
                 groupDescriptors[i].read(i, this);
-
                 iNodeTables[i] = new INodeTable(this, (int) groupDescriptors[i].getInodeTable());
             }
 
@@ -174,7 +168,6 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
     public void create(BlockSize blockSize) throws FileSystemException {
         try {
             // create the superblock
-            superblock = new Superblock();
             superblock.create(blockSize, this);
 
             // create the group descriptors
@@ -183,8 +176,9 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
             iNodeTables = new INodeTable[groupCount];
 
+            GroupDescriptor groupDescriptor = new GroupDescriptor();
             for (int i = 0; i < groupCount; i++) {
-                groupDescriptors[i] = new GroupDescriptor();
+                groupDescriptors[i] = groupDescriptor;
                 groupDescriptors[i].create(i, this);
             }
 
@@ -192,21 +186,20 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             // create the block bitmap
             // create the inode bitmap
             // fill the inode table with zeroes
+            int blockSizeSize = blockSize.getSize();
             for (int i = 0; i < groupCount; i++) {
                 log.debug("creating group " + i);
-
-                byte[] blockBitmap = new byte[blockSize.getSize()];
-                byte[] inodeBitmap = new byte[blockSize.getSize()];
-
+                byte[] blockBitmap = new byte[blockSizeSize];
+                byte[] inodeBitmap = new byte[blockSizeSize];
                 // update the block bitmap: mark the metadata blocks allocated
                 long iNodeTableBlock = groupDescriptors[i].getInodeTable();
                 long firstNonMetadataBlock = iNodeTableBlock + INodeTable.getSizeInBlocks(this);
                 int metadataLength =
                         (int) (firstNonMetadataBlock - (superblock.getFirstDataBlock() + i *
                                 superblock.getBlocksPerGroup()));
-                for (int j = 0; j < metadataLength; j++)
+                for (int j = 0; j < metadataLength; j++) {
                     BlockBitmap.setBit(blockBitmap, j);
-
+                }
                 // set the padding at the end of the last block group
                 if (i == groupCount - 1) {
                     for (long k = superblock.getBlocksCount(); k < groupCount * superblock.getBlocksPerGroup(); k++)
@@ -220,7 +213,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
                         INodeBitmap.setBit(inodeBitmap, j);
 
                 // create an empty inode table
-                byte[] emptyBlock = new byte[blockSize.getSize()];
+                byte[] emptyBlock = new byte[blockSizeSize];
                 for (long j = iNodeTableBlock; j < firstNonMetadataBlock; j++)
                     writeBlock(j, emptyBlock, false);
 
@@ -790,7 +783,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         }
 
         if (result.isSuccessful()) {
-            result.setBlock(group * getSuperblock().getBlocksPerGroup() +
+            result.setBlock(group * superblock.getBlocksPerGroup() +
                     superblock.getFirstDataBlock() + result.getBlock());
             result.setFreeBlocksCount(gdesc.getFreeBlocksCount());
         }
