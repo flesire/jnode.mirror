@@ -36,11 +36,11 @@ import org.jnode.fs.FileSystemException;
  */
 public class INodeTable {
     private final int blockSize;
-    int blockCount;
-    Ext2FileSystem fs;
-    int firstBlock; // the first block of the inode table
+    private int blockCount;
+    private Ext2FileSystem fs;
+    private long firstBlock; // the first block of the inode table
 
-    public INodeTable(Ext2FileSystem fs, int firstBlock) {
+    public INodeTable(Ext2FileSystem fs, long firstBlock) {
         this.fs = fs;
         this.firstBlock = firstBlock;
         blockSize = fs.getBlockSize();

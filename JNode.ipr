@@ -1318,6 +1318,14 @@
       <item index="5" class="java.lang.String" itemvalue="ERROR" />
     </list>
   </component>
+  <component name="IvyIDEA.ProjectSettings">
+    <option name="artifactTypeSettings">
+      <ArtifactTypeSettings />
+    </option>
+    <option name="propertiesSettings">
+      <PropertiesSettings />
+    </option>
+  </component>
   <component name="JavacSettings">
     <option name="MAXIMUM_HEAP_SIZE" value="1024" />
   </component>

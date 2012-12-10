@@ -201,6 +201,10 @@ public class Superblock {
 
     }
 
+    public int getGroupCount() {
+        return (int) Ext2Utils.ceilDiv(this.getBlocksCount(), this.getBlocksPerGroup());
+    }
+
     // this field is only written during format (so no synchronization issues
     // here)
     public long getINodesCount() {

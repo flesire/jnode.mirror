@@ -43,6 +43,9 @@ import org.jnode.fs.spi.AbstractFileSystem;
  * 
  */
 public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
+    /** Class logger */
+    private final Logger log = Logger.getLogger(getClass());
+    /** File system metadata information block */
     private Superblock superblock;
 
     private GroupDescriptor groupDescriptors[];
@@ -55,31 +58,33 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
     private INodeCache inodeCache;
 
-    private final Logger log = Logger.getLogger(getClass());
 
-    // private Object groupDescriptorLock;
-    // private Object superblockLock;
-
-    // private final boolean DEBUG=true;
 
     // TODO: SYNC_WRITE should be made a parameter
     /** if true, writeBlock() does not return until the block is written to disk */
     private boolean SYNC_WRITE = true;
 
     /**
-     * Constructor for Ext2FileSystem in specified readOnly mode
+     * Constructor for Ext2FileSystem.
+     *
+     * @param device
+     * @param readOnly
+     * @param type
      * 
      * @throws FileSystemException
      */
     public Ext2FileSystem(Device device, boolean readOnly, Ext2FileSystemType type) throws FileSystemException {
         super(device, readOnly, type);
-        log.setLevel(Level.DEBUG);
-
-        blockCache = new BlockCache(50, (float) 0.75);
-        inodeCache = new INodeCache(50, (float) 0.75);
+        blockCache = new BlockCache(50, 0.75f);
+        inodeCache = new INodeCache(50, 0.75f);
         superblock = new Superblock();
     }
 
+    /**
+     * Read file system metadata from the device.
+     *
+     * @throws FileSystemException
+     */
     public void read() throws FileSystemException {
         ByteBuffer data;
 
@@ -91,7 +96,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             superblock.read(data.array(), this);
 
             // read the group descriptors
-            groupCount = (int) Ext2Utils.ceilDiv(superblock.getBlocksCount(), superblock.getBlocksPerGroup());
+            groupCount = superblock.getGroupCount();
             groupDescriptors = new GroupDescriptor[groupCount];
             iNodeTables = new INodeTable[groupCount];
 
@@ -99,7 +104,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             for (int i = 0; i < groupCount; i++) {
                 groupDescriptors[i] = groupDescriptor;
                 groupDescriptors[i].read(i, this);
-                iNodeTables[i] = new INodeTable(this, (int) groupDescriptors[i].getInodeTable());
+                iNodeTables[i] = new INodeTable(this, groupDescriptors[i].getInodeTable());
             }
 
         } catch (FileSystemException e) {
@@ -165,17 +170,20 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
                 "  #inodes/group: " + superblock.getINodesPerGroup());
     }
 
+    /**
+     * Create metadata information for a new file system.
+     * @param blockSize Size of a block.
+     *
+     * @throws FileSystemException
+     */
     public void create(BlockSize blockSize) throws FileSystemException {
         try {
             // create the superblock
             superblock.create(blockSize, this);
-
+            groupCount = superblock.getGroupCount();
             // create the group descriptors
-            groupCount = (int) Ext2Utils.ceilDiv(superblock.getBlocksCount(), superblock.getBlocksPerGroup());
             groupDescriptors = new GroupDescriptor[groupCount];
-
             iNodeTables = new INodeTable[groupCount];
-
             GroupDescriptor groupDescriptor = new GroupDescriptor();
             for (int i = 0; i < groupCount; i++) {
                 groupDescriptors[i] = groupDescriptor;
@@ -183,47 +191,9 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             }
 
             // create each block group:
-            // create the block bitmap
-            // create the inode bitmap
-            // fill the inode table with zeroes
-            int blockSizeSize = blockSize.getSize();
             for (int i = 0; i < groupCount; i++) {
-                log.debug("creating group " + i);
-                byte[] blockBitmap = new byte[blockSizeSize];
-                byte[] inodeBitmap = new byte[blockSizeSize];
-                // update the block bitmap: mark the metadata blocks allocated
-                long iNodeTableBlock = groupDescriptors[i].getInodeTable();
-                long firstNonMetadataBlock = iNodeTableBlock + INodeTable.getSizeInBlocks(this);
-                int metadataLength =
-                        (int) (firstNonMetadataBlock - (superblock.getFirstDataBlock() + i *
-                                superblock.getBlocksPerGroup()));
-                for (int j = 0; j < metadataLength; j++) {
-                    BlockBitmap.setBit(blockBitmap, j);
-                }
-                // set the padding at the end of the last block group
-                if (i == groupCount - 1) {
-                    for (long k = superblock.getBlocksCount(); k < groupCount * superblock.getBlocksPerGroup(); k++)
-                        BlockBitmap.setBit(blockBitmap, (int) (k % superblock.getBlocksPerGroup()));
-                }
-
-                // update the inode bitmap: mark the special inodes allocated in
-                // the first block group
-                if (i == 0)
-                    for (int j = 0; j < superblock.getFirstInode() - 1; j++)
-                        INodeBitmap.setBit(inodeBitmap, j);
-
-                // create an empty inode table
-                byte[] emptyBlock = new byte[blockSizeSize];
-                for (long j = iNodeTableBlock; j < firstNonMetadataBlock; j++)
-                    writeBlock(j, emptyBlock, false);
-
-                iNodeTables[i] = new INodeTable(this, (int) iNodeTableBlock);
-
-                writeBlock(groupDescriptors[i].getBlockBitmap(), blockBitmap, false);
-                writeBlock(groupDescriptors[i].getInodeBitmap(), inodeBitmap, false);
+                createGroup(blockSize.getSize(), i);
             }
-
-            log.info("superblock.getBlockSize(): " + superblock.getBlockSize());
 
             buildRootEntry();
 
@@ -234,6 +204,50 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             throw new FileSystemException("Unable to create filesystem", ioe);
         }
 
+    }
+
+    /**
+     * Create block bitmap, inode bitmap and fill the corresponding inode table with zeroes.
+     * @param blockSize
+     * @param i
+     * @throws IOException
+     */
+    private void createGroup(int blockSize, int i) throws IOException {
+        log.debug("creating group " + i);
+        // create the block bitmap
+        // create the inode bitmap
+        byte[] blockBitmap = new byte[blockSize];
+        byte[] inodeBitmap = new byte[blockSize];
+        // update the block bitmap: mark the metadata blocks allocated
+        long iNodeTableBlock = groupDescriptors[i].getInodeTable();
+        long firstNonMetadataBlock = iNodeTableBlock + INodeTable.getSizeInBlocks(this);
+        int metadataLength =
+                (int) (firstNonMetadataBlock - (superblock.getFirstDataBlock() + i *
+                        superblock.getBlocksPerGroup()));
+        for (int j = 0; j < metadataLength; j++) {
+            BlockBitmap.setBit(blockBitmap, j);
+        }
+        // set the padding at the end of the last block group
+        if (i == groupCount - 1) {
+            for (long k = superblock.getBlocksCount(); k < groupCount * superblock.getBlocksPerGroup(); k++)
+                BlockBitmap.setBit(blockBitmap, (int) (k % superblock.getBlocksPerGroup()));
+        }
+        // fill the inode table with zeroes
+        // update the inode bitmap: mark the special inodes allocated in
+        // the first block group
+        if (i == 0)
+            for (int j = 0; j < superblock.getFirstInode() - 1; j++)
+                INodeBitmap.setBit(inodeBitmap, j);
+
+        // create an empty inode table
+        byte[] emptyBlock = new byte[blockSize];
+        for (long j = iNodeTableBlock; j < firstNonMetadataBlock; j++)
+            writeBlock(j, emptyBlock, false);
+
+        iNodeTables[i] = new INodeTable(this, (int) iNodeTableBlock);
+
+        writeBlock(groupDescriptors[i].getBlockBitmap(), blockBitmap, false);
+        writeBlock(groupDescriptors[i].getInodeBitmap(), inodeBitmap, false);
     }
 
     /**
@@ -311,10 +325,11 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
      * operations are synchronized to the blocks (actually, to Block.getData()),
      * so at any point in time it has to be sure that no two copies of the same
      * block are stored in the cache.
-     * 
-     * @return data block nr
+     *
+     * @param blockNumber Number identifying the block.
+     * @return Byte array contains block data.
      */
-    protected byte[] getBlock(long nr) throws IOException {
+    protected byte[] getBlock(long blockNumber) throws IOException {
         if (isClosed())
             throw new IOException("FS closed (fs instance: " + this + ")");
         // log.debug("blockCache size: "+blockCache.size());
@@ -322,7 +337,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         int blockSize = superblock.getBlockSize();
         Block result;
 
-        Integer key = (int) nr;
+        Integer key = (int) blockNumber;
         synchronized (blockCache) {
             // check if the block has already been retrieved
             if (blockCache.containsKey(key)) {
@@ -342,14 +357,14 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         // the block will be put in the cache only once in the second
         // synchronized block
         ByteBuffer data = ByteBuffer.allocate(blockSize);
-        log.debug("Reading block " + nr + " (offset: " + nr * blockSize + ") from disk");
-        getApi().read(nr * blockSize, data);
+        log.debug("Reading block " + blockNumber + " (offset: " + blockNumber * blockSize + ") from disk");
+        getApi().read(blockNumber * blockSize, data);
 
         // synchronize again
         synchronized (blockCache) {
             // check if the block has already been retrieved
             if (!blockCache.containsKey(key)) {
-                result = new Block(this, nr, data.array());
+                result = new Block(this, blockNumber, data.array());
                 blockCache.put(key, result);
                 return result.getData();
             } else {

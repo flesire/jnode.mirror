@@ -5,25 +5,21 @@
     <option name="ANALYSIS_IN_BACKGROUND" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="24b3740b-e73c-4121-b8cc-d72ed6c97721" name="Default" comment="" />
-    <list id="f91d921c-92b6-4b54-ae52-887841385975" name="no commit" comment="">
+    <list default="true" id="24b3740b-e73c-4121-b8cc-d72ed6c97721" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JNode.ipr" afterPath="$PROJECT_DIR$/JNode.ipr" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/all/all.iml" afterPath="$PROJECT_DIR$/all/all.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/builder/builder.iml" afterPath="$PROJECT_DIR$/builder/builder.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/core/core.iml" afterPath="$PROJECT_DIR$/core/core.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/distr/distr.iml" afterPath="$PROJECT_DIR$/distr/distr.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/fs.iml" afterPath="$PROJECT_DIR$/fs/fs.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gui/gui.iml" afterPath="$PROJECT_DIR$/gui/gui.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jnode.iml" afterPath="$PROJECT_DIR$/jnode.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/net/net.iml" afterPath="$PROJECT_DIR$/net/net.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shell/shell.iml" afterPath="$PROJECT_DIR$/shell/shell.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/textui/textui.iml" afterPath="$PROJECT_DIR$/textui/textui.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JNode.iws" afterPath="$PROJECT_DIR$/JNode.iws" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java" />
     </list>
+    <list id="f91d921c-92b6-4b54-ae52-887841385975" name="no commit" comment="" />
     <ignored path="JNode.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1354897319473" ignored="false" />
+    <file path="/Dummy.txt" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1355155217055" ignored="false" />
     <file path="/HfsPlusObject.java" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1354807384815" ignored="false" />
-    <file path="/Ext2FileSystem.java" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1354896502021" ignored="false" />
+    <file path="/Ext2FileSystem.java" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1355156927343" ignored="false" />
+    <file path="/Superblock.java" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1355155476442" ignored="false" />
+    <file path="/INodeTable.java" changelist="24b3740b-e73c-4121-b8cc-d72ed6c97721" time="1355155898823" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,8 +34,8 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <breakpoint_rules default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <breakpoint_rules default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -86,7 +82,34 @@
       <file leaf-file-name="Ext2FileSystem.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="201" column="17" selection-start="8778" selection-end="8778" vertical-scroll-proportion="0.32593855">
+            <state line="198" column="0" selection-start="8028" selection-end="8028" vertical-scroll-proportion="-0.11584327">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AbstractFileSystem.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/spi/AbstractFileSystem.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="81" selection-start="1474" selection-end="1484" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="INodeTable.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="70" column="30" selection-start="2380" selection-end="2388" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Superblock.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="204" column="66" selection-start="7521" selection-end="7521" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -114,6 +137,8 @@
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HFSPlusParams.java" />
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusObject.java" />
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/spi/AbstractFSDirectory.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java" />
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java" />
       </list>
     </option>
@@ -364,7 +389,7 @@
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="preferences.pluginManager" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
@@ -517,28 +542,29 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-4" width="1688" height="1058" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32785088" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32894737" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="IvyIDEA" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.249694" sideWeight="0.67105263" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39802632" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.249694" sideWeight="0.6721491" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32894737" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39802632" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -649,60 +675,14 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/SuperBlock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="36" selection-start="3990" selection-end="3990" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HFSPlusParams.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="256" column="0" selection-start="8747" selection-end="8747" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusEntry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="13" selection-start="1323" selection-end="1323" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="26" selection-start="1021" selection-end="1021" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="13" selection-start="1186" selection-end="1186" vertical-scroll-proportion="0.11486486">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/service/def/FileSystemPlugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="189" column="29" selection-start="5877" selection-end="5877" vertical-scroll-proportion="0.029010238">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/service/def/FileHandleManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="97" column="10" selection-start="2934" selection-end="2934" vertical-scroll-proportion="-1.8381602">
-          <folding />
-        </state>
+        <state line="97" column="10" selection-start="2934" selection-end="2934" vertical-scroll-proportion="-1.8381602" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/service/def/FileSystemMounter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="39" selection-start="2576" selection-end="2576" vertical-scroll-proportion="0.029010238">
-          <folding />
-        </state>
+        <state line="78" column="39" selection-start="2576" selection-end="2576" vertical-scroll-proportion="0.029010238" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/FSDirectory.java">
@@ -714,30 +694,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/builder/src/builder/org/jnode/build/BootFloppyBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="230" column="28" selection-start="7255" selection-end="7255" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="230" column="28" selection-start="7255" selection-end="7255" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/service/def/VirtualFS.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="12" selection-start="1073" selection-end="1073" vertical-scroll-proportion="0.029010238">
-          <folding />
-        </state>
+        <state line="32" column="12" selection-start="1073" selection-end="1073" vertical-scroll-proportion="0.029010238" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/fat/AbstractDirectory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="166" column="37" selection-start="5145" selection-end="5145" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="166" column="37" selection-start="5145" selection-end="5145" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/service/def/FileSystemAPIImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="412" column="29" selection-start="12249" selection-end="12249" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="412" column="29" selection-start="12249" selection-end="12249" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/spi/AbstractFSDirectory.java">
@@ -754,9 +726,51 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="204" column="66" selection-start="7521" selection-end="7521" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="23" selection-start="2448" selection-end="2448" vertical-scroll-proportion="0.3321976">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/GroupDescriptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="176" column="30" selection-start="6511" selection-end="6516" vertical-scroll-proportion="0.36115843">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="70" column="30" selection-start="2380" selection-end="2388" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/FileSystem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="17" selection-start="1069" selection-end="1069" vertical-scroll-proportion="-0.53662694">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/spi/AbstractFileSystem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="81" selection-start="1474" selection-end="1484" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="201" column="17" selection-start="8778" selection-end="8778" vertical-scroll-proportion="0.32593855">
+        <state line="198" column="0" selection-start="8028" selection-end="8028" vertical-scroll-proportion="-0.11584327">
           <folding />
         </state>
       </provider>
