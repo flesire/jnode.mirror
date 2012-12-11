@@ -43,14 +43,12 @@ public class FSBitmap {
         byte bitIndex = (byte) (index % 8);
         byte mask = (byte) (1 << bitIndex);
 
-        return ((data[byteIndex] & mask) == 0) ? true : false;
+        return ((data[byteIndex] & mask) == 0);
     }
 
     protected static boolean isFree(byte data, int index) {
-        // byte bitIndex = (byte) (index % 8);
-
         byte mask = (byte) (1 << index);
-        return ((data & mask) == 0) ? true : false;
+        return ((data & mask) == 0);
     }
 
     protected static void setBit(byte[] data, int index) {
@@ -63,7 +61,6 @@ public class FSBitmap {
 
     protected static void setBit(byte[] data, int byteIndex, int bitIndex) {
         byte mask = (byte) (1 << bitIndex);
-
         data[byteIndex] = (byte) (data[byteIndex] | mask);
     }
 
