@@ -56,10 +56,8 @@ final class VirtualMountEntry implements FSEntry {
         this.mountedFS = mountedFS;
         this.name = name;
         this.parent = parent.getDirectory();
-        if ((path == null) || (path.length() == 0)) {
-            this.root = mountedFS.getRootEntry();
-        } else {
-            FSEntry e = mountedFS.getRootEntry();
+        FSEntry entry = mountedFS.getRootEntry();
+        if ((path != null) && (path.length() > 0)) {
             while (path != null) {
                 final int idx = path.indexOf(File.separatorChar);
                 final String dir;
@@ -70,10 +68,10 @@ final class VirtualMountEntry implements FSEntry {
                     dir = path;
                     path = null;
                 }
-                e = e.getDirectory().getEntry(dir);
+                entry = entry.getDirectory().getEntry(dir);
             }
-            this.root = e;
         }
+        this.root = entry;
     }
 
     /**
