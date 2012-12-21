@@ -58,8 +58,6 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
     private INodeCache inodeCache;
 
-
-
     // TODO: SYNC_WRITE should be made a parameter
     /** if true, writeBlock() does not return until the block is written to disk */
     private boolean SYNC_WRITE = true;
@@ -86,14 +84,8 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
      * @throws FileSystemException
      */
     public void read() throws FileSystemException {
-        ByteBuffer data;
-
         try {
-            data = ByteBuffer.allocate(Superblock.SUPERBLOCK_LENGTH);
-            // skip the first 1024 bytes (bootsector) and read the superblock
-            // TODO: the superblock should read itself
-            getApi().read(1024, data);
-            superblock.read(data.array(), this);
+            superblock.read(this);
 
             // read the group descriptors
             groupCount = superblock.getGroupCount();
@@ -113,38 +105,8 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             throw new FileSystemException(e);
         }
 
-        // check for unsupported filesystem options
-        // (an unsupported INCOMPAT feature means that the fs may not be mounted
-        // at all)
-        if (hasIncompatFeature(Ext2Constants.EXT2_FEATURE_INCOMPAT_COMPRESSION))
-            throw new FileSystemException(getDevice().getId() +
-                    " Unsupported filesystem feature (COMPRESSION) disallows mounting");
-        if (hasIncompatFeature(Ext2Constants.EXT2_FEATURE_INCOMPAT_META_BG))
-            throw new FileSystemException(getDevice().getId() +
-                    " Unsupported filesystem feature (META_BG) disallows mounting");
-        if (hasIncompatFeature(Ext2Constants.EXT3_FEATURE_INCOMPAT_JOURNAL_DEV))
-            throw new FileSystemException(getDevice().getId() +
-                    " Unsupported filesystem feature (JOURNAL_DEV) disallows mounting");
-        if (hasIncompatFeature(Ext2Constants.EXT3_FEATURE_INCOMPAT_RECOVER))
-            throw new FileSystemException(getDevice().getId() +
-                    " Unsupported filesystem feature (RECOVER) disallows mounting");
+        checkFeatures();
 
-        // an unsupported RO_COMPAT feature means that the filesystem can only
-        // be mounted readonly
-        if (hasROFeature(Ext2Constants.EXT2_FEATURE_RO_COMPAT_LARGE_FILE)) {
-            log.info(getDevice().getId() + " Unsupported filesystem feature (LARGE_FILE) forces readonly mode");
-            setReadOnly(true);
-        }
-        if (hasROFeature(Ext2Constants.EXT2_FEATURE_RO_COMPAT_BTREE_DIR)) {
-            log.info(getDevice().getId() + " Unsupported filesystem feature (BTREE_DIR) forces readonly mode");
-            setReadOnly(true);
-        }
-
-        // if the filesystem has not been cleanly unmounted, mount it readonly
-        if (superblock.getState() == Ext2Constants.EXT2_ERROR_FS) {
-            log.info(getDevice().getId() + " Filesystem has not been cleanly unmounted, mounting it readonly");
-            setReadOnly(true);
-        }
 
         // if the filesystem has been mounted R/W, set it to "unclean"
         if (!isReadOnly()) {
@@ -157,19 +119,7 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
             superblock.setWTime(Ext2Utils.encodeDate(new Date()));
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
-        log.debug(" superblock: " + "\n" + 
-                "  #Mount: " + superblock.getMntCount() + "\n" + 
-                "  #MaxMount: " + superblock.getMaxMntCount() + "\n" + "  Last mount time: " +
-                sdf.format(Ext2Utils.decodeDate(superblock.getMTime()).getTime()) + "\n" + 
-                "  Last write time: " +
-                sdf.format(Ext2Utils.decodeDate(superblock.getWTime()).getTime()) + "\n" + 
-                "  #blocks: " + superblock.getBlocksCount() + "\n" + 
-                "  #blocks/group: " + superblock.getBlocksPerGroup() + "\n" +
-                "  #block groups: " + groupCount + "\n" + 
-                "  block size: " + superblock.getBlockSize() + "\n" +
-                "  #inodes: " + superblock.getINodesCount() + "\n" + 
-                "  #inodes/group: " + superblock.getINodesPerGroup());
+        log.debug(superblock.toString());
     }
 
     /**
@@ -210,34 +160,34 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
 
     /**
      * Create block bitmap, inode bitmap and fill the corresponding inode table with zeroes.
-     * @param blockSize
-     * @param i
+     * @param blockSize Size defined for a block in the current file system.
+     * @param index Index of the group.
      * @throws IOException
      */
-    private void createGroup(int blockSize, int i) throws IOException {
-        log.debug("creating group " + i);
+    private void createGroup(int blockSize, int index) throws IOException {
+        log.debug("creating group " + index);
         // create the block bitmap
         // create the inode bitmap
         byte[] blockBitmap = new byte[blockSize];
         byte[] inodeBitmap = new byte[blockSize];
         // update the block bitmap: mark the metadata blocks allocated
-        long iNodeTableBlock = groupDescriptors[i].getInodeTable();
+        long iNodeTableBlock = groupDescriptors[index].getInodeTable();
         long firstNonMetadataBlock = iNodeTableBlock + INodeTable.getSizeInBlocks(this);
         int metadataLength =
-                (int) (firstNonMetadataBlock - (superblock.getFirstDataBlock() + i *
+                (int) (firstNonMetadataBlock - (superblock.getFirstDataBlock() + index *
                         superblock.getBlocksPerGroup()));
         for (int j = 0; j < metadataLength; j++) {
             BlockBitmap.setBit(blockBitmap, j);
         }
         // set the padding at the end of the last block group
-        if (i == groupCount - 1) {
+        if (index == groupCount - 1) {
             for (long k = superblock.getBlocksCount(); k < groupCount * superblock.getBlocksPerGroup(); k++)
                 BlockBitmap.setBit(blockBitmap, (int) (k % superblock.getBlocksPerGroup()));
         }
         // fill the inode table with zeroes
         // update the inode bitmap: mark the special inodes allocated in
         // the first block group
-        if (i == 0)
+        if (index == 0)
             for (int j = 0; j < superblock.getFirstInode() - 1; j++)
                 INodeBitmap.setBit(inodeBitmap, j);
 
@@ -246,10 +196,10 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         for (long j = iNodeTableBlock; j < firstNonMetadataBlock; j++)
             writeBlock(j, emptyBlock, false);
 
-        iNodeTables[i] = new INodeTable(this, (int) iNodeTableBlock);
+        iNodeTables[index] = new INodeTable(this, (int) iNodeTableBlock);
 
-        writeBlock(groupDescriptors[i].getBlockBitmap(), blockBitmap, false);
-        writeBlock(groupDescriptors[i].getInodeBitmap(), inodeBitmap, false);
+        writeBlock(groupDescriptors[index].getBlockBitmap(), blockBitmap, false);
+        writeBlock(groupDescriptors[index].getInodeBitmap(), inodeBitmap, false);
     }
 
     /**
@@ -435,48 +385,6 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         }
     }
 
-    /*
-     * Helper class for timedWrite
-     * 
-     * @author blind
-     */
-    /*
-     * class TimeoutWatcher extends TimerTask { Thread mainThread; public
-     * TimeoutWatcher(Thread mainThread) { this.mainThread = mainThread; }
-     * public void run() { mainThread.interrupt(); } }
-     * 
-     * private static final long TIMEOUT = 100;
-     */
-    /*
-     * timedWrite writes to disk and waits for timeout, if the operation does
-     * not finish in time, restart it. DO NOT CALL THIS DIRECTLY! ONLY TO BE
-     * CALLED FROM writeBlock()! @param nr the number of the block to write
-     * @param data the data in the block
-     */
-    /*
-     * private void timedWrite(long nr, byte[] data) throws IOException{ boolean
-     * finished = false; Timer writeTimer; while(!finished) { finished = true;
-     * writeTimer = new Timer(); writeTimer.schedule(new
-     * TimeoutWatcher(Thread.currentThread()), TIMEOUT); try{
-     * getApi().write(nr*getBlockSize(), data, 0, (int)getBlockSize());
-     * writeTimer.cancel(); }catch(IOException ioe) { //IDEDiskDriver will throw
-     * an IOException with a cause of an InterruptedException //it the write is
-     * interrupted if(ioe.getCause() instanceof InterruptedException) {
-     * writeTimer.cancel(); log.debug("IDE driver interrupted during write
-     * operation: probably timeout"); finished = false; } } } }
-     * 
-     * private void timedRead(long nr, byte[] data) throws IOException{ boolean
-     * finished = false; Timer readTimer; while(!finished) { finished = true;
-     * readTimer = new Timer(); readTimer.schedule(new
-     * TimeoutWatcher(Thread.currentThread()), TIMEOUT); try{ getApi().read(
-     * nr*getBlockSize(), data, 0, (int)getBlockSize()); readTimer.cancel();
-     * }catch(IOException ioe) { //IDEDiskDriver will throw an IOException with
-     * a cause of an InterruptedException //it the write is interrupted
-     * if(ioe.getCause() instanceof InterruptedException) { readTimer.cancel();
-     * log.debug("IDE driver interrupted during read operation: probably
-     * timeout"); finished = false; } } } }
-     */
-
     public Superblock getSuperblock() {
         return superblock;
     }
@@ -613,13 +521,13 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
         // trigger a write to disk
         iNode.update();
 
-        log.debug("** NEW INODE ALLOCATED: inode number: " + iNode.getINodeNr());
+        log.debug("** New inode allocated with number " + iNode.getINodeNr());
 
         // put the inode into the cache
         synchronized (inodeCache) {
             Integer key = iNodeNr;
             if (inodeCache.containsKey(key))
-                throw new FileSystemException("Newly allocated inode is already in the inode cache!?");
+                throw new FileSystemException("Newly allocated inode is already in the inode cache");
             else
                 inodeCache.put(key, iNode);
         }
@@ -827,28 +735,6 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
     }
 
     /**
-     * Check whether the filesystem uses the given RO feature
-     * (S_FEATURE_RO_COMPAT)
-     * 
-     * @param mask
-     * @return {@code true} if the filesystem uses the feature, otherwise {@code false}.
-     */
-    protected boolean hasROFeature(long mask) {
-        return (mask & superblock.getFeatureROCompat()) != 0;
-    }
-
-    /**
-     * Check whether the filesystem uses the given COMPAT feature
-     * (S_FEATURE_INCOMPAT)
-     * 
-     * @param mask
-     * @return {@code true} if the filesystem uses the feature, otherwise {@code false}.
-     */
-    protected boolean hasIncompatFeature(long mask) {
-        return (mask & superblock.getFeatureIncompat()) != 0;
-    }
-
-    /**
      * utility function for determining if a given block group has superblock
      * and group descriptor copies
      * 
@@ -971,5 +857,70 @@ public class Ext2FileSystem extends AbstractFileSystem<Ext2Entry> {
     @Override
     public String getVolumeName() throws IOException {
         return superblock.getVolumeName();
+    }
+
+    // Private methods
+
+    /**
+     * check for unsupported filesystem options. The are two unsupported features :
+     * <ul>
+     * <li>An unsupported INCOMPAT feature means that the fs may not be mounted at all </li>
+     * <li>An unsupported RO_COMPAT feature means that the filesystem can only be mounted readonly</li>
+     * </ul>
+     * @throws FileSystemException occurs if an unsupported feature is found.
+     */
+    private void checkFeatures() throws FileSystemException {
+
+        if (hasIncompatFeature(Ext2Constants.EXT2_FEATURE_INCOMPAT_COMPRESSION))
+            throw new FileSystemException(getDevice().getId() +
+                " Unsupported filesystem feature (COMPRESSION) disallows mounting");
+        if (hasIncompatFeature(Ext2Constants.EXT2_FEATURE_INCOMPAT_META_BG))
+            throw new FileSystemException(getDevice().getId() +
+                " Unsupported filesystem feature (META_BG) disallows mounting");
+        if (hasIncompatFeature(Ext2Constants.EXT3_FEATURE_INCOMPAT_JOURNAL_DEV))
+            throw new FileSystemException(getDevice().getId() +
+                " Unsupported filesystem feature (JOURNAL_DEV) disallows mounting");
+        if (hasIncompatFeature(Ext2Constants.EXT3_FEATURE_INCOMPAT_RECOVER))
+            throw new FileSystemException(getDevice().getId() +
+                " Unsupported filesystem feature (RECOVER) disallows mounting");
+
+        // an unsupported RO_COMPAT feature means that the filesystem can only
+        // be mounted readonly
+        if (hasROFeature(Ext2Constants.EXT2_FEATURE_RO_COMPAT_LARGE_FILE)) {
+            log.info(getDevice().getId() + " Unsupported filesystem feature (LARGE_FILE) forces readonly mode");
+            setReadOnly(true);
+        }
+        if (hasROFeature(Ext2Constants.EXT2_FEATURE_RO_COMPAT_BTREE_DIR)) {
+            log.info(getDevice().getId() + " Unsupported filesystem feature (BTREE_DIR) forces readonly mode");
+            setReadOnly(true);
+        }
+
+        // if the filesystem has not been cleanly unmounted, mount it readonly
+        if (superblock.getState() == Ext2Constants.EXT2_ERROR_FS) {
+            log.info(getDevice().getId() + " Filesystem has not been cleanly unmounted, mounting it readonly");
+            setReadOnly(true);
+        }
+    }
+
+    /**
+     * Check whether the filesystem uses the given RO feature
+     * (S_FEATURE_RO_COMPAT)
+     *
+     * @param mask
+     * @return {@code true} if the filesystem uses the feature, otherwise {@code false}.
+     */
+    private boolean hasROFeature(long mask) {
+        return (mask & superblock.getFeatureROCompat()) != 0;
+    }
+
+    /**
+     * Check whether the filesystem uses the given COMPAT feature
+     * (S_FEATURE_INCOMPAT)
+     *
+     * @param mask
+     * @return {@code true} if the filesystem uses the feature, otherwise {@code false}.
+     */
+    protected boolean hasIncompatFeature(long mask) {
+        return (mask & superblock.getFeatureIncompat()) != 0;
     }
 }
