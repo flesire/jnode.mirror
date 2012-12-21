@@ -157,6 +157,19 @@ public final class MasterFileTable extends FileRecord {
         return fileRecord;
     }
 
+    /**
+     * Gets an MFT record with a given index.
+     * 
+     * @param index the index to get.
+     * @return the file record.
+     * @throws IOException if the record at the index is not valid or there is an error reading in the data.
+     */
+    public FileRecord getRecord(long index) throws IOException {
+        FileRecord fileRecord = getRecordUnchecked(index);
+        fileRecord.checkIfValid();
+        return fileRecord;
+    }
+
     public FileRecord getIndexedFileRecord(IndexEntry indexEntry) throws IOException {
         return getRecord(indexEntry.getFileReferenceNumber());
     }

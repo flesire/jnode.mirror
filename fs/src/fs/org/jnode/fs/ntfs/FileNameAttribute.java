@@ -116,6 +116,22 @@ public final class FileNameAttribute extends NTFSResidentAttribute {
     }
 
     /**
+     * Gets the allocated file size.
+     */
+    public long getAllocatedFileSize() {
+        final int attrOffset = getAttributeOffset();
+        return getInt64(attrOffset + 0x28);
+    }
+
+    /**
+     * Gets the real file size.
+     */
+    public long getRealSize() {
+        final int attrOffset = getAttributeOffset();
+        return getInt64(attrOffset + 0x30);
+    }
+
+    /**
      * Gets the flags.
      */
     public int getFlags() {
