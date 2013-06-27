@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: IBMPartitionTableType.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -42,7 +42,6 @@ public class IBMPartitionTableType implements PartitionTableType {
     }
 
     public boolean supports(byte[] firstSector, BlockDeviceAPI devApi) {
-        // TODO Make a suitable implementation
-        return true;
+        return IBMPartitionTable.containsPartitionTable(firstSector);
     }
 }

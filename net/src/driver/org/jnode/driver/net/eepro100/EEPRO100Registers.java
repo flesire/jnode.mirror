@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: EEPRO100Registers.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.eepro100;
 
 import org.apache.log4j.Logger;
@@ -48,11 +48,11 @@ public class EEPRO100Registers implements EEPRO100Constants {
         this.io = io;
     }
 
-    // --- REGISTER METHODS
+    //  --- REGISTER METHODS
 
     /**
      * Writes a 8-bit NIC register
-     * 
+     *
      * @param reg
      * @param value
      */
@@ -63,7 +63,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
 
     /**
      * Writes a 16-bit NIC register
-     * 
+     *
      * @param reg
      * @param value
      */
@@ -74,7 +74,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
 
     /**
      * Writes a 32-bit NIC register
-     * 
+     *
      * @param reg
      * @param value
      */
@@ -85,7 +85,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
 
     /**
      * Reads a 16-bit NIC register
-     * 
+     *
      * @param reg
      */
     public int getReg16(int reg) {
@@ -94,7 +94,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
 
     /**
      * Reads a 32-bit NIC register
-     * 
+     *
      * @param reg
      */
 
@@ -104,7 +104,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
 
     /**
      * Reads a 8-bit NIC register
-     * 
+     *
      * @param reg
      */
     public final int getReg8(int reg) {
@@ -127,7 +127,7 @@ public class EEPRO100Registers implements EEPRO100Constants {
                 break;
         } while (++wait <= 10000);
         log.debug("Command " + NumberUtils.hex(delayed_cmd) + " was not immediately accepted, " +
-                wait + " ticks!");
+            wait + " ticks!");
     }
 
 }

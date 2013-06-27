@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TFTPClient.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.tftp;
 
 import java.io.BufferedReader;
@@ -30,7 +30,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * Console TFTP client. Usage: TFTPClient [hostname [PUT/GET filename]]
+ * Console TFTP client.
+ * Usage: TFTPClient [hostname [PUT/GET filename]]
  * 
  * @author markhale
  */
@@ -52,6 +53,7 @@ public class TFTPClient extends org.apache.commons.net.tftp.TFTPClient {
     private InetAddress serverAddress;
     private int mode = BINARY_MODE;
     private boolean quit;
+    
 
     public TFTPClient(PrintWriter out) {
         this.out = out;
@@ -59,7 +61,7 @@ public class TFTPClient extends org.apache.commons.net.tftp.TFTPClient {
 
     public void run(Reader in) throws IOException {
         // FIXME ... figure out to how to use JNode command argument parsing
-        // (and completion) for our little TFTP interactive command syntax.
+        // (and completion) for our little TFTP interactive command syntax. 
         this.br = new BufferedReader(in);
         out.println("JNode TFTP Client");
         do {
@@ -75,7 +77,6 @@ public class TFTPClient extends org.apache.commons.net.tftp.TFTPClient {
 
     /**
      * High-level command API.
-     * 
      * @return true on success.
      */
     public boolean executeCommand(String[] args) {

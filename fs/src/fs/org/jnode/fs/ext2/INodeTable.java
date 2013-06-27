@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: INodeTable.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,6 @@
 package org.jnode.fs.ext2;
 
 import java.io.IOException;
-
 import org.jnode.fs.FileSystemException;
 
 /**
@@ -36,25 +35,23 @@ import org.jnode.fs.FileSystemException;
  */
 public class INodeTable {
     private final int blockSize;
-    private int blockCount;
-    private Ext2FileSystem fs;
-    private long firstBlock; // the first block of the inode table
+    int blockCount;
+    Ext2FileSystem fs;
+    int firstBlock; // the first block of the inode table
 
-    public INodeTable(Ext2FileSystem fs, long firstBlock) {
+    public INodeTable(Ext2FileSystem fs, int firstBlock) {
         this.fs = fs;
         this.firstBlock = firstBlock;
         blockSize = fs.getBlockSize();
         blockCount =
                 (int) Ext2Utils.ceilDiv(
-                        fs.getSuperblock().getINodesPerGroup() * INode.INODE_LENGTH, blockSize);
+                        fs.getSuperblock().getINodesPerGroup() * fs.getSuperblock().getINodeSize(), blockSize);
     }
 
     public static int getSizeInBlocks(Ext2FileSystem fs) {
-        int count =
-                (int) Ext2Utils.ceilDiv(
-                        fs.getSuperblock().getINodesPerGroup() * INode.INODE_LENGTH, 
-                        fs.getBlockSize());
-        return count;
+        return (int) Ext2Utils.ceilDiv(
+                fs.getSuperblock().getINodesPerGroup() * fs.getSuperblock().getINodeSize(),
+                fs.getBlockSize());
     }
 
     /**
@@ -100,13 +97,14 @@ public class INodeTable {
      * safe to synchronize to it
      */
     public synchronized byte[] getInodeData(int index) throws IOException, FileSystemException {
-        byte data[] = new byte[INode.INODE_LENGTH];
+        int iNodeSize = (int) fs.getSuperblock().getINodeSize();
+        byte data[] = new byte[iNodeSize];
 
         int indexCopied = 0;
-        while (indexCopied < INode.INODE_LENGTH) {
-            int blockNo = (index * INode.INODE_LENGTH + indexCopied) / blockSize;
-            int blockOffset = (index * INode.INODE_LENGTH + indexCopied) % blockSize;
-            int copyLength = Math.min(blockSize - blockOffset, INode.INODE_LENGTH);
+        while (indexCopied < iNodeSize) {
+            int blockNo = (index * iNodeSize + indexCopied) / blockSize;
+            int blockOffset = (index * iNodeSize + indexCopied) % blockSize;
+            int copyLength = Math.min(blockSize - blockOffset, iNodeSize);
             System.arraycopy(getINodeTableBlock(blockNo), blockOffset, data, indexCopied,
                     copyLength);
             indexCopied += copyLength;

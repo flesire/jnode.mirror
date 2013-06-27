@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: vm-invoke.asm 2491 2006-04-23 11:31:22Z epr $
 ;
 ; Java VM method invocation support code
 ;

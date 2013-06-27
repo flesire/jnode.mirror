@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
@@ -66,10 +66,6 @@ public class HFSPlusParams {
     public HFSPlusParams() {
         this.catalogNodeSize = DEFAULT_CATALOG_NODE_SIZE;
         this.extentNodeSize = DEFAULT_EXTENT_NODE_SIZE;
-        this.volumeName = "NO NAME";
-        this.blockSize = OPTIMAL_BLOCK_SIZE;
-        this.journaled = false;
-        this.journalSize = DEFAULT_JOURNAL_SIZE;
     }
 
     /**
@@ -155,8 +151,8 @@ public class HFSPlusParams {
     }
 
     private int[] extentClumpTable = new int[] {4, 4, 4, 5, 5, 6, 7, 8, 9, 11, 14, 16, 20, 25, 32};
-    private int[] catalogClumpTable = new int[] {4, 6, 8, 11, 14, 19, 25, 34, 45, 60, 80, 107, 144,
-        192, 256};
+    private int[] catalogClumpTable =
+            new int[] {4, 6, 8, 11, 14, 19, 25, 34, 45, 60, 80, 107, 144, 192, 256};
 
     /**
      * Get the file clump size for Extent and catalog B-Tree files.
@@ -255,6 +251,10 @@ public class HFSPlusParams {
         return catalogNodeSize;
     }
 
+    public long getBlockCount() {
+        return blockDeviceSize / blockSize;
+    }
+
     public int getCatalogClumpSize() {
         return catalogClumpSize;
     }
@@ -297,10 +297,6 @@ public class HFSPlusParams {
 
     public int getInitializeNumRecords() {
         return journaled ? 6 : 2;
-    }
-
-    public long getBlockCount() {
-        return blockDeviceSize / blockSize;
     }
 
 }

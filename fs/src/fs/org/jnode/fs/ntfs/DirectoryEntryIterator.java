@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: DirectoryEntryIterator.java 5963 2013-02-20 08:01:21Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,8 @@ package org.jnode.fs.ntfs;
 import java.util.Iterator;
 
 import org.jnode.fs.FSEntry;
+import org.jnode.fs.ntfs.index.IndexEntry;
+import org.jnode.fs.ntfs.index.NTFSIndex;
 
 /**
  * Iterator for FSEntry's.
@@ -51,8 +53,6 @@ final class DirectoryEntryIterator implements Iterator<FSEntry> {
 
     /**
      * Are there more entries.
-     * 
-     * @see org.jnode.fs.FSEntryIterator#hasNext()
      */
     public boolean hasNext() {
         return (nextEntry != null);
@@ -60,8 +60,6 @@ final class DirectoryEntryIterator implements Iterator<FSEntry> {
 
     /**
      * Get the next entry.
-     * 
-     * @see org.jnode.fs.FSEntryIterator#next()
      */
     public FSEntry next() {
         final NTFSEntry result = nextEntry;

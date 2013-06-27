@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: AbstractDHCPClient.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.dhcp;
 
 import org.apache.log4j.Logger;
@@ -30,8 +30,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 /**
- * System independent base class. Implementations should override doConfigure.
- * 
+ * System independent base class.
+ * Implementations should override doConfigure.
+ *
  * @author markhale
  */
 public class AbstractDHCPClient extends AbstractBOOTPClient {
@@ -85,9 +86,9 @@ public class AbstractDHCPClient extends AbstractBOOTPClient {
             case DHCPMessage.DHCPOFFER:
                 byte[] serverID = msg.getOption(DHCPMessage.SERVER_IDENTIFIER_OPTION);
                 byte[] requestedIP = hdr.getYourIPAddress().getAddress();
-                hdr =
-                        new BOOTPHeader(BOOTPHeader.BOOTREQUEST, transactionID, 0,
-                                hdr.getClientIPAddress(), hdr.getClientHwAddress());
+                hdr = new BOOTPHeader(
+                        BOOTPHeader.BOOTREQUEST, transactionID, 0, 
+                        hdr.getClientIPAddress(), hdr.getClientHwAddress());
                 msg = new DHCPMessage(hdr, DHCPMessage.DHCPREQUEST);
                 msg.setOption(DHCPMessage.REQUESTED_IP_ADDRESS_OPTION, requestedIP);
                 msg.setOption(DHCPMessage.SERVER_IDENTIFIER_OPTION, serverID);

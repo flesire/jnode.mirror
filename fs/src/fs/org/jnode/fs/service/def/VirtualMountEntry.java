@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: VirtualMountEntry.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -56,8 +56,10 @@ final class VirtualMountEntry implements FSEntry {
         this.mountedFS = mountedFS;
         this.name = name;
         this.parent = parent.getDirectory();
-        FSEntry entry = mountedFS.getRootEntry();
-        if ((path != null) && (path.length() > 0)) {
+        if ((path == null) || (path.length() == 0)) {
+            this.root = mountedFS.getRootEntry();
+        } else {
+            FSEntry e = mountedFS.getRootEntry();
             while (path != null) {
                 final int idx = path.indexOf(File.separatorChar);
                 final String dir;
@@ -68,10 +70,10 @@ final class VirtualMountEntry implements FSEntry {
                     dir = path;
                     path = null;
                 }
-                entry = entry.getDirectory().getEntry(dir);
+                e = e.getDirectory().getEntry(dir);
             }
+            this.root = e;
         }
-        this.root = entry;
     }
 
     /**

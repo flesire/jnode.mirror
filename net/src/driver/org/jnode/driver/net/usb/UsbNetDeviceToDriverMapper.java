@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.usb;
 
 import org.apache.log4j.Logger;
@@ -51,7 +51,7 @@ public class UsbNetDeviceToDriverMapper implements DeviceToDriverMapper, UsbNetC
         if (descr.getInterfaceClass() != USB_CLASS_WIRELESS) {
             return null;
         }
-        log.info("Found USB wireless device.");
+        log.debug("Found USB wireless device.");
         if (descr.getInterfaceSubClass() == US_SC_RF) {
             log.debug("Subclass " + descr.getInterfaceSubClass());
             return new UsbBluetoothDriver();

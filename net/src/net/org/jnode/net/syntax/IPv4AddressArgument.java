@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.syntax;
 
 import java.util.StringTokenizer;
@@ -28,8 +28,8 @@ import org.jnode.shell.syntax.Argument;
 import org.jnode.shell.syntax.CommandSyntaxException;
 
 /**
- * This Argument class accepts 4-part IPv4 addresses. It validates the address,
- * but does no completion. The string "default" is a synonym for "0.0.0.0".
+ * This Argument class accepts 4-part IPv4 addresses.  It validates the address, 
+ * but does no completion.  The string "default" is a synonym for "0.0.0.0".
  * 
  * @author crawley@jnode.org
  */
@@ -47,7 +47,7 @@ public class IPv4AddressArgument extends Argument<IPv4Address> {
     @Override
     protected IPv4Address doAccept(Token value, int flags) throws CommandSyntaxException {
         if (value.text.equals("default")) {
-            return new IPv4Address(new byte[] {0, 0, 0, 0}, 0);
+            return new IPv4Address(new byte[]{0, 0, 0, 0}, 0);
         }
         final StringTokenizer tok = new StringTokenizer(value.text, ".");
         if (tok.countTokens() != 4) {
@@ -58,18 +58,17 @@ public class IPv4AddressArgument extends Argument<IPv4Address> {
             final byte b2 = parseUnsignedByte(tok.nextToken());
             final byte b3 = parseUnsignedByte(tok.nextToken());
             final byte b4 = parseUnsignedByte(tok.nextToken());
-            return new IPv4Address(new byte[] {b1, b2, b3, b4}, 0);
+            return new IPv4Address(new byte[]{b1, b2, b3, b4}, 0);
         } catch (NumberFormatException ex) {
             throw new CommandSyntaxException("invalid component in IPv4 address");
         }
     }
-
+    
     /**
      * Parse a number and check it is in the range 0 to 255.
      * 
      * @param str
-     * @throws NumberFormatException if 'str' is not a number or if it is out of
-     *             range
+     * @throws NumberFormatException if 'str' is not a number or if it is out of range
      * @return the number cast as a byte.
      */
     private byte parseUnsignedByte(String str) {

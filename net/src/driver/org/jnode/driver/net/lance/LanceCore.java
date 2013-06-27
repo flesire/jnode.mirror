@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: LanceCore.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.lance;
 
 import java.security.PrivilegedExceptionAction;
@@ -46,21 +46,19 @@ import org.jnode.util.NumberUtils;
 import org.jnode.util.TimeoutException;
 
 /**
- * This is the DeviceCore for LANCE and PCnet 32 compatable ethernet PCI
- * drivers.
+ * This is the DeviceCore for LANCE and PCnet 32 compatable ethernet PCI drivers.
  * <p/>
  * The current implementation was specificaly designed for the AMD PCnet-PCI II
- * Ethernet Controller (Am79C970A), but should work for other AMD PCnet PCI
- * devices. The driver is based on information in the following specification
- * from AMD. http://www.amd.com/files/connectivitysolutions/networking/
- * archivednetworking/19436.pdf
+ * Ethernet Controller (Am79C970A), but should work for other AMD PCnet PCI devices.
+ * The driver is based on information in the following specification from AMD.
+ * http://www.amd.com/files/connectivitysolutions/networking/archivednetworking/19436.pdf
  * <p/>
- * Specificaly the following assumptions were made: - Device supports Software
- * Style 2 (PCnet-PCI) which defines the layout of the initialaztion block and
- * the descriptor rings.
+ * Specificaly the following assumptions were made:
+ * - Device supports Software Style 2 (PCnet-PCI) which defines the layout of the initialaztion
+ * block and the descriptor rings.
  * <p/>
  * Note: It should be easy to expand this driver to remove these assuptions.
- * 
+ *
  * @author Chirs Cole
  */
 public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceConstants,
@@ -75,33 +73,33 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
      * Device Driver
      */
     private final LanceDriver driver;
-
+    
     /**
      * Start of IO address space
      */
     private final int iobase;
-
+    
     /**
      * IO address space resource
      */
     private final IOResource ioResource;
     private final IOAccess io;
-
+    
     /**
      * IRQ resource
      */
     private final IRQResource irq;
-
+    
     /**
      * My ethernet address
      */
     private EthernetAddress hwAddress;
-
+    
     /**
      * Flags for the specific device found
      */
     private final LanceFlags flags;
-
+    
     /**
      * Manager for receive and transmit rings as well as data buffers
      */
@@ -109,11 +107,11 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
 
     /**
      * Create a new instance and allocate all resources
-     * 
+     *
      * @throws ResourceNotFreeException
      */
     public LanceCore(LanceDriver driver, ResourceOwner owner, PCIDevice device, Flags flags)
-            throws ResourceNotFreeException, DriverException {
+        throws ResourceNotFreeException, DriverException {
         this.driver = driver;
         this.flags = (LanceFlags) flags;
 
@@ -198,12 +196,10 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
         io.reset();
 
         // Set the Software Style to mode 2 (PCnet-PCI)
-        // Note: this may not be compatable with older lance controllers (non
-        // PCnet)
+        // Note: this may not be compatable with older lance controllers (non PCnet)
         io.setBCR(20, 2);
 
-        // TODO the device should be setup based on the flags for the chip
-        // version
+        // TODO the device should be setup based on the flags for the chip version
         // Auto select port
         io.setBCR(2, BCR2_ASEL);
         // Enable full duplex
@@ -216,8 +212,7 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
         io.setCSR(1, iaddr & 0xFFFF);
         io.setCSR(2, (iaddr >> 16) & 0xFFFF);
 
-        // Initialize the device with the Initialization Block and enable
-        // interrupts
+        // Initialize the device with the Initialization Block and enable interrupts
         io.setCSR(0, CSR0_INIT | CSR0_IENA);
     }
 
@@ -264,7 +259,7 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
 
     /**
      * Transmit the given buffer
-     * 
+     *
      * @param buf
      * @param timeout
      * @throws InterruptedException
@@ -306,19 +301,18 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
                 io.setCSR(15, 0);
 
                 // assert the Start and clear Initialization Done (IDON) flag
-                // Note: there are reported errors due to setting IDON here but
-                // I have not seen any
+                // Note: there are reported errors due to setting IDON here but I have not seen any
                 io.setCSR(0, CSR0_STRT | CSR0_IENA | CSR0_IDON);
             }
 
             // check if interrupt is due to Transmition Interrupt
             if ((csr0 & CSR0_TINT) != 0) {
-                // log.debug("Transmition Interrupt");
+                //log.debug("Transmition Interrupt");
             }
 
             // check if interrupt is due to Receive Interrupt
             if ((csr0 & CSR0_RINT) != 0) {
-                // log.debug("Receive Interrupt");
+                //log.debug("Receive Interrupt");
                 rxProcess();
             }
 
@@ -441,9 +435,9 @@ public class LanceCore extends AbstractDeviceCore implements IRQHandler, LanceCo
 
         bufferManager.dumpData(log);
 
-        int validVMWareLanceRegs[] =
-                {0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 30, 31, 58, 76, 77, 80,
-                    82, 88, 89, 112, 124};
+        int validVMWareLanceRegs[] = {
+            0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 30, 31, 58, 76, 77, 80,
+            82, 88, 89, 112, 124};
 
         for (int validVMWareLanceReg : validVMWareLanceRegs) {
             int csr_val = io.getCSR(validVMWareLanceReg);

@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: kdb.asm 5654 2009-08-16 15:07:12Z fduminy $
 ;
 ; Kernel low level debugger via serial port functions
 ;

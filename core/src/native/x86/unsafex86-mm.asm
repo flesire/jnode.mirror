@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafex86-mm.asm 1874 2005-07-03 18:33:13Z epr $
 ;
 ; Native multi media methods implementation for org.jnode.vm.x86.UnsafeX86
 ;

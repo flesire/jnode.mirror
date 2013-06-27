@@ -14,11 +14,11 @@
 package org.mmtk.vm;
 
 /**
- * $Id$
+ * $Id: Statistics.java 4114 2008-05-22 10:23:33Z lsantha $
  * 
  * @author <a href="http://cs.anu.edu.au/~Steve.Blackburn">Steve Blackburn</a>
  * @author Perry Cheng
- * @version $Revision$
+ * @version $Revision: 4114 $
  */
 public class Statistics {
     

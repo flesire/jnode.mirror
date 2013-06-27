@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,6 +20,28 @@
  
 package org.jnode.fs.hfsplus;
 
-public class FileInfo {
+import org.jnode.util.BigEndian;
 
+public class FileInfo {
+    private int fileType;
+    private int fileCreator;
+    private int finderFlags;
+
+    public FileInfo(byte[] data, int offset) {
+        fileType = BigEndian.getInt32(data, offset);
+        fileCreator = BigEndian.getInt32(data, offset + 4);
+        finderFlags = BigEndian.getInt16(data, offset + 8);
+    }
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public int getFileCreator() {
+        return fileCreator;
+    }
+
+    public int getFinderFlags() {
+        return finderFlags;
+    }
 }

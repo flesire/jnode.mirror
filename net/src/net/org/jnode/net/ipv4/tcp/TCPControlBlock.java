@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TCPControlBlock.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.tcp;
 
 import java.net.ConnectException;
@@ -92,14 +92,14 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Create a new instance
-     * 
+     *
      * @param list
      * @param parent
      * @param tcp
-     * @param isn The initial outgoing sequence number
+     * @param isn    The initial outgoing sequence number
      */
     public TCPControlBlock(TCPControlBlockList list, TCPControlBlock parent, TCPProtocol tcp,
-            int isn) {
+                           int isn) {
         super(list, IPv4Constants.IPPROTO_TCP, TCP_DEFAULT_TTL);
         this.parent = parent;
         this.outChannel = new TCPOutChannel(tcp, this, isn);
@@ -117,7 +117,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Handle a received segment for this connection
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -179,7 +179,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Process a reset segment
-     * 
+     *
      * @param ipHdr
      * @param hdr
      * @param skbuf
@@ -228,7 +228,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
     /**
      * Current state is LISTEN. If a SYN segment is received, send a SYN&ACK,
      * and set the state to SYN_RECV
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -254,7 +254,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
             } else {
                 // Process the SYN request
                 final TCPControlBlock copy =
-                        (TCPControlBlock) copyAndConnect(dst, ipHdr.getSource(), hdr.getSrcPort());
+                    (TCPControlBlock) copyAndConnect(dst, ipHdr.getSource(), hdr.getSrcPort());
                 copy.listenSynReceivedOnCopy(hdr, skbuf);
             }
         } else {
@@ -267,11 +267,12 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
      * Current state is 0, SYN segment received. This method is called on a copy
      * of the listening control block. Send a SYN&ACK, and set the state to
      * SYN_RECV
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
-    private void listenSynReceivedOnCopy(TCPHeader hdr, SocketBuffer skbuf) throws SocketException {
+    private void listenSynReceivedOnCopy(TCPHeader hdr, SocketBuffer skbuf)
+        throws SocketException {
         if (DEBUG) {
             log.debug("listenSynReceivedOnCopy");
         }
@@ -323,7 +324,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
     /**
      * Current state is ESTABLISHED, FIN segment received. Send a ACK, and set
      * the state to CLOSE_WAIT
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -340,7 +341,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * State is FIN_WAIT_1, any segment received
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -365,7 +366,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * State is FIN_WAIT_2, any segment received
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -405,7 +406,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * State is LAST_ACK, any segment received
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -422,7 +423,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * State is CLOSING, any segment received
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -439,7 +440,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * State is TIME_WAIT, discard any segments
-     * 
+     *
      * @param hdr
      * @param skbuf
      */
@@ -482,8 +483,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
      */
     protected final void sendACK(int extraFlags, int ackNr) throws SocketException {
         if (DEBUG) {
-            log.debug("sendACK(0x" + NumberUtils.hex(extraFlags, 4) + ", " + (ackNr & 0xFFFFFFFFL) +
-                    ')');
+            log.debug("sendACK(0x" + NumberUtils.hex(extraFlags, 4) + ", " + (ackNr & 0xFFFFFFFFL) + ')');
         }
 
         // Create the FIN TCP reply
@@ -507,7 +507,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
         // Create the FIN TCP reply
         final TCPHeader replyHdr =
-                createOutgoingTCPHeader(TCPF_FIN | TCPF_ACK, inChannel.getRcvNext());
+            createOutgoingTCPHeader(TCPF_FIN | TCPF_ACK, inChannel.getRcvNext());
 
         // Create the IP reply header
         final IPv4Header replyIp = createOutgoingIPv4Header();
@@ -556,7 +556,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
     /**
      * Notify this listening parent that one of my children have established a
      * connection.
-     * 
+     *
      * @param child
      */
     private synchronized void notifyChildEstablished(TCPControlBlock child) throws SocketException {
@@ -591,7 +591,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Is the current state equal to the given state?
-     * 
+     *
      * @param state
      * @return
      */
@@ -601,7 +601,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Update the state and notify any waiting threads
-     * 
+     *
      * @param state
      */
     private synchronized void setState(int state) throws SocketException {
@@ -639,13 +639,13 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Create a TCP header for outgoing trafic
-     * 
+     *
      * @param options
      * @return The created TCP header
      */
     protected TCPHeader createOutgoingTCPHeader(int options, int ackNr) {
         final TCPHeader hdr =
-                new TCPHeader(getLocalPort(), getForeignPort(), 0, 0, ackNr, outWindowSize, 0);
+            new TCPHeader(getLocalPort(), getForeignPort(), 0, 0, ackNr, outWindowSize, 0);
         hdr.setFlags(options);
         return hdr;
     }
@@ -656,7 +656,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Wait for incoming requests
-     * 
+     *
      * @throws SocketException
      */
     public synchronized void appListen() throws SocketException {
@@ -669,7 +669,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
     /**
      * Active connect to a foreign address. This method blocks until the
      * connection has been established.
-     * 
+     *
      * @throws SocketException
      */
     public synchronized void appConnect(IPv4Address fAddr, int fPort) throws SocketException {
@@ -703,7 +703,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Wait for an established connection.
-     * 
+     *
      * @return The accepted connection
      */
     public synchronized TCPControlBlock appAccept() {
@@ -771,7 +771,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
      * Send data to the foreign side. This method can split-up the data in
      * chunks and blocks until there is space in the send buffer to hold the
      * data.
-     * 
+     *
      * @param data
      * @param offset
      * @param length
@@ -815,7 +815,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
     /**
      * Read data from the input buffer up to len bytes long. Block until there
      * is data available.
-     * 
+     *
      * @param dst
      * @param off
      * @param len
@@ -848,7 +848,7 @@ public class TCPControlBlock extends IPv4ControlBlock implements TCPConstants {
 
     /**
      * Has this connection been reset
-     * 
+     *
      * @return Returns the reset.
      */
     public final boolean isReset() {

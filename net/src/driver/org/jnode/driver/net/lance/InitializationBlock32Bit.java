@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: InitializationBlock32Bit.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.lance;
 
 import org.apache.log4j.Logger;
@@ -69,8 +69,10 @@ public class InitializationBlock32Bit {
     public void dumpData(Logger out) {
         out.debug("Intialization Block - 32 bit mode");
         for (int i = 0; i <= INIT_BLOCK_SIZE - 1; i += 4) {
-            out.debug("0x" + NumberUtils.hex(mem.getAddress().toInt() + offset + i) + " : 0x" +
-                    NumberUtils.hex((byte) i) + " : 0x" + NumberUtils.hex(mem.getInt(offset + i)));
+            out.debug(
+                    "0x" + NumberUtils.hex(mem.getAddress().toInt() + offset + i) + 
+                    " : 0x" + NumberUtils.hex((byte) i) + 
+                    " : 0x" + NumberUtils.hex(mem.getInt(offset + i)));
         }
     }
 }

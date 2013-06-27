@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,14 +17,15 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.test.net.ethernet;
-
-import junit.framework.TestCase;
 
 import org.jnode.net.HardwareAddress;
 import org.jnode.net.ethernet.EthernetAddress;
 import org.jnode.net.ethernet.EthernetConstants;
+
+import junit.framework.TestCase;
+
 
 public class EthernetAddressTest extends TestCase {
 
@@ -39,12 +40,28 @@ public class EthernetAddressTest extends TestCase {
     private static final String TEST_MAC_ADDRESS_STRING_WRONG = "00-14-22-49-XX-2B";
     private static final String TEST_MAC_ADDRESS_STRING_WRONG_LENGTH = "00-14-22-49-DD-2B-32";
 
+    public void testEqualsObject() {
+        fail("Not yet implemented");
+    }
+
+    public void testHashCode() {
+        fail("Not yet implemented");
+    }
+
     public void testToString() {
         EthernetAddress mac =
                 new EthernetAddress(TEST_MAC_ADDRESS_BYTE_0, TEST_MAC_ADDRESS_BYTE_1,
                         TEST_MAC_ADDRESS_BYTE_2, TEST_MAC_ADDRESS_BYTE_3, TEST_MAC_ADDRESS_BYTE_4,
                         TEST_MAC_ADDRESS_BYTE_5);
         assertEquals(TEST_MAC_ADDRESS_STRING_DISPLAY, mac.toString());
+    }
+
+    public void testEthernetAddressByteArrayInt() {
+        fail("Not yet implemented");
+    }
+
+    public void testEthernetAddressSocketBufferInt() {
+        fail("Not yet implemented");
     }
 
     public void testEthernetAddressString() {
@@ -104,11 +121,23 @@ public class EthernetAddressTest extends TestCase {
         assertEquals(TEST_MAC_ADDRESS_BYTE_5, mac.get(5));
     }
 
+    public void testWriteToSocketBufferInt() {
+        fail("Not yet implemented");
+    }
+
+    public void testWriteToByteArrayInt() {
+        fail("Not yet implemented");
+    }
+
     public void testIsBroadcast() {
         EthernetAddress mac = new EthernetAddress(TEST_MAC_ADDRESS_STRING);
         assertFalse(mac.isBroadcast());
         EthernetAddress broadcast = new EthernetAddress("FF-FF-FF-FF-FF-FF");
         assertTrue(broadcast.isBroadcast());
+    }
+
+    public void testGetDefaultBroadcastAddress() {
+        fail("Not yet implemented");
     }
 
     public void testGetType() {

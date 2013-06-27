@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Asm.java 5952 2013-02-17 15:47:51Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -38,7 +38,7 @@ import org.apache.tools.ant.taskdefs.condition.Os;
  * Description of the Class.
  *
  * @author epr
- * @version $Revision$
+ * @version $Revision: 5952 $
  */
 public class Asm extends MatchingTask {
 

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: CSW.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.block.usb.storage;
 
 import org.jnode.driver.bus.usb.USBPacket;
@@ -43,10 +43,6 @@ public class CSW extends USBPacket {
 
     public void setStatus(byte status) {
         setByte(12, status);
-    }
-
-    public int getStatus() {
-        return getByte(12);
     }
 
     @Override

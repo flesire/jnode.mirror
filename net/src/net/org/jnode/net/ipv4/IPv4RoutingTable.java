@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: IPv4RoutingTable.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,25 +17,19 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4;
 
 import java.net.NoRouteToHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.jnode.net.ipv4.dhcp.DHCPClient;
 
 /**
  * @author epr
  */
 public class IPv4RoutingTable {
-
-    private static final Logger log = Logger.getLogger(IPv4RoutingTable.class);
 
     /** All entries as instanceof IPv4Route */
     private final Vector<IPv4Route> entries = new Vector<IPv4Route>();
@@ -100,32 +94,27 @@ public class IPv4RoutingTable {
     public IPv4Route search(IPv4Address destination) throws NoRouteToHostException {
         while (true) {
             try {
-                log.debug("# of route registred : " + entries.size());
-                Vector<IPv4Route> up = getRouteUp(entries);
-                log.debug("# of route up : " + up.size());
                 // First search for a matching host-address route
-                if (up.size() > 0) {
-                    for (IPv4Route route : up) {
-                        if (route.isHost()) {
-                            if (route.getDestination().equals(destination)) {
-                                return route;
-                            }
-                        }
-                    }
-                    // No direct host found, search through the networks
-                    for (IPv4Route r : up) {
-                        if (r.isNetwork()) {
-                            if (r.getDestination().matches(destination, r.getSubnetmask())) {
-                                return r;
-                            }
-                        }
-                    }
-
-                    // No network found, search for the default gateway
-                    for (IPv4Route r : up) {
-                        if (r.isGateway()) {
+                for (IPv4Route r : entries) {
+                    if (r.isHost() && r.isUp()) {
+                        if (r.getDestination().equals(destination)) {
                             return r;
                         }
+                    }
+                }
+                // No direct host found, search through the networks
+                for (IPv4Route r : entries) {
+                    if (r.isNetwork() && r.isUp()) {
+                        if (r.getDestination().matches(destination, r.getSubnetmask())) {
+                            return r;
+                        }
+                    }
+                }
+
+                // No network found, search for the default gateway
+                for (IPv4Route r : entries) {
+                    if (r.isGateway() && r.isUp()) {
+                        return r;
                     }
                 }
                 // No route found
@@ -137,19 +126,8 @@ public class IPv4RoutingTable {
         }
     }
 
-    private Vector<IPv4Route> getRouteUp(Vector<IPv4Route> routes) {
-        Vector<IPv4Route> filtered = new Vector<IPv4Route>();
-        for (IPv4Route route : entries) {
-            if (route.isUp()) {
-                filtered.add(route);
-            }
-        }
-        return filtered;
-    }
-
     /**
      * Convert to a String representation
-     * 
      * @see java.lang.Object#toString()
      */
     public String toString() {

@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: MagicUtils.java 5756 2010-07-11 14:27:38Z fduminy $
  *
  * JNode.org
  * Copyright (C) 2003-2006 JNode.org

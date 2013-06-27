@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: EEPRO100Flags.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,11 +17,12 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.eepro100;
 
 import org.jnode.driver.net.ethernet.spi.Flags;
 import org.jnode.plugin.ConfigurationElement;
+
 
 /**
  * @author flesire
@@ -41,11 +42,9 @@ public class EEPRO100Flags implements Flags {
         this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jnode.driver.net.ethernet.Flags#getName()
-     */
+    /* (non-Javadoc)
+    * @see org.jnode.driver.net.ethernet.Flags#getName()
+    */
     @Override
     public String getName() {
         return this.name;

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: ARPHeader.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.arp;
 
 import java.net.SocketException;
@@ -33,7 +33,7 @@ import org.jnode.net.ipv4.IPv4Address;
  * @author epr
  */
 public class ARPHeader implements NetworkLayerHeader {
-
+    
     private final static int ARP_DATA_LENGTH = 28;
 
     private HardwareAddress sourceHardwareAddress;
@@ -58,8 +58,8 @@ public class ARPHeader implements NetworkLayerHeader {
      * @param ptype
      */
     public ARPHeader(HardwareAddress srcHWAddress, ProtocolAddress srcPAddress,
-            HardwareAddress targetHWAddress, ProtocolAddress targetPAddress, ARPOperation op,
-            int hwtype, int ptype, int hwSize, int pSize) {
+            HardwareAddress targetHWAddress, ProtocolAddress targetPAddress, ARPOperation op, int hwtype,
+            int ptype, int hwSize, int pSize) {
         this.sourceHardwareAddress = srcHWAddress;
         this.sourceProtocolAddress = srcPAddress;
         this.destinationHardwareAddress = targetHWAddress;
@@ -201,14 +201,14 @@ public class ARPHeader implements NetworkLayerHeader {
     public ProtocolAddress getTargetPAddress() {
         return destinationProtocolAddress;
     }
-
+    
     public int getHardwareAddressSize() {
-        return hardwareAddressSize;
-    }
-
+		return hardwareAddressSize;
+	}
+    
     public int getProtocolAddressSize() {
-        return protocolAddressSize;
-    }
+		return protocolAddressSize;
+	}
 
     /**
      * Swap the two src and target addresses
@@ -223,8 +223,10 @@ public class ARPHeader implements NetworkLayerHeader {
         sourceProtocolAddress = pTmp;
     }
 
+
     /**
-     * @param i
+     *
+     * @param operation
      */
     public void setOperation(ARPOperation operation) {
         this.operation = operation;

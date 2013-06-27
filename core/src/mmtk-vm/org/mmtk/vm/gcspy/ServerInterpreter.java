@@ -18,11 +18,11 @@ import org.vmmagic.pragma.Uninterruptible;
 /**
  * VM-neutral stub file for generic GCspy server interpreter This class
  * implements the GCspy server. Mostly it forwards calls to the C gcspy library.
- * $Id$
+ * $Id: ServerInterpreter.java 4114 2008-05-22 10:23:33Z lsantha $
  *
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  * @author <a href="http://www.ukc.ac.uk/people/staff/rej">Richard Jones</a>
- * @version $Revision$
+ * @version $Revision: 4114 $
  */
 public class ServerInterpreter implements Uninterruptible {
     public static void init(String name, int port, String[] eventNames,

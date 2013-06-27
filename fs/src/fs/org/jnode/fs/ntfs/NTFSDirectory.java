@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: NTFSDirectory.java 5963 2013-02-20 08:01:21Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,6 +28,7 @@ import org.jnode.fs.FSDirectory;
 import org.jnode.fs.FSEntry;
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.ReadOnlyFileSystemException;
+import org.jnode.fs.ntfs.index.NTFSIndex;
 
 /**
  * @author vali

@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -41,6 +41,9 @@ public class GptPartitionTable implements PartitionTable<GptPartitionTableEntry>
     /** The type of partition table */
     private final GptPartitionTableType tableType;
 
+    /** The detected block size. */
+    private final int blockSize;
+
     /** The partition entries */
     private final List<GptPartitionTableEntry> partitions = new ArrayList<GptPartitionTableEntry>();
 
@@ -57,7 +60,7 @@ public class GptPartitionTable implements PartitionTable<GptPartitionTableEntry>
     public GptPartitionTable(GptPartitionTableType tableType, byte[] first16KiB, Device device) {
         this.tableType = tableType;
 
-        int blockSize = detectBlockSize(first16KiB);
+        blockSize = detectBlockSize(first16KiB);
 
         if (blockSize != -1) {
             long entries = LittleEndian.getUInt32(first16KiB, blockSize + 0x50);
@@ -70,8 +73,7 @@ public class GptPartitionTable implements PartitionTable<GptPartitionTableEntry>
 
                 GptPartitionTableEntry entry = new GptPartitionTableEntry(this, first16KiB, offset, blockSize);
 
-                if (entry.isValid())
-                {
+                if (entry.isValid()) {
                     partitions.add(entry);
                 }
             }
@@ -85,7 +87,7 @@ public class GptPartitionTable implements PartitionTable<GptPartitionTableEntry>
      * @return the detected block size or {@code -1} if no GPT partition is found.
      */
     private static int detectBlockSize(byte[] first16KiB) {
-        int[] detectionSizes = new int[] { 0x200, 0x1000 };
+        int[] detectionSizes = new int[] { 0x200, 0x1000, 0x2000 };
 
         for (int blockSize : detectionSizes) {
             if (first16KiB.length < blockSize + 8) {
@@ -115,13 +117,24 @@ public class GptPartitionTable implements PartitionTable<GptPartitionTableEntry>
         return detectBlockSize(first16KiB) != -1;
     }
 
+    @Override
     public Iterator<GptPartitionTableEntry> iterator() {
         return Collections.unmodifiableList(partitions).iterator();
     }
 
     /**
+     * Gets the block size.
+     *
+     * @return the block size.
+     */
+    public int getBlockSize() {
+        return blockSize;
+    }
+
+    /**
      * @see org.jnode.partitions.PartitionTable#getType()
      */
+    @Override
     public PartitionTableType getType() {
         return tableType;
     }

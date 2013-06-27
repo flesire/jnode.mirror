@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FatFileSystemType.java 5969 2013-02-21 07:28:22Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,8 +25,6 @@ import org.jnode.driver.block.FSBlockDeviceAPI;
 import org.jnode.fs.BlockDeviceFileSystemType;
 import org.jnode.fs.FileSystemException;
 import org.jnode.partitions.PartitionTableEntry;
-import org.jnode.partitions.ibm.IBMPartitionTableEntry;
-import org.jnode.partitions.ibm.IBMPartitionTypes;
 
 
 /**
@@ -41,6 +39,7 @@ public class FatFileSystemType implements BlockDeviceFileSystemType<FatFileSyste
     }
 
     public boolean supports(PartitionTableEntry pte, byte[] firstSector, FSBlockDeviceAPI devApi) {
+/*
         if (pte != null) {
             if (!pte.isValid())
                 return false;
@@ -58,8 +57,22 @@ public class FatFileSystemType implements BlockDeviceFileSystemType<FatFileSyste
                 return false;
             }
         }
+*/
 
-        return false;
+        // Check for FAT-32
+        if (firstSector[66] == 0x29 &&
+                firstSector[82] == 'F' &&
+                firstSector[83] == 'A' &&
+                firstSector[84] == 'T')
+        {
+            return true;
+        }
+
+        // Check for FAT-16/12
+        return (firstSector[38] == 0x29 &&
+                firstSector[54] == 'F' &&
+                firstSector[55] == 'A' &&
+                firstSector[56] == 'T');
     }
 
     public FatFileSystem create(Device device, boolean readOnly) throws FileSystemException {

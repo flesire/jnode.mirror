@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Prism2InfoFrame.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.prism2;
 
 import org.jnode.util.LittleEndian;
@@ -39,7 +39,7 @@ final class Prism2InfoFrame implements Prism2Constants {
 
     /**
      * Gets the framelength of an Info frame.
-     * 
+     *
      * @param src
      * @param srcOffset
      * @return The frame length in bytes (including the length of the header)
@@ -50,7 +50,7 @@ final class Prism2InfoFrame implements Prism2Constants {
 
     /**
      * Gets the infotype of an Info frame.
-     * 
+     *
      * @param src
      * @param srcOffset
      * @return
@@ -61,7 +61,7 @@ final class Prism2InfoFrame implements Prism2Constants {
 
     /**
      * Gets the link status of an IT_LINKSTATUS frame.
-     * 
+     *
      * @param src
      * @param srcOffset
      * @return

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Fat.java 5969 2013-02-21 07:28:22Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -75,11 +75,12 @@ public abstract class Fat {
 
         if (bs.isFat32()) {
             return new Fat32(bs, api);
+        } else if (bs.isFat16()) {
+            return new Fat16(bs, api);
+        } else if (bs.isFat12()) {
+//            return new Fat12(bs, api);
         }
-        /*
-         * else if ( bs.isFat16() ) return new Fat16 ( bs, api ); else if (
-         * bs.isFat12() ) return new Fat12 ( bs, api );
-         */
+
         throw new FileSystemException("FAT not recognized");
     }
 
@@ -193,9 +194,7 @@ public abstract class Fat {
                 getBootSector().getFirstDataSector();
     }
 
-    public final long getClusterPosition(int index) {
-        return getClusterSector(index) * (long) bs.getBytesPerSector();
-    }
+    public abstract long getClusterPosition(int index);
 
     public final int size() {
         return (int) (bs.getCountOfClusters() + firstCluster());
@@ -225,8 +224,16 @@ public abstract class Fat {
         return (entry == freeEntry());
     }
 
+    public long getUInt16(int index) throws IOException {
+        return cache.getUInt16(index);
+    }
+
     public long getUInt32(int index) throws IOException {
         return cache.getUInt32(index);
+    }
+
+    public void setInt16(int index, int element) throws IOException {
+        cache.setInt16(index, element);
     }
 
     public void setInt32(int index, int element) throws IOException {

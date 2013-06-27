@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FatEntry.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,20 +20,21 @@
  
 package org.jnode.fs.jfat;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-
 import org.apache.log4j.Logger;
-import org.jnode.util.NumberUtils;
-import org.jnode.fs.FSEntry;
-import org.jnode.fs.FSDirectory;
-import org.jnode.fs.FSFile;
 import org.jnode.fs.FSAccessRights;
+import org.jnode.fs.FSDirectory;
+import org.jnode.fs.FSEntry;
+import org.jnode.fs.FSEntryCreated;
+import org.jnode.fs.FSEntryLastAccessed;
+import org.jnode.fs.FSFile;
+import org.jnode.util.NumberUtils;
 
 
-public class FatEntry extends FatObject implements FSEntry {
+public class FatEntry extends FatObject implements FSEntry, FSEntryCreated, FSEntryLastAccessed {
     private static final Logger log = Logger.getLogger(FatEntry.class);
 
     private String name;

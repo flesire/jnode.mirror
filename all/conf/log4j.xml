@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Id: log4j.xml 5975 2013-02-23 16:38:05Z lsantha $
+
+    Copyright (C) 2003-2013 JNode.org
+
+    This library is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+    License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this library; If not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!-- ===================================================================== -->
@@ -7,7 +26,7 @@
 <!--                                                                       -->
 <!-- ===================================================================== -->
 
-<!-- $Id$ -->
+<!-- $Id: log4j.xml 5975 2013-02-23 16:38:05Z lsantha $ -->
 
 <!--
    | For more configuration infromation and examples see the Jakarta Log4j
@@ -21,7 +40,7 @@
   <!-- ============================== -->
 
   <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-    <param name="Threshold" value="DEBUG"/>
+    <param name="Threshold" value="INFO"/>
     <param name="Target" value="System.out"/>
 
     <layout class="org.apache.log4j.PatternLayout">

@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.usb;
 
 import org.jnode.driver.bus.usb.USBConstants;
@@ -25,7 +25,7 @@ import org.jnode.driver.bus.usb.USBConstants;
 public interface UsbNetConstant extends USBConstants {
     /* Subclass */
     public static final int US_SC_RF = 0x01;
-
+    
     /* Protocols */
     public static final int US_PR_BLUETOOTH = 0x01; /* Control/Bulk/Interrupt */
 }

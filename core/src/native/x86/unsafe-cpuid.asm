@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafe-cpuid.asm 1036 2005-01-30 10:41:32Z epr $
 ;
 ; Native method implementation for org.jnode.vm.Unsafe
 ; of the CPU identification methods.

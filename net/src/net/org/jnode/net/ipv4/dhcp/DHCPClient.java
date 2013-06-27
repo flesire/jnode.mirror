@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: DHCPClient.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.dhcp;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ import org.jnode.plugin.URLPluginLoader;
 
 /**
  * Console DHCP client.
- * 
+ *
  * @author markhale
  * @author Martin Husted Hartvig (hagar@jnode.org)
  */
@@ -58,7 +58,7 @@ public class DHCPClient extends AbstractDHCPClient {
 
     /**
      * Configure the given device using BOOTP
-     * 
+     *
      * @param device
      */
     public final void configureDevice(final Device device) throws IOException {
@@ -71,7 +71,6 @@ public class DHCPClient extends AbstractDHCPClient {
 
         try {
             AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-                @Override
                 public Object run() throws IOException {
                     // Get the API.
                     try {
@@ -95,7 +94,6 @@ public class DHCPClient extends AbstractDHCPClient {
      * Performs the actual configuration of a network device based on the
      * settings in a DHCP message.
      */
-    @Override
     protected void doConfigure(DHCPMessage msg) throws IOException {
         super.doConfigure(msg);
 
@@ -106,7 +104,8 @@ public class DHCPClient extends AbstractDHCPClient {
             throw new NetworkException(ex);
         }
         BOOTPHeader hdr = msg.getHeader();
-        cfg.configureDeviceStatic(device, new IPv4Address(hdr.getYourIPAddress()), null, false);
+        cfg.configureDeviceStatic(device, new IPv4Address(hdr
+                .getYourIPAddress()), null, false);
 
         final IPv4Address serverAddr = new IPv4Address(hdr.getServerIPAddress());
         final IPv4Address networkAddress = serverAddr.and(serverAddr.getDefaultSubnetmask());
@@ -130,6 +129,7 @@ public class DHCPClient extends AbstractDHCPClient {
         if (dnsValue != null) {
             for (int i = 0; i < dnsValue.length; i += 4) {
                 final IPv4Address dnsIP = new IPv4Address(dnsValue, i);
+                
                 log.info("Got Dns IP address    : " + dnsIP);
                 try {
                     ResolverImpl.addDnsServer(dnsIP);
@@ -139,19 +139,17 @@ public class DHCPClient extends AbstractDHCPClient {
                 }
             }
         }
-
+        
         // Find the plugin loader option
         final byte[] pluginLoaderValue = msg.getOption(DHCPMessage.PLUGIN_LOADER_OPTION);
         if (pluginLoaderValue != null) {
             final String pluginLoaderURL = new String(pluginLoaderValue, "UTF8");
             log.info("Got plugin loader url : " + pluginLoaderURL);
             AccessController.doPrivileged(new PrivilegedAction<Object>() {
-                @Override
                 public Object run() {
                     try {
                         final PluginManager pm = InitialNaming.lookup(PluginManager.class);
-                        pm.getLoaderManager().addPluginLoader(
-                                new URLPluginLoader(new URL(pluginLoaderURL)));
+                        pm.getLoaderManager().addPluginLoader(new URLPluginLoader(new URL(pluginLoaderURL)));
                     } catch (Throwable ex) {
                         log.error("Failed to configure plugin loader");
                         log.debug("Failed to configure plugin loader", ex);

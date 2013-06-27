@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Ext2Entry.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,10 +21,11 @@
 package org.jnode.fs.ext2;
 
 import java.io.IOException;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jnode.fs.FSDirectory;
+import org.jnode.fs.FSEntryLastAccessed;
+import org.jnode.fs.FSEntryLastChanged;
 import org.jnode.fs.spi.AbstractFSEntry;
 
 /**
@@ -37,7 +38,7 @@ import org.jnode.fs.spi.AbstractFSEntry;
  *         TODO: besides getFile() and getDirectory(), we will need
  *         getBlockDevice() getCharacterDevice(), etc.
  */
-public class Ext2Entry extends AbstractFSEntry {
+public class Ext2Entry extends AbstractFSEntry implements FSEntryLastChanged, FSEntryLastAccessed {
 
     private final Logger log = Logger.getLogger(getClass());
     private INode iNode = null;
@@ -86,7 +87,7 @@ public class Ext2Entry extends AbstractFSEntry {
         return type;
     }
 
-    INode getINode() {
+    public INode getINode() {
         return iNode;
     }
 
@@ -97,7 +98,9 @@ public class Ext2Entry extends AbstractFSEntry {
             return AbstractFSEntry.ROOT_ENTRY;
         else if (mode == Ext2Constants.EXT2_S_IFDIR)
             return AbstractFSEntry.DIR_ENTRY;
-        else if (mode == Ext2Constants.EXT2_S_IFREG || mode == Ext2Constants.EXT2_FT_SYMLINK)
+        else if (mode == Ext2Constants.EXT2_S_IFREG || mode == Ext2Constants.EXT2_S_IFLNK ||
+                 mode == Ext2Constants.EXT2_S_IFIFO || mode == Ext2Constants.EXT2_S_IFCHR ||
+                 mode == Ext2Constants.EXT2_S_IFBLK)
             return AbstractFSEntry.FILE_ENTRY;
         else
             return AbstractFSEntry.OTHER_ENTRY;

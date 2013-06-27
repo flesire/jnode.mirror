@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: IOAccess.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.lance;
 
 import org.jnode.system.resource.IOResource;
@@ -43,28 +43,28 @@ public abstract class IOAccess {
 
     /**
      * Gets the contents of a Control and Status Register.
-     * 
+     *
      * @param csrnr
      */
     public abstract int getCSR(int csrnr);
 
     /**
      * Sets the contents of a Control and Status Register.
-     * 
+     *
      * @param csrnr
      */
     public abstract void setCSR(int csrnr, int value);
 
     /**
      * Gets the contents of a Bus Configuration Register.
-     * 
+     *
      * @param bcrnr
      */
     public abstract int getBCR(int bcrnr);
 
     /**
      * Sets the contents of a Bus Configuration Register.
-     * 
+     *
      * @param bcrnr
      * @param value
      */

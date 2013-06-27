@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: HardwareAddress.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,19 +17,17 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net;
 
 /**
  * Interface for network hardware addresses, such as an ethernet address.
- * 
  * @author epr
  */
 public interface HardwareAddress {
 
     /**
      * Is this address equal to the given address.
-     * 
      * @param o
      */
     public boolean equals(HardwareAddress o);
@@ -41,14 +39,12 @@ public interface HardwareAddress {
 
     /**
      * Gets the address-byte at a given index
-     * 
      * @param index
      */
     public byte get(int index);
 
     /**
      * Write this address to a given offset in the given buffer
-     * 
      * @param skbuf
      * @param skbufOffset
      */
@@ -65,7 +61,8 @@ public interface HardwareAddress {
     public HardwareAddress getDefaultBroadcastAddress();
 
     /**
-     * Gets the type of this address. This type is used by (e.g.) ARP.
+     * Gets the type of this address.
+     * This type is used by (e.g.) ARP.
      */
     public int getType();
 

@@ -18,11 +18,11 @@ import org.vmmagic.pragma.Uninterruptible;
 
 /**
  * VM-neutral stub file to set up a GCspy Stream, by forwarding calls to gcspy C
- * library $Id$
+ * library $Id: Stream.java 4114 2008-05-22 10:23:33Z lsantha $
  *
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  * @author <a href="http://www.ukc.ac.uk/people/staff/rej">Richard Jones</a>
- * @version $Revision$
+ * @version $Revision: 4114 $
  */
 
 public class Stream implements Uninterruptible {

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: NetAPIImpl.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.service;
 
 import java.net.InetAddress;
@@ -93,16 +93,18 @@ public class NetAPIImpl implements VMNetAPI {
     /**
      * Return a network device by its address
      * 
-     * @param addr The address of the interface to return
-     * @exception SocketException If an error occurs
-     * @exception NullPointerException If the specified addess is null
+     * @param addr
+     *            The address of the interface to return
+     * @exception SocketException
+     *                If an error occurs
+     * @exception NullPointerException
+     *                If the specified addess is null
      */
     public VMNetDevice getByInetAddress(InetAddress addr) throws SocketException {
         for (Device dev : DeviceUtils.getDevicesByAPI(NetDeviceAPI.class)) {
             try {
                 final NetDeviceAPI api = dev.getAPI(NetDeviceAPI.class);
-                final ProtocolAddressInfo info =
-                        api.getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
+                final ProtocolAddressInfo info = api.getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
                 if (info != null && info.contains(addr)) {
                     return new NetDeviceImpl(dev);
                 }
@@ -121,7 +123,8 @@ public class NetAPIImpl implements VMNetAPI {
      */
     public Collection<VMNetDevice> getNetDevices() {
         final ArrayList<VMNetDevice> list = new ArrayList<VMNetDevice>();
-        final Collection<Device> devs = DeviceUtils.getDevicesByAPI(NetDeviceAPI.class);
+        final Collection<Device> devs = DeviceUtils
+                .getDevicesByAPI(NetDeviceAPI.class);
         for (Device dev : devs) {
             list.add(new NetDeviceImpl(dev));
         }
@@ -134,12 +137,13 @@ public class NetAPIImpl implements VMNetAPI {
      * @return InetAddress
      */
     public InetAddress getLocalAddress() throws UnknownHostException {
-        final Collection<Device> devices = DeviceUtils.getDevicesByAPI(NetDeviceAPI.class);
+        final Collection<Device> devices = DeviceUtils
+                .getDevicesByAPI(NetDeviceAPI.class);
         for (Device dev : devices) {
             try {
                 final NetDeviceAPI api = dev.getAPI(NetDeviceAPI.class);
-                final ProtocolAddressInfo addrInfo =
-                        api.getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
+                final ProtocolAddressInfo addrInfo = 
+                    api.getProtocolAddressInfo(EthernetConstants.ETH_P_IP);
                 if (addrInfo != null) {
                     final ProtocolAddress addr = addrInfo.getDefaultAddress();
                     if (addr != null) {

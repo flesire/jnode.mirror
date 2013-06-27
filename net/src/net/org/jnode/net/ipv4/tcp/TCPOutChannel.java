@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TCPOutChannel.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.tcp;
 
 import java.net.SocketException;
@@ -96,9 +96,10 @@ public class TCPOutChannel {
     }
 
     /**
-     * Process an ack-nr. Remove all segments that have been acknowledged and
-     * remove the occupied data from the databuffer.
-     * 
+     * Process an ack-nr.
+     * Remove all segments that have been acknowledged and remove
+     * the occupied data from the databuffer.
+     *
      * @param ackNr
      */
     public synchronized void processAck(int ackNr) {
@@ -141,7 +142,7 @@ public class TCPOutChannel {
      * Process timeout handling
      */
     public void timeout() throws SocketException {
-        // allocation free looping
+        //allocation free looping
         for (TCPOutSegment seg : unackedSegments) {
             seg.timeout(tcp);
         }
@@ -153,7 +154,7 @@ public class TCPOutChannel {
 
     /**
      * Send a TCP segment containing no data
-     * 
+     *
      * @param ipHdr
      * @param hdr
      */
@@ -167,9 +168,10 @@ public class TCPOutChannel {
     }
 
     /**
-     * Send a TCP segment containing the given data. This method blocks until
-     * there is enough space in the output buffer to hold the data.
-     * 
+     * Send a TCP segment containing the given data.
+     * This method blocks until there is enough space in the output buffer
+     * to hold the data.
+     *
      * @param ipHdr
      * @param hdr
      * @param data
@@ -177,7 +179,7 @@ public class TCPOutChannel {
      * @param length Must be smaller or equal to mss.
      */
     public synchronized void send(IPv4Header ipHdr, TCPHeader hdr, byte[] data, int offset,
-            int length) throws SocketException {
+                                  int length) throws SocketException {
         if (DEBUG) {
             log.debug("outChannel.send(ipHdr,hdr,data," + offset + ", " + length + ')');
         }
@@ -206,24 +208,25 @@ public class TCPOutChannel {
 
     /**
      * Do the actual sending and adjusting of sequence number.
-     * 
+     *
      * @param ipHdr
      * @param hdr
      * @param dataOffset
      */
-    private void sendHelper(IPv4Header ipHdr, TCPHeader hdr, int dataOffset) throws SocketException {
+    private void sendHelper(IPv4Header ipHdr, TCPHeader hdr, int dataOffset)
+        throws SocketException {
         // Adjust the sequence numbers
         hdr.setSequenceNr(snd_next);
         if (hdr.isFlagSynchronizeSet() || hdr.isFlagFinishedSet()) {
             snd_next++;
-            // snd_unack++;
+            //snd_unack++;
         } else {
             snd_next += hdr.getDataLength();
         }
         snd_max = snd_next;
         // Create & send the segment
         final TCPOutSegment seg =
-                new TCPOutSegment(ipHdr, hdr, dataBuffer, dataOffset, timeoutTicks);
+            new TCPOutSegment(ipHdr, hdr, dataBuffer, dataOffset, timeoutTicks);
         seg.send(tcp);
         if (!seg.isAckOnly() && !hdr.isFlagSynchronizeSet()) {
             if (DEBUG) {

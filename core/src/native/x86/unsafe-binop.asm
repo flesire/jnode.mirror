@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafe-binop.asm 1044 2005-02-01 14:32:10Z epr $
 ;
 ; Native method implementation for org.jnode.vm.Unsafe
 ; of the binary operations.

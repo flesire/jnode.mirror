@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: BCM570xConstants.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,13 +17,12 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.bcm570x;
 
 /**
- * Driver constants to the RTL8139 ethernet card.
- * <p/>
- * Build with help of the donation from WebSprocket LLC
+ * Driver constants to the RTL8139 ethernet card. <p/> Build with help of the
+ * donation from WebSprocket LLC
  * 
  * @author Martin Husted Hartvig
  */
@@ -102,8 +101,9 @@ public interface BCM570xConstants {
     public int txFlag = TX_FIFO_THRESHOLD << 16;
 
     // accept broadcasts and runt packets, wrap around the buffer
-    public int rxConfig = (RX_DMA_BURST << 8) | (RX_FIFO_THRESHOLD << 13) | (RX_RBLEN << 11) |
-            RX_AR | RX_BCAST | RX_MYPHYS;
+    public int rxConfig =
+            (RX_DMA_BURST << 8) | (RX_FIFO_THRESHOLD << 13) | (RX_RBLEN << 11) | RX_AR | RX_BCAST |
+                    RX_MYPHYS;
     public static final int INTR_RX_OK = 0x0001;
     public static final int INTR_RX_ERR = 0x0002;
     public static final int INTR_TX_OK = 0x0004;
@@ -115,9 +115,9 @@ public interface BCM570xConstants {
     public static final int INTR_LEN_CHG = 0x2000;
     public static final int INTR_TIMEOUT = 0x4000;
     public static final int INTR_SYS_ERR = 0x8000;
-    public static final int INTR_MASK = (INTR_SYS_ERR | INTR_TIMEOUT | INTR_LEN_CHG |
-            INTR_RX_UNDERRUN | INTR_RX_BUF_OVRFLO | INTR_RX_FIFO_OVRFLO | INTR_RX_ERR | INTR_RX_OK |
-            INTR_TX_ERR | INTR_TX_OK);
+    public static final int INTR_MASK =
+            (INTR_SYS_ERR | INTR_TIMEOUT | INTR_LEN_CHG | INTR_RX_UNDERRUN | INTR_RX_BUF_OVRFLO |
+                    INTR_RX_FIFO_OVRFLO | INTR_RX_ERR | INTR_RX_OK | INTR_TX_ERR | INTR_TX_OK);
     public static final int CFG1_MMIO = 0x08;
     public static final int CFG1_PIO = 0x04;
     public static final int CSCR_LINKCHANGE = 0x800;
@@ -146,7 +146,7 @@ public interface BCM570xConstants {
     public static final int RX_PAM = 0x4000; // Physical address matched
     public static final int RX_BAR = 0x2000; // Broadcast address received
     public static final int RX_ISE = 0x0020; // Invalid symbol error
-                                             // (100B-TX)
+                                                // (100B-TX)
     public static final int RX_RUNT = 0x0010; // runt packet
     public static final int RX_LONG = 0x0008; // long packet (>4k bytes)
     public static final int RX_CRC = 0x0004; // CRC error

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: NetDeviceEvent.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net;
 
 import java.util.EventObject;
@@ -26,7 +26,7 @@ import org.jnode.driver.Device;
 
 /**
  * Base class for all net device events.
- * 
+ *
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
 public abstract class NetDeviceEvent extends EventObject {
@@ -48,7 +48,7 @@ public abstract class NetDeviceEvent extends EventObject {
 
     /**
      * Gets the device that it the source of this event.
-     * 
+     *
      * @return the Device
      */
     public final Device getDevice() {
@@ -57,7 +57,7 @@ public abstract class NetDeviceEvent extends EventObject {
 
     /**
      * Gets the event ID.
-     * 
+     *
      * @return Returns the id.
      */
     public final int getId() {

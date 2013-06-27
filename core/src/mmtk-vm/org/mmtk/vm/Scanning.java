@@ -26,11 +26,11 @@ import org.vmmagic.pragma.UninterruptiblePragma;
 import org.vmmagic.unboxed.ObjectReference;
 
 /**
- * $Id$
+ * $Id: Scanning.java 5756 2010-07-11 14:27:38Z fduminy $
  * 
  * @author <a href="http://cs.anu.edu.au/~Steve.Blackburn">Steve Blackburn</a>
  * @author Perry Cheng
- * @version $Revision$
+ * @version $Revision: 5756 $
  */
 public final class Scanning implements Constants {
 

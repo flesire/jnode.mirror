@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: UDPStatistics.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.udp;
 
 import org.jnode.vm.objects.Counter;
@@ -47,18 +47,15 @@ public class UDPStatistics implements Statistics {
     /** #received datagrams with no process on destination port */
     protected final Counter noport = new Counter("noport");
 
-    /**
-     * #received broadcast/multicast datagrams with no process on destination
-     * port
-     */
+    /** #received broadcast/multicast datagrams with no process on destination port */
     protected final Counter noportbcast = new Counter("nopoartbcast");
 
     /** total #output datagrams */
     protected final Counter opackets = new Counter("opackets");
 
     /** The list of statistics */
-    protected final Statistic[] list = new Statistic[] {badlen, badsum, fullsock, hdrops, ipackets,
-        noport, noportbcast, opackets};
+    protected final Statistic[] list = new Statistic[] {
+        badlen, badsum, fullsock, hdrops, ipackets, noport, noportbcast, opackets};
 
     /**
      * Gets all statistics

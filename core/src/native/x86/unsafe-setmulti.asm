@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafe-setmulti.asm 1146 2005-03-05 11:38:33Z lsantha $
 ;
 ; Native method implementation for org.jnode.vm.Unsafe
 ; of the set multiple values operations.

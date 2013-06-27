@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Ext2Directory.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jnode.fs.FSEntry;
@@ -56,10 +55,18 @@ public class Ext2Directory extends AbstractFSDirectory {
         this.entry = entry;
         log.setLevel(Level.DEBUG);
         boolean readOnly;
-        if ((iNode.getFlags() & Ext2Constants.EXT2_INDEX_FL) == 1)
+        if ((iNode.getFlags() & Ext2Constants.EXT2_INDEX_FL) != 0 ||
+            (iNode.getFlags() & Ext2Constants.EXT4_INODE_EXTENTS_FLAG) != 0) {
             readOnly = true; //force readonly
-        else
+
+            if ((iNode.getFlags() & Ext2Constants.EXT4_INODE_EXTENTS_FLAG) != 0)
+                log.info("inode uses extents: " + entry);
+            if ((iNode.getFlags() & Ext2Constants.EXT2_INDEX_FL) != 0)
+                log.info("inode uses index: " + entry);
+        }
+        else {
             readOnly = fs.isReadOnly();
+        }
         setRights(true, !readOnly);
 
         log.debug("directory size: " + iNode.getSize());
@@ -220,10 +227,10 @@ public class Ext2Directory extends AbstractFSDirectory {
         //so synchronize to the inode.
         synchronized (iNode) {
             try {
-                Ext2File dir = new Ext2File(iNode); //read itself as a file
+                Ext2File dir = new Ext2File(entry); //read itself as a file
 
                 //find the last directory record (if any)
-                Ext2FSEntryIterator iterator = new Ext2FSEntryIterator(iNode);
+                Ext2FSEntryIterator iterator = new Ext2FSEntryIterator(entry);
                 Ext2DirectoryRecord rec = null;
                 while (iterator.hasNext()) {
                     rec = iterator.nextDirectoryRecord();
@@ -330,9 +337,9 @@ public class Ext2Directory extends AbstractFSDirectory {
 
         Ext2DirectoryRecord current;
 
-        public Ext2FSEntryIterator(INode iNode) throws IOException {
+        public Ext2FSEntryIterator(Ext2Entry entry) throws IOException {
             //read itself as a file
-            Ext2File directoryFile = new Ext2File(iNode);
+            Ext2File directoryFile = new Ext2File(entry);
             //read the whole directory
 
             data = ByteBuffer.allocate((int) directoryFile.getLength());
@@ -417,7 +424,7 @@ public class Ext2Directory extends AbstractFSDirectory {
      * @return the FSEntryTable containing the directory's entries.
      */
     protected FSEntryTable readEntries() throws IOException {
-        Ext2FSEntryIterator it = new Ext2FSEntryIterator(iNode);
+        Ext2FSEntryIterator it = new Ext2FSEntryIterator(entry);
         ArrayList<FSEntry> entries = new ArrayList<FSEntry>();
 
         while (it.hasNext()) {

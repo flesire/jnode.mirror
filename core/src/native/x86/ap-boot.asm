@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: ap-boot.asm 2460 2006-04-15 20:09:58Z epr $
 ;
 ; Application processor boot code.
 ; Only used on Multi processor systems.

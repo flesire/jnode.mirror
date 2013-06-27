@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: USBStorageDeviceData.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.block.usb.storage;
 
 import org.apache.log4j.Logger;
@@ -29,7 +29,9 @@ import org.jnode.driver.bus.usb.USBEndPoint;
 import org.jnode.driver.bus.usb.USBInterface;
 
 final class USBStorageDeviceData implements USBStorageConstants {
-
+    /**
+     * My logger
+     */
     private static final Logger log = Logger.getLogger(USBStorageDeviceData.class);
     /** */
     private USBDevice device;
@@ -40,7 +42,7 @@ final class USBStorageDeviceData implements USBStorageConstants {
     /** */
     private int subClass;
     /** */
-    private UsbStorageTransport transport;
+    private ITransport transport;
     /** */
     private USBDataPipe sendControlPipe;
     /** */
@@ -69,7 +71,21 @@ final class USBStorageDeviceData implements USBStorageConstants {
         this.maxLun = 0;
         this.protocol = intf.getInterfaceProtocol();
         this.subClass = intf.getInterfaceSubClass();
-        this.transport = getTransportProtocol(this.protocol);
+
+        switch (this.protocol) {
+            case US_PR_CBI:
+                log.info("*** Set transport protocol to CONTROL/BULK/INTERRUPT");
+                break;
+            case US_PR_BULK:
+                log.info("*** Set transport protocol to BULK ONLY");
+                this.transport = new USBStorageBulkTransport(this);
+                //((USBStorageBulkTransport)USBMassStorage.getTransport()).getMaxLun(usbDev);
+                break;
+            case US_PR_SCM_ATAPI:
+                log.info("*** Set transport protocol to SCM ATAPI");
+            default:
+                throw new DriverException("Transport protocol not implemented.");
+        }
 
         USBEndPoint ep;
         for (int i = 0; i < intf.getNumEndPoints(); i++) {
@@ -90,26 +106,7 @@ final class USBStorageDeviceData implements USBStorageConstants {
             }
         }
 
-    }
 
-    private UsbStorageTransport getTransportProtocol(int protocol) throws DriverException {
-        UsbStorageTransport transportProtocol = null;
-        switch (protocol) {
-            case US_PR_CBI:
-                log.info("*** Set transport protocol to CONTROL/BULK/INTERRUPT");
-                transportProtocol = new USBStorageCBITransport(this);
-                break;
-            case US_PR_BULK:
-                log.info("*** Set transport protocol to BULK ONLY");
-                transportProtocol = new USBStorageBulkTransport(this);
-                // ((USBStorageBulkTransport)USBMassStorage.getTransport()).getMaxLun(usbDev);
-                break;
-            case US_PR_SCM_ATAPI:
-                log.info("*** Set transport protocol to SCM ATAPI");
-            default:
-                throw new DriverException("Transport protocol not implemented.");
-        }
-        return transportProtocol;
     }
 
     /**
@@ -169,9 +166,10 @@ final class USBStorageDeviceData implements USBStorageConstants {
     }
 
     /**
-     * 
+     *
      * @param dev
      */
+
 
     /**
      * @return Returns the bulkInEndPoint.
@@ -232,14 +230,14 @@ final class USBStorageDeviceData implements USBStorageConstants {
     /**
      * @return Returns the transport.
      */
-    public UsbStorageTransport getTransport() {
+    public ITransport getTransport() {
         return transport;
     }
 
     /**
      * @param transport The transport to set.
      */
-    public void setTransport(UsbStorageTransport transport) {
+    public void setTransport(ITransport transport) {
         this.transport = transport;
     }
 

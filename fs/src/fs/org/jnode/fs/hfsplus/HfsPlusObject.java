@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,9 +23,7 @@ package org.jnode.fs.hfsplus;
 import org.jnode.fs.FSObject;
 
 public class HfsPlusObject implements FSObject {
-    private HfsPlusFileSystem fs;
-
-    private boolean valid;
+    protected HfsPlusFileSystem fs;
 
     public HfsPlusObject(final HfsPlusFileSystem fileSystem) {
         this.fs = fileSystem;

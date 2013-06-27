@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Ne2000Core.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.ne2000;
 
 import java.security.PrivilegedExceptionAction;
@@ -109,13 +109,13 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Create a new instance
-     * 
+     *
      * @param owner
      * @param device
      * @param flags
      */
     public Ne2000Core(Ne2000PCIDriver driver, ResourceOwner owner, Device device, Ne2000Flags flags)
-            throws ResourceNotFreeException, DriverException {
+        throws ResourceNotFreeException, DriverException {
         final int irq = getIRQ(device, flags);
         this.driver = driver;
         this.flags = flags;
@@ -175,7 +175,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Gets the first IO-Address used by the given device
-     * 
+     *
      * @param device
      * @param flags
      */
@@ -183,7 +183,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Gets the number of IO-Addresses used by the given device
-     * 
+     *
      * @param device
      * @param flags
      */
@@ -191,7 +191,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Gets the IRQ used by the given device
-     * 
+     *
      * @param device
      * @param flags
      */
@@ -257,7 +257,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Transmit the given buffer
-     * 
+     *
      * @param buf
      * @param timeout
      * @throws InterruptedException
@@ -274,8 +274,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
             wait(timeout);
         }
         tx_active = true;
-        // log.debug("Going for transmit:\n" + NumberUtils.hex(buf.getBuffer(),
-        // buf.getBufferOffset(), buf.getSize()));
+        //log.debug("Going for transmit:\n" + NumberUtils.hex(buf.getBuffer(), buf.getBufferOffset(), buf.getSize()));
 
         final int length = buf.getSize();
         setNicData(buf, 0, (tx_start << 8), length);
@@ -407,11 +406,11 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
     }
 
     /**
-     * Process an interrupt caused by a received frame with no errors. Page 0 is
-     * assumed!
+     * Process an interrupt caused by a received frame with no errors.
+     * Page 0 is assumed!
      */
     private void processReceiveInterrupt() {
-        // log.debug("Receive on " + flags.getName());
+        //log.debug("Receive on " + flags.getName());
 
         // Get receive status
         boolean rc;
@@ -422,7 +421,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Read a single packet from the receive buffer
-     * 
+     *
      * @return true on succesfull packet read, false otherwise
      */
     private boolean readPacket() {
@@ -443,17 +442,15 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
         int curr = getReg(NE_P1_CURR);
         setReg(NE_P0_CR, NE_CR_PS0);
         if (curr == next) {
-            // log.debug("No valid packet, curr==next, rsr=0x" +
-            // NumberUtils.hex(rsr, 2) + ",
-            // curr=0x" + NumberUtils.hex(curr, 2));
+            //log.debug("No valid packet, curr==next, rsr=0x" + NumberUtils.hex(rsr, 2) + ", 
+            //curr=0x" + NumberUtils.hex(curr, 2));
             return false;
         }
 
         // Get the packet header
         final Ne2000PacketHeader hdr = getHeader(next);
-        // log.debug("curr=0x" + NumberUtils.hex(curr, 2) + ", next=0x" +
-        // NumberUtils.hex(next, 2) + ",
-        // hdr=" + hdr);
+        //log.debug("curr=0x" + NumberUtils.hex(curr, 2) + ", next=0x" + NumberUtils.hex(next, 2) + ",
+        //hdr=" + hdr);
         final int len = hdr.getLength();
         final byte[] bbuf = new byte[len + 1]; // +1, to allow 16-bit transfer
 
@@ -485,9 +482,8 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
             setReg(NE_P0_BOUND, nextBound);
         }
 
-        // log.debug("curr=" + curr + ", next=" + next + ", nextBound=" +
-        // nextBound + ", length=" + len + ",
-        // hdr.next=" + hdr.getNextPacketPage());
+        //log.debug("curr=" + curr + ", next=" + next + ", nextBound=" + nextBound + ", length=" + len + ",
+        //hdr.next=" + hdr.getNextPacketPage());
 
         // Process the packet
         try {
@@ -495,10 +491,8 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
         } catch (NetworkException ex) {
             log.error("Error in onReceive", ex);
         }
-        // log.debug("Received packet length:" + buf.getSize() + ", src:" +
-        // srcAddr + ", dst:" + dstAddr + ",
-        // data:\n" + NumberUtils.hex(buf.getBuffer(), buf.getBufferOffset(),
-        // buf.getSize()));
+        //log.debug("Received packet length:" + buf.getSize() + ", src:" + srcAddr + ", dst:" + dstAddr + ", 
+        //data:\n" + NumberUtils.hex(buf.getBuffer(), buf.getBufferOffset(), buf.getSize()));
         return true;
     }
 
@@ -508,7 +502,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
     private void processTransmitInterrupt() {
         tx_active = false;
         notifyAll();
-        // log.debug("Transmit success on " + flags.getName());
+        //log.debug("Transmit success on " + flags.getName());
     }
 
     /**
@@ -535,7 +529,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Read data from the NIC
-     * 
+     *
      * @param nicSrcAddress
      * @param dst
      * @param length
@@ -570,7 +564,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Read data from the NIC
-     * 
+     *
      * @param skbuf
      * @param skbufOffset
      * @param nicDstAddress
@@ -593,8 +587,8 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
         if (flags.is16bit()) {
             int i;
             for (i = 0; (i + 1) < origLength; i += 2) {
-                // final int v0 = src[srcOffset + i + 0] & 0xFF;
-                // final int v1 = src[srcOffset + i + 1] & 0xFF;
+                //final int v0 = src[srcOffset + i + 0] & 0xFF;
+                //final int v1 = src[srcOffset + i + 1] & 0xFF;
                 final int v0 = skbuf.get(skbufOffset + i + 0);
                 final int v1 = skbuf.get(skbufOffset + i + 1);
                 io.outPortWord(iobase + NE_DATA, (v1 << 8) | v0);
@@ -614,7 +608,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Read a packet header starting at a given page
-     * 
+     *
      * @param page
      */
     private Ne2000PacketHeader getHeader(int page) {
@@ -625,7 +619,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Gets the value of a register
-     * 
+     *
      * @param reg
      */
     private int getReg(int reg) {
@@ -634,7 +628,7 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
 
     /**
      * Gets the value of a register
-     * 
+     *
      * @param reg
      * @param value
      */
@@ -654,10 +648,10 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
      */
     private int probeNicMemoryStart() throws DriverException {
         final SocketBuffer testBuf = new SocketBuffer();
-        final byte[] testData =
-                new byte[] {(byte) 0x23, (byte) 0x34, (byte) 0x56, (byte) 0xf3, (byte) 0x72,
-                    (byte) 0xa6, (byte) 0xe2, (byte) 0xa1, (byte) 0x23, (byte) 0x34, (byte) 0x56,
-                    (byte) 0xf3, (byte) 0x72, (byte) 0xa6, (byte) 0xe2, (byte) 0xa1};
+        final byte[] testData = new byte[] {
+            (byte) 0x23, (byte) 0x34, (byte) 0x56, (byte) 0xf3, (byte) 0x72,
+            (byte) 0xa6, (byte) 0xe2, (byte) 0xa1, (byte) 0x23, (byte) 0x34, (byte) 0x56,
+            (byte) 0xf3, (byte) 0x72, (byte) 0xa6, (byte) 0xe2, (byte) 0xa1};
         final byte[] returnData = new byte[testData.length];
         testBuf.append(testData, 0, testData.length);
 
@@ -666,12 +660,11 @@ public abstract class Ne2000Core extends AbstractDeviceCore implements IRQHandle
             getNicData((page << 8), returnData, 0, testData.length);
 
             if (Arrays.equals(testData, returnData)) {
-                // log.debug("Found start page " + page);
+                //log.debug("Found start page " + page);
                 return page;
             }
 
-            // log.debug("Got (on page " + page + "): " +
-            // NumberUtils.hex(returnData, 0, returnData.length));
+            //log.debug("Got (on page " + page + "): " + NumberUtils.hex(returnData, 0, returnData.length));
 
         }
         throw new DriverException("Cannot find NIC memory of " + flags.getName());

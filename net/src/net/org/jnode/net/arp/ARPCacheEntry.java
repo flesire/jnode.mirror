@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: ARPCacheEntry.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.arp;
 
 import org.jnode.net.HardwareAddress;
@@ -31,9 +31,9 @@ import org.jnode.net.ProtocolAddress;
 public class ARPCacheEntry {
 
     private static final long ARP_CACHE_LIFETIME = 10 * 60 * 1000;
-
-    private final long creationTime;
-    private long lifeTime;
+    
+	private final long creationTime;
+	private long lifeTime;
     private final HardwareAddress hardwareAddress;
     private final ProtocolAddress protocolAddress;
     private final boolean dynamic;
@@ -45,8 +45,7 @@ public class ARPCacheEntry {
      * @param protocolAddress
      * @param dynamic
      */
-    public ARPCacheEntry(HardwareAddress hardwareAddress, ProtocolAddress protocolAddress,
-            boolean dynamic) {
+    public ARPCacheEntry(HardwareAddress hardwareAddress, ProtocolAddress protocolAddress, boolean dynamic) {
         this.hardwareAddress = hardwareAddress;
         this.protocolAddress = protocolAddress;
         this.creationTime = System.currentTimeMillis();
@@ -99,7 +98,6 @@ public class ARPCacheEntry {
 
     /**
      * Convert to a String representation
-     * 
      * @see java.lang.Object#toString()
      */
     public String toString() {

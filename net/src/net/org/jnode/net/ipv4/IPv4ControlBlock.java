@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: IPv4ControlBlock.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4;
 
 import java.net.BindException;
@@ -209,10 +209,10 @@ public class IPv4ControlBlock {
     }
 
     /**
-     * Create an IPv4 header for outgoing packets. This control block must have
-     * been connected before calling this method. The dataLength of the header
-     * is set to 0, this must be changes before prefixing this header to a
-     * SocketBuffer.
+     * Create an IPv4 header for outgoing packets.
+     * This control block must have been connected before calling this method.
+     * The dataLength of the header is set to 0, this must be
+     * changes before prefixing this header to a SocketBuffer.
      */
     protected IPv4Header createOutgoingIPv4Header() {
         return new IPv4Header(tos, ttl, protocol, fAddr, 0);

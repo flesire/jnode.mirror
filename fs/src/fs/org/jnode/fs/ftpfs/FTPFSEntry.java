@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FTPFSEntry.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,12 +20,10 @@
  
 package org.jnode.fs.ftpfs;
 
-import org.jnode.fs.FSEntry;
-import org.jnode.fs.FSAccessRights;
-
-import java.io.IOException;
-
 import com.enterprisedt.net.ftp.FTPFile;
+import java.io.IOException;
+import org.jnode.fs.FSAccessRights;
+import org.jnode.fs.FSEntry;
 
 /**
  * @author Levente S\u00e1ntha
@@ -77,6 +75,7 @@ public abstract class FTPFSEntry implements FSEntry {
     /**
      * Gets the last modification time of this entry.
      *
+	 * @return the last modification time, in milliseconds since January 1, 1970 UTC.
      * @throws java.io.IOException
      */
 
@@ -84,6 +83,19 @@ public abstract class FTPFSEntry implements FSEntry {
         return ftpFile.lastModified().getTime();
         //return ftpFile.getTimestamp().getTimeInMillis();
     }
+
+    /**
+	 * <p>Gets the last access time of this entry.</p>
+	 *
+	 * <p>This implementation returns <code>0</code> as the FTP library has no means of
+	 *    obtaining the access time.</p>
+	 *
+	 * @return the last access time, in milliseconds since January 1, 1970 UTC.
+	 * @throws IOException
+	 */
+	public long getLastAccessed() throws IOException {
+		return 0;
+	}
 
     /**
      * Gets the name of this entry.
@@ -124,13 +136,22 @@ public abstract class FTPFSEntry implements FSEntry {
     }
 
     /**
-     * Gets the last modification time of this entry.
+     * Sets the last modification time of this entry.  This implementation does nothing.
      *
+	 * @param lastModified the new last modification time.
      * @throws java.io.IOException
      */
     public void setLastModified(long lastModified) throws IOException {
 
     }
+
+    /**
+	 * Sets the last access time of this entry.  This implementation does nothing.
+	 *
+	 * @param lastAccessed the new last access time.
+	 */
+	public void setLastAccessed(long lastAccessed) {
+	}
 
     /**
      * Sets the name of this entry.

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: EEPRO100RxFD.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.eepro100;
 
 import org.jnode.net.SocketBuffer;
@@ -45,17 +45,17 @@ public class EEPRO100RxFD {
      * Offset within mem of first UDP
      */
     private final int firstUPDOffset;
-
+    
     /**
      * Offset within mem of first ethernet frame
      */
     private final int firstFrameOffset;
-
+    
     /**
      * 32-bit address first UDP
      */
     private final Address firstUPDAddress;
-
+    
     /**
      * 32-bit address of first ethernet frame
      */
@@ -157,9 +157,10 @@ public class EEPRO100RxFD {
     }
 
     public final String print() {
-        return (Integer.toHexString(bufferAddress) + ": " + Integer.toHexString(mem.getInt(4)) +
-                ' ' + Integer.toHexString(mem.getInt(8)) + ' ' + Integer
-                    .toHexString(mem.getInt(12)));
+        return (Integer.toHexString(bufferAddress) + ": " + 
+                Integer.toHexString(mem.getInt(4)) + ' ' + 
+                Integer.toHexString(mem.getInt(8)) + ' ' + 
+                Integer.toHexString(mem.getInt(12)));
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: BOOTPServer.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.bootp;
 
 import java.io.FileReader;
@@ -85,7 +85,7 @@ public class BOOTPServer {
                 XMLElement child = (XMLElement) aChildren;
                 try {
                     table.put(child.getStringAttribute("ethernetAddress").toUpperCase(),
-                            new TableEntry(child));
+                        new TableEntry(child));
                 } catch (IllegalArgumentException ex) {
                     log.debug("Invalid IP address", ex);
                 }
@@ -141,10 +141,10 @@ public class BOOTPServer {
             return;
         }
         Inet4Address yourIP = entry.address;
-        hdr =
-                new BOOTPHeader(BOOTPHeader.BOOTREPLY, hdr.getTransactionID(),
-                        hdr.getTimeElapsedSecs(), hdr.getClientIPAddress(), yourIP,
-                        (Inet4Address) InetAddress.getLocalHost(), hdr.getClientHwAddress());
+        hdr = new BOOTPHeader(
+                BOOTPHeader.BOOTREPLY, hdr.getTransactionID(), hdr.getTimeElapsedSecs(), 
+                hdr.getClientIPAddress(), yourIP, (Inet4Address) InetAddress.getLocalHost(), 
+                hdr.getClientHwAddress());
         hdr.setBootFileName(entry.bootFileName);
         BOOTPMessage msg = new BOOTPMessage(hdr);
         packet = msg.toDatagramPacket();

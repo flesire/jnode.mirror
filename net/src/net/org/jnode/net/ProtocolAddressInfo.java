@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: ProtocolAddressInfo.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net;
 
 import java.net.InetAddress;
@@ -34,14 +34,12 @@ public interface ProtocolAddressInfo {
 
     /**
      * Is the given address one of the addresses of this object?
-     * 
      * @param address
      */
     public boolean contains(ProtocolAddress address);
 
     /**
      * Is the given address one of the addresses of this object?
-     * 
      * @param address
      */
     public boolean contains(InetAddress address);
@@ -53,7 +51,6 @@ public interface ProtocolAddressInfo {
 
     /**
      * Gets a collection of all protocol addresses of this interface.
-     * 
      * @return A Set of ProtocolAddress instances
      */
     public Set<ProtocolAddress> addresses();

@@ -24,7 +24,7 @@ import org.vmmagic.unboxed.Word;
  * handling those references, and computing death times
  * 
  * @author <a href="http://www-ali.cs.umass.edu/~hertz">Matthew Hertz</a>
- * @version $Revision$
+ * @version $Revision: 5226 $
  */
 public final class TraceInterface {
 

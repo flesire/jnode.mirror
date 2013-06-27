@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: USBStorageSCSIHostDriver.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -158,7 +158,7 @@ public class USBStorageSCSIHostDriver extends Driver
         public int executeCommand(CDB cdb, byte[] data, int dataOffset, long timeout)
             throws SCSIException, TimeoutException, InterruptedException {
             log.debug("*** execute command ***");
-            UsbStorageTransport t = storageDeviceData.getTransport();
+            ITransport t = storageDeviceData.getTransport();
             t.transport(cdb, timeout);
             return 0;
         }
@@ -181,7 +181,7 @@ public class USBStorageSCSIHostDriver extends Driver
             log.info("*** INQUIRY ***");
             final byte[] inqData = new byte[96];
 
-            UsbStorageTransport t = storageDeviceData.getTransport();
+            ITransport t = storageDeviceData.getTransport();
             t.transport(new CDBInquiry(inqData.length), 50000);
 
             inquiryResult = new InquiryData(inqData);

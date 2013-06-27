@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TCPOutSegment.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.tcp;
 
 import java.net.SocketException;
@@ -55,7 +55,7 @@ public class TCPOutSegment extends TCPSegment {
      * @param dataOffset
      */
     public TCPOutSegment(IPv4Header ipHdr, TCPHeader hdr, TCPDataBuffer buffer, int dataOffset,
-            int timeout) {
+                         int timeout) {
         super(ipHdr, hdr);
         this.buffer = buffer;
         this.dataOffset = dataOffset;
@@ -80,7 +80,7 @@ public class TCPOutSegment extends TCPSegment {
 
     /**
      * Send this segment
-     * 
+     *
      * @param tcp
      */
     public void send(TCPProtocol tcp) throws SocketException {
@@ -108,9 +108,8 @@ public class TCPOutSegment extends TCPSegment {
 
     /**
      * Does this segment only contain an ACK?
-     * 
-     * @return True if this segment contains only an acknowledgment, false
-     *         otherwise
+     *
+     * @return True if this segment contains only an acknowledgment, false otherwise
      */
     public boolean isAckOnly() {
         return ((hdr.getFlags() == TCPConstants.TCPF_ACK) && (hdr.getDataLength() == 0));

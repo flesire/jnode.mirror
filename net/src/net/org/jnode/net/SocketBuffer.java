@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: SocketBuffer.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net;
 
 import org.apache.log4j.Logger;
@@ -196,7 +196,7 @@ public class SocketBuffer {
                 next.pull(count);
             } else {
                 throw new IllegalArgumentException("Cannot pull " + count + " bytes (" + start +
-                        ',' + size + ')');
+                    ',' + size + ')');
             }
         } else {
             start += count;
@@ -227,7 +227,7 @@ public class SocketBuffer {
                 next.unpull(remaining);
             } else {
                 throw new IllegalArgumentException("Cannot unpull " + count + " bytes (" + start +
-                        ',' + size + ')');
+                    ',' + size + ')');
             }
         }
         testBuffer();
@@ -578,7 +578,6 @@ public class SocketBuffer {
 
     /**
      * Set the new buffer size
-     * 
      * @param newSize
      */
     private void setSize(int newSize) {
@@ -631,7 +630,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Gets the header of the linklayer
+     * Gets the header of the linklayer 
      */
     public LinkLayerHeader getLinkLayerHeader() {
         if (linkLayerHeader != null) {
@@ -644,7 +643,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Gets the header of the networklayer
+     * Gets the header of the networklayer 
      */
     public NetworkLayerHeader getNetworkLayerHeader() {
         if (networkLayerHeader != null) {
@@ -657,7 +656,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Gets the header of the transportlayer
+     * Gets the header of the transportlayer 
      */
     public TransportLayerHeader getTransportLayerHeader() {
         if (transportLayerHeader != null) {
@@ -670,8 +669,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Sets the header of the linklayer
-     * 
+     * Sets the header of the linklayer 
      * @param header
      */
     public void setLinkLayerHeader(LinkLayerHeader header) {
@@ -679,8 +677,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Sets the header of the networklayer
-     * 
+     * Sets the header of the networklayer 
      * @param header
      */
     public void setNetworkLayerHeader(NetworkLayerHeader header) {
@@ -688,8 +685,7 @@ public class SocketBuffer {
     }
 
     /**
-     * Sets the header of the transportlayer
-     * 
+     * Sets the header of the transportlayer 
      * @param header
      */
     public void setTransportLayerHeader(TransportLayerHeader header) {

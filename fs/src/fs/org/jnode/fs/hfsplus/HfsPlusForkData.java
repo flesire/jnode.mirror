@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -88,12 +88,12 @@ public class HfsPlusForkData {
     }
 
     public final String toString() {
-        StringBuilder s = new StringBuilder();
+        StringBuffer s = new StringBuffer();
         s.append("Total size : ").append(totalSize).append("\n");
         s.append("Clump size : ").append(clumpSize).append("\n");
         s.append("Total Blocks : ").append(totalBlock).append("\n");
         for (int i = 0; i < extents.length; i++) {
-            s.append("Extent[").append(i).append("]: ").append(extents[i].toString());
+            s.append("Extent[" + i + "]: " + extents[i].toString());
         }
         return s.toString();
     }

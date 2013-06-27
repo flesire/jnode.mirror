@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.protocol.nfs;
 
 import java.io.IOException;
@@ -43,9 +43,8 @@ public class Handler extends URLStreamHandler {
         OncRpcPortmapClient client = null;
         int version = 0;
         try {
-            client =
-                    new OncRpcPortmapClient(InetAddress.getByName(url.getHost()),
-                            OncRpcProtocols.ONCRPC_TCP);
+            client = new OncRpcPortmapClient(
+                    InetAddress.getByName(url.getHost()), OncRpcProtocols.ONCRPC_TCP);
             OncRpcServerIdent[] servers = client.listServers();
             for (OncRpcServerIdent server : servers) {
                 if (server.program == 100003 && server.version > version) {

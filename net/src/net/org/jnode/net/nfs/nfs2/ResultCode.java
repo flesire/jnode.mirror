@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,18 +17,19 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.nfs.nfs2;
 
 /**
  * @author Andrei Dore
  */
 public enum ResultCode {
-    NFS_OK(0), NFS_ERROR_NO_PERM(1), NFS_ERROR_NO_ENTRY(2), NFS_ERROR_IO(5), NFS_ERROR_NXIO(6), NFS_ERROR_ACCESS(
-            13), NFS_ERROR_FILE_ALREADY_EXIST(17), NFS_ERROR_NO_DEVICE(19), NFS_ERROR_NOT_DIRECTORY(
-            20), NFS_ERROR_IS_DIRECTORY(21), NFS_ERROR_FILE_TOO_BIG(27), NFS_ERROR_NO_SPACE(28), NFS_ERROR_READ_ONLY_FS(
-            30), NFS_ERROR_NAME_TOO_LONG(63), NFS_ERROR_DIRECTORY_NOT_EMPTY(66), NFS_ERROR_DISK_QUOTA(
-            69), NFS_ERROR_STALE(70), NFS_ERROR_WRITE_FLUSH(99);
+    NFS_OK(0), NFS_ERROR_NO_PERM(1), NFS_ERROR_NO_ENTRY(2), NFS_ERROR_IO(5), NFS_ERROR_NXIO(6), 
+    NFS_ERROR_ACCESS(13), NFS_ERROR_FILE_ALREADY_EXIST(17), NFS_ERROR_NO_DEVICE(19), 
+    NFS_ERROR_NOT_DIRECTORY(20), NFS_ERROR_IS_DIRECTORY(21), NFS_ERROR_FILE_TOO_BIG(27), 
+    NFS_ERROR_NO_SPACE(28), NFS_ERROR_READ_ONLY_FS(30), NFS_ERROR_NAME_TOO_LONG(63), 
+    NFS_ERROR_DIRECTORY_NOT_EMPTY(66), NFS_ERROR_DISK_QUOTA(69), NFS_ERROR_STALE(70),
+    NFS_ERROR_WRITE_FLUSH(99);
 
     private int code;
 

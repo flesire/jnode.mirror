@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: IPv4FragmentList.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4;
 
 import java.util.ArrayList;
@@ -105,8 +105,7 @@ public class IPv4FragmentList implements IPv4Constants {
                 fragments.add(fragments.indexOf(f), skbuf);
                 return;
             } else if (myFrOfs < (fOfs + fSize)) {
-                // Fragment offset in the middle of an existing fragment: this
-                // is an error!
+                // Fragment offset in the middle of an existing fragment: this is an error!
                 log.debug("Fragment offset(" + myFrOfs + mySize + ',' +
                         ") falls in another fragment (" + fOfs + ',' + fSize + ").");
                 return;
@@ -139,8 +138,8 @@ public class IPv4FragmentList implements IPv4Constants {
     }
 
     /**
-     * Gets the complete packet This method can only be called when
-     * <code>isComplete</code> returns true.
+     * Gets the complete packet
+     * This method can only be called when <code>isComplete</code> returns true.
      */
     public SocketBuffer getPacket() {
         return (SocketBuffer) fragments.get(0);
@@ -148,7 +147,6 @@ public class IPv4FragmentList implements IPv4Constants {
 
     /**
      * Gets the key of this fragmentlist.
-     * 
      * @see IPv4Header#getFragmentListKey()
      */
     public Object getKey() {

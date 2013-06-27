@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: AbstractDatagramSocketImpl.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.util;
 
 import java.io.IOException;
@@ -45,25 +45,25 @@ public abstract class AbstractDatagramSocketImpl extends DatagramSocketImpl impl
 
     /** The receive queue of SocketBuffer instances */
     private final Queue<SocketBuffer> receiveQueue = new Queue<SocketBuffer>();
-
+    
     /** Have I been closed? */
     private boolean closed;
-
+    
     /** Time to live */
     private int ttl = 0xFF;
-
+    
     /** Type of service */
     private int tos = 0;
-
+    
     /** Timeout of network operations */
     private int timeout = 0;
-
+    
     /** Local address */
     private InetAddress laddr;
-
+    
     /** Send using broadcast addresses? */
     private boolean broadcast = true;
-
+    
     /** Device used for transmission (can be null) */
     private Device device;
 
@@ -157,7 +157,7 @@ public abstract class AbstractDatagramSocketImpl extends DatagramSocketImpl impl
                     break;
                 case SO_SNDBUF: /* ignore */
                     break;
-                case SO_TRANSMIT_IF:
+                case SO_TRANSMIT_IF: 
                     if (val == null) {
                         device = null;
                     } else {
@@ -261,9 +261,8 @@ public abstract class AbstractDatagramSocketImpl extends DatagramSocketImpl impl
     protected abstract void onReceive(DatagramPacket p, SocketBuffer skbuf) throws IOException;
 
     /**
-     * Deliver a packet to this socket. This will put the packet in the receive
-     * queue if this socket has not been closed.
-     * 
+     * Deliver a packet to this socket. This will put the packet in the
+     * receive queue if this socket has not been closed.
      * @param skbuf
      */
     public final boolean deliverReceived(SocketBuffer skbuf) {
@@ -283,8 +282,7 @@ public abstract class AbstractDatagramSocketImpl extends DatagramSocketImpl impl
     }
 
     /**
-     * Gets the local port of this socket
-     * 
+     * Gets the local port of this socket 
      * @see java.net.DatagramSocketImpl#getLocalPort()
      */
     public final int getLocalPort() {
@@ -292,7 +290,7 @@ public abstract class AbstractDatagramSocketImpl extends DatagramSocketImpl impl
     }
 
     /**
-     * Gets the local port of this socket
+     * Gets the local port of this socket 
      */
     public final InetAddress getLocalAddress() {
         return laddr;

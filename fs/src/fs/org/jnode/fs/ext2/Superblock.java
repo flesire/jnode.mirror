@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Superblock.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,8 +22,6 @@ package org.jnode.fs.ext2;
 
 import java.io.IOException;
 
-import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jnode.fs.FileSystemException;
@@ -58,20 +56,18 @@ public class Superblock {
 
     public Superblock() {
         data = new byte[SUPERBLOCK_LENGTH];
+        log.setLevel(Level.INFO);
     }
 
-    public void read(Ext2FileSystem fs) throws FileSystemException {
-        ByteBuffer data = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
-        try {
-            fs.getApi().read(Superblock.SUPERBLOCK_LENGTH, data);
-        } catch (IOException e) {
-            throw new FileSystemException(e);
-        }
-        System.arraycopy(data.array(), 0, this.data, 0, SUPERBLOCK_LENGTH);
+    public void read(byte src[], Ext2FileSystem fs) throws FileSystemException {
+        System.arraycopy(src, 0, data, 0, SUPERBLOCK_LENGTH);
+
+        this.fs = fs;
+
         // check the magic :)
         if (getMagic() != 0xEF53)
             throw new FileSystemException("Not ext2 superblock (" + getMagic() + ": bad magic)");
-        this.fs = fs;
+
         setDirty(false);
     }
 
@@ -203,10 +199,6 @@ public class Superblock {
             setDirty(false);
         }
 
-    }
-
-    public int getGroupCount() {
-        return (int) Ext2Utils.ceilDiv(this.getBlocksCount(), this.getBlocksPerGroup());
     }
 
     // this field is only written during format (so no synchronization issues
@@ -712,21 +704,5 @@ public class Superblock {
      */
     public void setDirty(boolean b) {
         dirty = b;
-    }
-
-    public String toString(){
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy");
-        return " superblock: " + "\n" +
-            "  #Mount: " + this.getMntCount() + "\n" +
-            "  #MaxMount: " + this.getMaxMntCount() + "\n" + "  Last mount time: " +
-            sdf.format(Ext2Utils.decodeDate(this.getMTime()).getTime()) + "\n" +
-            "  Last write time: " +
-            sdf.format(Ext2Utils.decodeDate(this.getWTime()).getTime()) + "\n" +
-            "  #blocks: " + this.getBlocksCount() + "\n" +
-            "  #blocks/group: " + this.getBlocksPerGroup() + "\n" +
-            "  #block groups: " + this + "\n" +
-            "  block size: " + this.getBlockSize() + "\n" +
-            "  #inodes: " + this.getINodesCount() + "\n" +
-            "  #inodes/group: " + this.getINodesPerGroup();
     }
 }

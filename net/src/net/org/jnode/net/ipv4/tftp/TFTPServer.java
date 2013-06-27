@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TFTPServer.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.tftp;
 
 import java.io.File;
@@ -48,16 +48,16 @@ public class TFTPServer extends TFTP {
 
     /** current client address */
     private InetAddress clientAddress;
-
+    
     private int clientPort;
     /** send transfer stream */
-
+    
     private FileInputStream fileIn;
     /** receive transfer stream */
-
+    
     private FileOutputStream fileOut;
     /** current block number received or sent */
-
+    
     private int blockNumber;
 
     public static void main(String[] args) {
@@ -103,11 +103,10 @@ public class TFTPServer extends TFTP {
                     File file = new File(".", wreqPacket.getFilename());
                     log.info("Request to write file " + wreqPacket.getFilename() + " (" +
                             file.getAbsolutePath() + ") received from " + packet.getAddress() +
-                            ':' + packet.getPort());
+                        ':' + packet.getPort());
                     fileOut = new FileOutputStream(file);
                     blockNumber = 0;
-                    bufferedSend(new TFTPAckPacket(packet.getAddress(), packet.getPort(),
-                            blockNumber));
+                    bufferedSend(new TFTPAckPacket(packet.getAddress(), packet.getPort(), blockNumber));
                     clientAddress = packet.getAddress();
                     clientPort = packet.getPort();
                 }
@@ -117,8 +116,8 @@ public class TFTPServer extends TFTP {
                     TFTPDataPacket dataPacket = (TFTPDataPacket) packet;
                     // if client sent next block
                     if (dataPacket.getBlockNumber() == blockNumber + 1) {
-                        fileOut.write(dataPacket.getData(), dataPacket.getDataOffset(),
-                                dataPacket.getDataLength());
+                        fileOut.write(dataPacket.getData(), dataPacket.getDataOffset(), dataPacket
+                                .getDataLength());
                         // send acknowledgement
                         bufferedSend(new TFTPAckPacket(packet.getAddress(), packet.getPort(),
                                 dataPacket.getBlockNumber()));
@@ -139,7 +138,7 @@ public class TFTPServer extends TFTP {
                         File file = new File(".", rreqPacket.getFilename());
                         log.info("Request to read file " + rreqPacket.getFilename() + " (" +
                                 file.getAbsolutePath() + ") received from " + packet.getAddress() +
-                                ':' + packet.getPort());
+                            ':' + packet.getPort());
                         fileIn = new FileInputStream(file);
                         blockNumber = 1;
                         byte[] data = new byte[TFTPDataPacket.MAX_DATA_LENGTH];

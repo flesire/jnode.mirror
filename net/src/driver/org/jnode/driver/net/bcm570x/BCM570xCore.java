@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: BCM570xCore.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,14 +17,18 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.bcm570x;
+
+import java.security.PrivilegedExceptionAction;
 
 import javax.naming.NameNotFoundException;
 
+import org.jnode.driver.Device;
 import org.jnode.driver.DriverException;
+import org.jnode.driver.bus.pci.PCIBaseAddress;
 import org.jnode.driver.bus.pci.PCIDevice;
-import org.jnode.driver.net.NetDeviceResource;
+import org.jnode.driver.bus.pci.PCIHeaderType0;
 import org.jnode.driver.net.NetworkException;
 import org.jnode.driver.net.ethernet.spi.Flags;
 import org.jnode.driver.net.spi.AbstractDeviceCore;
@@ -33,10 +37,13 @@ import org.jnode.net.HardwareAddress;
 import org.jnode.net.SocketBuffer;
 import org.jnode.net.ethernet.EthernetAddress;
 import org.jnode.net.ethernet.EthernetConstants;
+import org.jnode.system.resource.IOResource;
 import org.jnode.system.resource.IRQHandler;
+import org.jnode.system.resource.IRQResource;
 import org.jnode.system.resource.ResourceManager;
 import org.jnode.system.resource.ResourceNotFreeException;
 import org.jnode.system.resource.ResourceOwner;
+import org.jnode.util.AccessControllerUtils;
 import org.jnode.util.TimeoutException;
 
 /**
@@ -44,7 +51,18 @@ import org.jnode.util.TimeoutException;
  */
 public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants, IRQHandler,
         EthernetConstants {
-
+    /**
+     * Start of IO address space
+     */
+    private final int iobase;
+    /**
+     * IO address space
+     */
+    private final IOResource io;
+    /**
+     * IRQ
+     */
+    private final IRQResource irq;
     /**
      * My ethernet address
      */
@@ -52,7 +70,6 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
     /**
      * flags needed to setup device
      */
-    @SuppressWarnings("unused")
     private final BCM570xFlags flags;
     /**
      * main driver this belongs to
@@ -67,7 +84,6 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
      */
     // private boolean tx_active;
     private int txIndex;
-    @SuppressWarnings("unused")
     private int txAborted;
     private int txNumberOfPackets;
     private int txPending;
@@ -78,15 +94,40 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
      * @param flags
      */
     public BCM570xCore(BCM570xDriver driver, ResourceOwner owner, PCIDevice device, Flags flags)
-            throws DriverException, ResourceNotFreeException {
+        throws DriverException, ResourceNotFreeException {
         if (!(flags instanceof BCM570xFlags))
             throw new DriverException("Wrong flags to the BCM570x driver");
 
         this.driver = driver;
         log.info(driver);
         this.flags = (BCM570xFlags) flags;
-        resources = new NetDeviceResource(owner, this, device);
-        log.info("BCM570x driver " + resources);
+
+        final int irq = getIRQ(device, this.flags);
+        log.info("BCM570x driver irq " + irq);
+
+        // Get the start of the IO address space
+        this.iobase = getIOBase(device, this.flags);
+
+        final int iolength = getIOLength(device, this.flags);
+        log.info("BCM570x driver iobase " + iobase + " irq " + irq);
+        log.debug("BCM570x driver iobase " + iobase + " irq " + irq);
+
+        final ResourceManager rm;
+
+        try {
+            rm = InitialNaming.lookup(ResourceManager.NAME);
+        } catch (NameNotFoundException ex) {
+            throw new DriverException("Cannot find ResourceManager");
+        }
+
+        this.irq = rm.claimIRQ(owner, irq, this, true);
+
+        try {
+            io = claimPorts(rm, owner, iobase, iolength);
+        } catch (ResourceNotFreeException ex) {
+            this.irq.release();
+            throw ex;
+        }
 
         /*
          * this.rxRing = new RTL8139RxRing(RX_FRAMES, rm);
@@ -103,14 +144,15 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
          * final byte[] hwAddrArr = new byte[ETH_ALEN];
          * 
          * hwAddrArr[0] = adr1[0]; hwAddrArr[1] = adr1[1]; hwAddrArr[2] =
-         * adr1[2]; hwAddrArr[3] = adr1[3]; hwAddrArr[4] = adr2[0]; hwAddrArr[5]
-         * = adr2[1];
+         * adr1[2]; hwAddrArr[3] = adr1[3]; hwAddrArr[4] = adr2[0]; hwAddrArr[5] =
+         * adr2[1];
          * 
-         * this.hwAddress = new EthernetAddress(hwAddrArr, 0); // disable
-         * multicast setReg32(REG_MAR0, 0); setReg32(REG_MAR0 + 4, 0);
+         * this.hwAddress = new EthernetAddress(hwAddrArr, 0);
+         *  // disable multicast setReg32(REG_MAR0, 0); setReg32(REG_MAR0 + 4,
+         * 0);
          * 
-         * log.debug("Found " + flags.getName() + " IRQ=" + irq + ", IOBase=0x"
-         * + NumberUtils.hex(iobase) + ", MAC Address=" + hwAddress);
+         * log.debug("Found " + flags.getName() + " IRQ=" + irq + ", IOBase=0x" +
+         * NumberUtils.hex(iobase) + ", MAC Address=" + hwAddress);
          */
     }
 
@@ -345,6 +387,14 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
     }
 
     /**
+     * Release all resources
+     */
+    public void release() {
+        io.release();
+        irq.release();
+    }
+
+    /**
      * Transmit the given buffer
      * 
      * @param buf
@@ -511,12 +561,12 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
                 final SocketBuffer skbuf = null; // rxRing.getPacket(pktLen);
 
                 try {
-
+                    
                     if (skbuf != null && skbuf.getSize() > 0) {
                         driver.onReceive(skbuf);
                     }
                 } catch (NetworkException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); 
                 } finally {
                     // FIXME
                 }
@@ -564,4 +614,126 @@ public class BCM570xCore extends AbstractDeviceCore implements BCM570xConstants,
         }
     }
 
+    /**
+     * Gets the first IO-Address used by the given device
+     * 
+     * @param device
+     * @param flags
+     */
+    protected int getIOBase(Device device, Flags flags) throws DriverException {
+        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
+        final PCIBaseAddress[] addrs = config.getBaseAddresses();
+
+        if (addrs.length < 1) {
+            throw new DriverException("Cannot find iobase: not base addresses");
+        }
+        if (!addrs[0].isIOSpace()) {
+            throw new DriverException("Cannot find iobase: first address is not I/O");
+        }
+        return addrs[0].getIOBase();
+    }
+
+    /**
+     * Gets the number of IO-Addresses used by the given device
+     * 
+     * @param device
+     * @param flags
+     */
+    protected int getIOLength(Device device, Flags flags) throws DriverException {
+        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
+        final PCIBaseAddress[] addrs = config.getBaseAddresses();
+
+        if (addrs.length < 1) {
+            throw new DriverException("Cannot find iobase: not base addresses");
+        }
+
+        if (!addrs[0].isIOSpace()) {
+            throw new DriverException("Cannot find iobase: first address is not I/O");
+        }
+
+        return addrs[0].getSize();
+    }
+
+    /**
+     * Gets the IRQ used by the given device
+     * 
+     * @param device
+     * @param flags
+     */
+    protected int getIRQ(Device device, Flags flags) throws DriverException {
+        final PCIHeaderType0 config = ((PCIDevice) device).getConfig().asHeaderType0();
+        return config.getInterruptLine();
+    }
+
+    /**
+     * Reads a 8-bit NIC register
+     * 
+     * @param reg
+     */
+    protected final int getReg8(int reg) {
+        return io.inPortByte(iobase + reg);
+    }
+
+    /**
+     * Reads a 16-bit NIC register
+     * 
+     * @param reg
+     */
+    protected final int getReg16(int reg) {
+        return io.inPortWord(iobase + reg);
+    }
+
+    /**
+     * Reads a 32-bit NIC register
+     * 
+     * @param reg
+     */
+    protected final int getReg32(int reg) {
+        return io.inPortDword(iobase + reg);
+    }
+
+    /**
+     * Writes a 8-bit NIC register
+     * 
+     * @param reg
+     * @param value
+     */
+    protected final void setReg8(int reg, int value) {
+        io.outPortByte(iobase + reg, value);
+    }
+
+    /**
+     * Writes a 16-bit NIC register
+     * 
+     * @param reg
+     * @param value
+     */
+    protected final void setReg16(int reg, int value) {
+        io.outPortWord(iobase + reg, value);
+    }
+
+    /**
+     * Writes a 32-bit NIC register
+     * 
+     * @param reg
+     * @param value
+     */
+    public final void setReg32(int reg, int value) {
+        io.outPortDword(iobase + reg, value);
+    }
+
+    private IOResource claimPorts(final ResourceManager rm, final ResourceOwner owner,
+            final int low, final int length) throws ResourceNotFreeException, DriverException {
+        try {
+            return AccessControllerUtils.doPrivileged(new PrivilegedExceptionAction<IOResource>() {
+                public IOResource run() throws ResourceNotFreeException {
+                    return rm.claimIOResource(owner, low, length);
+                }
+            });
+        } catch (ResourceNotFreeException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new DriverException("Unknown exception", ex);
+        }
+    }
 }

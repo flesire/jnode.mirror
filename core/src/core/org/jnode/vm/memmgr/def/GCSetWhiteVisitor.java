@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: GCSetWhiteVisitor.java 5956 2013-02-17 20:50:10Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: UDPControlBlock.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,13 +17,13 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.udp;
 
 import org.jnode.net.ipv4.IPv4ControlBlock;
 import org.jnode.net.ipv4.IPv4ControlBlockList;
 
-public class UDPControlBlock extends IPv4ControlBlock {
+public class UDPControlBlock extends IPv4ControlBlock implements UDPConstants {
     public UDPControlBlock(IPv4ControlBlockList list, int protocol, int ttl) {
         super(list, protocol, ttl);
     }

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Fat32.java 5969 2013-02-21 07:28:22Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -35,6 +35,10 @@ public class Fat32 extends Fat {
 
     protected long offset(int index) {
         return (long) (4 * index);
+    }
+
+    public long getClusterPosition(int index) {
+        return getClusterSector(index) * (long) getBootSector().getBytesPerSector();
     }
 
     public int get(int index) throws IOException {

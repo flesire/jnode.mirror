@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FatCache.java 5969 2013-02-21 07:28:22Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -121,12 +121,32 @@ public class FatCache {
         return c;
     }
 
+    private long getUInt16(long offset) throws IOException {
+        long addr = offset / elementSize;
+        int ofs = (int) (offset % elementSize);
+
+        byte[] data = get(addr).getData();
+        return LittleEndian.getUInt16(data, ofs);
+    }
+
     private long getUInt32(long offset) throws IOException {
         long addr = (long) (offset / elementSize);
         int ofs = (int) (offset % elementSize);
 
         byte[] data = get(addr).getData();
         return LittleEndian.getUInt32(data, ofs);
+    }
+
+    private void setInt16(long offset, int value) throws IOException {
+        long addr = offset / elementSize;
+        int ofs = (int) (offset % elementSize);
+
+        CacheElement c = get(addr);
+        byte[] data = c.getData();
+
+        LittleEndian.setInt16(data, ofs, value);
+
+        c.setDirty();
     }
 
     private void setInt32(long offset, int value) throws IOException {
@@ -141,8 +161,16 @@ public class FatCache {
         c.setDirty();
     }
 
+    public long getUInt16(int index) throws IOException {
+        return getUInt16(fat.position(0, index));
+    }
+
     public long getUInt32(int index) throws IOException {
         return getUInt32(fat.position(0, index));
+    }
+
+    public void setInt16(int index, int element) throws IOException {
+        setInt16(fat.position(0, index), element);
     }
 
     public void setInt32(int index, int element) throws IOException {

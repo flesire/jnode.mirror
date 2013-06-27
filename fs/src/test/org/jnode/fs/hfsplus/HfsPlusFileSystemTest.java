@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.fs.hfsplus;
 
 import java.io.File;
@@ -37,10 +37,10 @@ import org.jnode.fs.service.def.FileSystemPlugin;
 import org.jnode.test.support.TestUtils;
 
 public class HfsPlusFileSystemTest extends TestCase {
-
+    
     private Device device;
     private FileSystemService fss;
-
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -48,7 +48,7 @@ public class HfsPlusFileSystemTest extends TestCase {
         device = createTestDisk(false);
         // create file system service.
         fss = createFSService();
-
+     
     }
 
     public void testCreate() throws Exception {
@@ -60,19 +60,7 @@ public class HfsPlusFileSystemTest extends TestCase {
         params.setJournaled(false);
         params.setJournalSize(HFSPlusParams.DEFAULT_JOURNAL_SIZE);
         fs.create(params);
-        assertEquals("testdrive", fs.getVolumeName());
-        assertEquals(10485760, fs.getTotalSpace());
-        assertEquals(10313728, fs.getFreeSpace());
-        assertEquals(-1, fs.getUsableSpace());
-
-        HfsPlusEntry root = fs.getRootEntry();
-        assertNotNull(root);
-        assertEquals("/", root.getName());
-        assertNull(root.getParent());
-
-        // Volume header assertions
         SuperBlock vh = fs.getVolumeHeader();
-        assertNotNull(vh);
         assertEquals(SuperBlock.HFSPLUS_SUPER_MAGIC, vh.getMagic());
         assertEquals(4096, vh.getBlockSize());
 
@@ -90,8 +78,6 @@ public class HfsPlusFileSystemTest extends TestCase {
         fs.close();
         fs = new HfsPlusFileSystemType().create(device, false);
         fs.read();
-        assertEquals(fs.getVolumeName(), "testdrive");
-        //
         fs.createRootEntry();
         FSDirectory root = fs.getRootEntry().getDirectory();
         assertFalse("Must be empty", root.iterator().hasNext());
@@ -100,7 +86,7 @@ public class HfsPlusFileSystemTest extends TestCase {
         fs.close();
         fs = new HfsPlusFileSystemType().create(device, false);
         fs.read();
-        assertEquals(1, fs.getVolumeHeader().getFolderCount());
+        assertEquals(1,fs.getVolumeHeader().getFolderCount());
         fs.createRootEntry();
         root = fs.getRootEntry().getDirectory();
         assertTrue("Must contains one directory", root.iterator().hasNext());

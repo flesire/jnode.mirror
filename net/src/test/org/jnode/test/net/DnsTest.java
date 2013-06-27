@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: DnsTest.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,8 +17,9 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.test.net;
+
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -38,7 +39,7 @@ public class DnsTest {
                 System.out.println("inetAddress " + inetAddress.getHostAddress());
             } catch (UnknownHostException e) {
                 e.printStackTrace(); // To change body of catch statement use
-                                     // Options | File Templates.
+                                        // Options | File Templates.
             }
         } else {
             System.out.println("insert url as arg.");

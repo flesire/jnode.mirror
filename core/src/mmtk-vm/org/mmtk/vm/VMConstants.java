@@ -36,7 +36,7 @@ import org.jnode.vm.facade.VmUtils;
  * VMConstants.java,v 1.1 2005/05/04 08:59:27 epr Exp $
  * 
  * @author <a href="http://cs.anu.edu.au/~Steve.Blackburn">Steve Blackburn</a>
- * @version $Revision$
+ * @version $Revision: 5756 $
  */
 public final class VMConstants {
     

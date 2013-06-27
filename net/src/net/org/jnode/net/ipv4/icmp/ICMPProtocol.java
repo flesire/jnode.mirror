@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: ICMPProtocol.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.icmp;
 
 import java.net.DatagramSocketImplFactory;
@@ -46,7 +46,7 @@ public class ICMPProtocol implements IPv4Protocol, IPv4Constants, ICMPConstants,
 
     private static final String IPNAME_ICMP = "icmp";
 
-    /** My logger */
+	/** My logger */
     private Logger log = Logger.getLogger(getClass());
 
     /** The IP service we're a part of */
@@ -183,6 +183,8 @@ public class ICMPProtocol implements IPv4Protocol, IPv4Constants, ICMPConstants,
         send(ipReplyHdr, hdr.createReplyHeader(), new SocketBuffer(skbuf));
     }
 
+    
+
     /**
      * @see org.jnode.net.ipv4.IPv4Protocol#getStatistics()
      */
@@ -207,8 +209,8 @@ public class ICMPProtocol implements IPv4Protocol, IPv4Constants, ICMPConstants,
     private void processReplyRequest(SocketBuffer skbuf) {
         final ICMPHeader hdr = (ICMPHeader) skbuf.getTransportLayerHeader();
         try {
-            if (hdr.getType() == ICMPType.ICMP_ECHO) {
-                sendEchoReply((ICMPEchoHeader) hdr, skbuf);
+            if(hdr.getType() == ICMPType.ICMP_ECHO) {
+                    sendEchoReply((ICMPEchoHeader) hdr, skbuf);
             }
         } catch (SocketException ex) {
             log.error("Error in ICMP reply", ex);

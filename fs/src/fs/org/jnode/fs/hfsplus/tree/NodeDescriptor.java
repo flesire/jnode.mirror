@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.fs.hfsplus.tree;
 
 import org.jnode.util.BigEndian;
@@ -94,8 +94,8 @@ public class NodeDescriptor {
     }
 
     public final String toString() {
-        return ("FLink:  " + getFLink() + " " + "BLink:  " + getBLink() + " " + "Kind:   " +
-                getKind() + " " + "height: " + getHeight() + " " + "#rec:   " + getNumRecords() + " ");
+        return ("FLink:  " + getFLink() + "\n" + "BLink:  " + getBLink() + "\n" + "Kind:   " +
+                getKind() + "\n" + "height: " + getHeight() + "\n" + "#rec:   " + getNumRecords() + "\n");
     }
 
     public int getFLink() {

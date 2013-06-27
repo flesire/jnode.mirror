@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FatFileSystemType.java 5966 2013-02-20 11:55:37Z galatnm $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,8 +25,6 @@ import org.jnode.driver.block.FSBlockDeviceAPI;
 import org.jnode.fs.BlockDeviceFileSystemType;
 import org.jnode.fs.FileSystemException;
 import org.jnode.partitions.PartitionTableEntry;
-import org.jnode.partitions.ibm.IBMPartitionTableEntry;
-import org.jnode.partitions.ibm.IBMPartitionTypes;
 
 /**
  * @author epr
@@ -50,6 +48,7 @@ public class FatFileSystemType implements BlockDeviceFileSystemType<FatFileSyste
      * @param firstSector
      */
     public boolean supports(PartitionTableEntry pte, byte[] firstSector, FSBlockDeviceAPI devApi) {
+/*
         if (pte != null) {
             if (!pte.isValid()) {
                 return false;
@@ -66,14 +65,24 @@ public class FatFileSystemType implements BlockDeviceFileSystemType<FatFileSyste
             } else {
                 return false;
             }
-
         }
 
+        try
+        {
         if (!new BootSector(firstSector).isaValidBootSector())
             return false;
+        }
+        catch (RuntimeException e)
+        {
+            return false;
+        }
+*/
 
-        // Very ugly, but good enough for now.
-        return true;
+        // FAT-32 is currently handled by the newer jfat package.
+        return (firstSector[38] == 0x29 &&
+                firstSector[54] == 'F' &&
+                firstSector[55] == 'A' &&
+                firstSector[56] == 'T');
     }
 
     /**

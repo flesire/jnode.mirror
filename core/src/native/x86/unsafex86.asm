@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafex86.asm 4396 2008-08-03 21:50:40Z fduminy $
 ;
 ; Native method implementation for org.jnode.vm.x86.UnsafeX86
 ;

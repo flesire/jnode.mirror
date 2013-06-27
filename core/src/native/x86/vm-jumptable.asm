@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: vm-jumptable.asm 1108 2005-02-13 19:21:09Z epr $
 ;
 ; Native address jumptable.
 ; This table is used by the native code compiler to call

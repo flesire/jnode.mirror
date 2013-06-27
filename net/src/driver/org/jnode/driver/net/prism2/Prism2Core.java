@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: Prism2Core.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.prism2;
 
 import javax.naming.NameNotFoundException;
@@ -75,8 +75,8 @@ import static org.jnode.driver.net.prism2.Prism2Constants.Register.RXFID;
 /**
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
-final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, WirelessConstants,
-        IRQHandler {
+final class Prism2Core extends WirelessDeviceCore implements Prism2Constants,
+    WirelessConstants, IRQHandler {
 
     /**
      * The driver I'm a part of
@@ -131,15 +131,15 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Initialize this instance.
-     * 
+     *
      * @param driver
      * @param owner
      * @param device
      * @param flags
      * @throws DriverException
      */
-    public Prism2Core(Prism2Driver driver, ResourceOwner owner, PCIDevice device, Flags flags)
-            throws DriverException {
+    public Prism2Core(Prism2Driver driver, ResourceOwner owner,
+                      PCIDevice device, Flags flags) throws DriverException {
         if (!(flags instanceof Prism2Flags))
             throw new DriverException("Wrong flags to the Prism2 driver");
 
@@ -157,7 +157,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
         final PCIHeaderType0 pciCfg = device.getConfig().asHeaderType0();
         final PCIBaseAddress[] baseAddrs = pciCfg.getBaseAddresses();
         if (baseAddrs.length < 1) {
-            throw new DriverException("No memory mapped I/O region in PCI config");
+            throw new DriverException(
+                "No memory mapped I/O region in PCI config");
         }
         final PCIBaseAddress regsAddr = pciCfg.getBaseAddresses()[0];
         if (!regsAddr.isMemorySpace()) {
@@ -169,9 +170,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
         final Extent regsSize = Extent.fromIntZeroExtend(regsAddr.getSize());
         try {
             final MemoryResource regs;
-            regs =
-                    rm.claimMemoryResource(device, regsAddrPtr, regsSize,
-                            ResourceManager.MEMMODE_NORMAL);
+            regs = rm.claimMemoryResource(device, regsAddrPtr, regsSize,
+                ResourceManager.MEMMODE_NORMAL);
             this.io = new Prism2IO(regs);
         } catch (ResourceNotFreeException ex) {
             throw new DriverException("Cannot claim memory mapped I/O", ex);
@@ -189,7 +189,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
             throw new DriverException("Cannot claim IRQ", ex);
         }
 
-        log.info("Found " + flags.getName() + ", regs at " + MagicUtils.toString(regsAddrPtr));
+        log.info("Found " + flags.getName() + ", regs at "
+            + MagicUtils.toString(regsAddrPtr));
     }
 
     /**
@@ -209,10 +210,11 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Execute the Access command
-     * 
+     *
      * @throws DriverException
      */
-    private final void executeAccessCmd(RecordID rid, boolean write) throws DriverException {
+    private final void executeAccessCmd(RecordID rid, boolean write)
+        throws DriverException {
         try {
             final Result result;
             final int cmdFlags;
@@ -230,10 +232,11 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Execute the Alloc command
-     * 
+     *
      * @throws DriverException
      */
-    private final void executeAllocCmd(int bufferLength) throws DriverException {
+    private final void executeAllocCmd(int bufferLength)
+        throws DriverException {
         try {
             final Result result;
             result = io.executeCommand(ALLOC, 0, bufferLength, 0, 0, null);
@@ -245,7 +248,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Enable the given mac port of the device.
-     * 
+     *
      * @param macPort
      * @throws DriverException
      */
@@ -262,7 +265,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Disable the given mac port of the device.
-     * 
+     *
      * @param macPort
      * @throws DriverException
      */
@@ -279,10 +282,11 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Execute the Transmit command
-     * 
+     *
      * @throws DriverException
      */
-    private final void executeTransmitCmd(int fid) throws DriverException {
+    private final void executeTransmitCmd(int fid)
+        throws DriverException {
         try {
             final Result result;
             result = io.executeCommand(TX, 0, fid, 0, 0, null);
@@ -294,7 +298,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Read a configuration record
-     * 
+     *
      * @param rid
      * @param dst
      * @param dstOffset
@@ -312,8 +316,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
         // Validate the record length
         if ((Prism2Record.getRecordLength(hdr, 0) - 1) * 2 != len) {
-            throw new DriverException("Mismatch in record length. " + len + '/' +
-                    Prism2Record.getRecordLength(hdr, 0));
+            throw new DriverException("Mismatch in record length. " + len + '/'
+                + Prism2Record.getRecordLength(hdr, 0));
         }
 
         // Copy out record data
@@ -322,7 +326,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Get a 16-bit configuration value.
-     * 
+     *
      * @param rid
      * @return The 16-bit value.
      * @throws DriverException
@@ -335,7 +339,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Get a 32-bit configuration value.
-     * 
+     *
      * @param rid
      * @return The 32-bit value.
      * @throws DriverException
@@ -349,7 +353,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Read the current ESSID
-     * 
+     *
      * @throws DriverException
      * @see org.jnode.driver.net.wireless.spi.WirelessDeviceCore#getESSID()
      */
@@ -368,7 +372,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Initialize the device so that it is ready to transmit and receive data.
-     * 
+     *
      * @see org.jnode.driver.net.spi.AbstractDeviceCore#initialize()
      */
     public void initialize() throws DriverException {
@@ -429,7 +433,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Write a configuration record
-     * 
+     *
      * @param rid
      * @param src
      * @param srcOffset
@@ -455,7 +459,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Set a 16-bit configuration value.
-     * 
+     *
      * @param rid
      * @param value
      * @throws DriverException
@@ -468,7 +472,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * Set a 32-bit configuration value.
-     * 
+     *
      * @param rid
      * @param value
      * @throws DriverException
@@ -497,8 +501,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
     }
 
     /**
-     * @see org.jnode.driver.net.spi.AbstractDeviceCore#transmit(SocketBuffer
-     *      buf, HardwareAddress destination, long timeout)
+     * @see org.jnode.driver.net.spi.AbstractDeviceCore#transmit(SocketBuffer buf, 
+     * HardwareAddress destination, long timeout)
      */
     public void transmit(SocketBuffer buf, HardwareAddress destination, long timeout)
         throws InterruptedException, TimeoutException {
@@ -523,13 +527,11 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
         final int hdrLen = Prism2CommFrame.HDR_LENGTH;
         final byte[] hdr = new byte[hdrLen];
 
-        // txdesc.tx_control = host2hfa384x_16( HFA384x_TX_MACPORT_SET(0) |
-        // HFA384x_TX_STRUCTYPE_SET(1) |
-        // HFA384x_TX_TXEX_SET(1) | HFA384x_TX_TXOK_SET(1) );
-        // txdesc.frame_control = host2ieee16(
-        // WLAN_SET_FC_FTYPE(WLAN_FTYPE_DATA) |
-        // WLAN_SET_FC_FSTYPE(WLAN_FSTYPE_DATAONLY) |
-        // WLAN_SET_FC_TODS(1) );
+//        txdesc.tx_control = host2hfa384x_16( HFA384x_TX_MACPORT_SET(0) | HFA384x_TX_STRUCTYPE_SET(1) | 
+//                   HFA384x_TX_TXEX_SET(1) | HFA384x_TX_TXOK_SET(1) );
+//txdesc.frame_control =  host2ieee16( WLAN_SET_FC_FTYPE(WLAN_FTYPE_DATA) |
+//                   WLAN_SET_FC_FSTYPE(WLAN_FSTYPE_DATAONLY) |
+//                   WLAN_SET_FC_TODS(1) );
         Prism2CommFrame.setAddress1(hdr, 0, bssid);
         Prism2CommFrame.setAddress2(hdr, 0, hwAddress);
         Prism2CommFrame.setAddress3(hdr, 0, (EthernetAddress) destination);
@@ -540,6 +542,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
             // Copy 802.11 header to BAP
 
             // Copy data to BAP
+
 
         } catch (DriverException ex) {
             log.debug("Failed to copy data to BAP", ex);
@@ -576,7 +579,8 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
                     // Get Info frame
                     processInfoEvent();
                 } else {
-                    log.debug("No suitable event 0x" + NumberUtils.hex(evstat, 4));
+                    log.debug("No suitable event 0x"
+                        + NumberUtils.hex(evstat, 4));
                     return;
                 }
             } catch (DriverException ex) {
@@ -587,7 +591,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * A frame has been received.
-     * 
+     *
      * @throws DriverException
      */
     private final void processReceiveEvent() throws DriverException {
@@ -601,7 +605,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
         io.copyFromBAP(fid, 0, frame, 0, hdrLen);
         final int dataLength = Prism2CommFrame.getDataLength(frame, 0);
 
-        // Create the SocketBuffer
+        // Create the SocketBuffer 
         final int ethHLEN = EthernetConstants.ETH_HLEN;
         final SocketBuffer skbuf = new SocketBuffer(ethHLEN + dataLength);
         skbuf.append(frame, Prism2CommFrame.p8023HDR_OFF, ethHLEN);
@@ -625,7 +629,7 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
 
     /**
      * An Info frame is ready
-     * 
+     *
      * @throws DriverException
      */
     private final void processInfoEvent() throws DriverException {
@@ -685,15 +689,17 @@ final class Prism2Core extends WirelessDeviceCore implements Prism2Constants, Wi
             case CNFAUTHENTICATION_SHAREDKEY:
                 return AuthenticationMode.SHAREDKEY;
             default:
-                throw new DriverException("Unknown authentication mode 0x" +
-                        NumberUtils.hex(mode, 4));
+                throw new DriverException("Unknown authentication mode 0x"
+                    + NumberUtils.hex(mode, 4));
         }
     }
 
     /**
-     * @see org.jnode.driver.net.wireless.spi.WirelessDeviceCore#setAuthenticationMode(org.jnode.net.wireless.AuthenticationMode)
+     * @see org.jnode.driver.net.wireless.spi.WirelessDeviceCore#setAuthenticationMode(
+     * org.jnode.net.wireless.AuthenticationMode)
      */
-    protected void setAuthenticationMode(AuthenticationMode mode) throws DriverException {
+    protected void setAuthenticationMode(AuthenticationMode mode)
+        throws DriverException {
         final int modeVal;
         switch (mode) {
             case OPENSYSTEM:

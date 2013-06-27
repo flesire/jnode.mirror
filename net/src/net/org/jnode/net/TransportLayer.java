@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TransportLayer.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net;
 
 import java.net.DatagramSocketImplFactory;
@@ -50,7 +50,6 @@ public interface TransportLayer {
 
     /**
      * Process a packet that has been received and matches getType()
-     * 
      * @param skbuf
      * @throws SocketException
      */
@@ -58,14 +57,12 @@ public interface TransportLayer {
 
     /**
      * Gets the SocketImplFactory of this protocol.
-     * 
      * @throws SocketException If this protocol is not Socket based.
      */
     public SocketImplFactory getSocketImplFactory() throws SocketException;
 
     /**
      * Gets the DatagramSocketImplFactory of this protocol.
-     * 
      * @throws SocketException If this protocol is not DatagramSocket based.
      */
     public DatagramSocketImplFactory getDatagramSocketImplFactory() throws SocketException;

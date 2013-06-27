@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.net.ipv4.udp;
 
 import gnu.java.net.PlainDatagramSocketImpl;
@@ -31,7 +31,7 @@ import java.io.FileDescriptor;
 
 /**
  * Glue class for supporting gnu.java.nio.DatagramChannelImpl.
- * 
+ *
  * @author Levente S\u00e1ntha
  */
 public class PlainUDPDatagramSocketImpl extends PlainDatagramSocketImpl {
@@ -122,7 +122,7 @@ public class PlainUDPDatagramSocketImpl extends PlainDatagramSocketImpl {
 
     @Override
     protected synchronized void create() throws SocketException {
-        // nothing to do here
+        //nothing to do here
     }
 
     @Override
@@ -139,11 +139,11 @@ public class PlainUDPDatagramSocketImpl extends PlainDatagramSocketImpl {
 
     @Override
     protected void send(DatagramPacket packet) throws IOException {
-        // synchronized (SEND_LOCK){
+        //synchronized (SEND_LOCK){
         System.out.println("udp: " + udp);
         System.out.println("packet: " + packet);
         udp.send(packet);
-        // }
+        //}
     }
 
     private final Object RECEIVE_LOCK = new Object();

@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,11 +28,11 @@ public class CatalogFolderTest {
 
 	@Test
 	public void testCatalogFolderIntCatalogNodeId() {
-		CatalogFolderRecord folder = new CatalogFolderRecord(0,CatalogNodeId.HFSPLUS_ROOT_CNID);
+		CatalogFolder folder = new CatalogFolder(0,CatalogNodeId.HFSPLUS_ROOT_CNID);
 		assertNotNull(folder);
 		assertEquals(0, folder.getValence());
 		assertEquals(2,folder.getFolderId().getId());
-		folder = new CatalogFolderRecord(folder.getBytes());
+		folder = new CatalogFolder(folder.getBytes());
 		assertNotNull(folder);
 		assertEquals(0, folder.getValence());
 		assertEquals(2,folder.getFolderId().getId());
@@ -41,7 +41,7 @@ public class CatalogFolderTest {
 	
 	@Test
 	public void testCatalogFolder(){
-		CatalogFolderRecord folder = new CatalogFolderRecord(new byte[]{0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -53, 96, 7, 78, -53, 96, 7, 78, -53, 96, 7, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 2, 0, 9, 0, 116, 0, 101, 0, 115, 0, 116, 0, 100, 0, 114, 0, 105, 0, 118, 0, 101, 0, 3});
+		CatalogFolder folder = new CatalogFolder(new byte[]{0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, -53, 96, 7, 78, -53, 96, 7, 78, -53, 96, 7, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 2, 0, 9, 0, 116, 0, 101, 0, 115, 0, 116, 0, 100, 0, 114, 0, 105, 0, 118, 0, 101, 0, 3});
 		assertNotNull(folder);
 		assertEquals(0, folder.getValence());
 		assertEquals(2,folder.getFolderId().getId());

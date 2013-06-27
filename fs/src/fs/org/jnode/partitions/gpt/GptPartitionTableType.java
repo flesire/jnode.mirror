@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -33,14 +33,17 @@ import org.jnode.partitions.PartitionTableType;
  */
 public class GptPartitionTableType implements PartitionTableType {
 
+    @Override
     public PartitionTable<?> create(byte[] firstSector, Device device) throws PartitionTableException {
         return new GptPartitionTable(this, firstSector, device);
     }
 
+    @Override
     public String getName() {
         return "EFI PART";
     }
 
+    @Override
     public boolean supports(byte[] first16KiB, BlockDeviceAPI devApi) {
         return GptPartitionTable.containsPartitionTable(first16KiB);
     }

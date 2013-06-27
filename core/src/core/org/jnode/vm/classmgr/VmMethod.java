@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: VmMethod.java 5987 2013-06-24 18:33:20Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,16 +20,16 @@
  
 package org.jnode.vm.classmgr;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import org.jnode.annotation.MagicPermission;
+import org.jnode.annotation.PrivilegedActionPragma;
 import org.jnode.vm.InternString;
 import org.jnode.vm.LoadCompileService;
 import org.jnode.vm.VmAddress;
 import org.jnode.vm.facade.VmUtils;
 import org.jnode.vm.isolate.VmIsolateLocal;
 import org.vmmagic.unboxed.Address;
+import sun.reflect.ReflectionFactory;
 
 @MagicPermission
 public abstract class VmMethod extends VmMember implements VmSharedStaticsEntry {
@@ -185,6 +185,7 @@ public abstract class VmMethod extends VmMember implements VmSharedStaticsEntry 
      *
      * @return Method
      */
+    @PrivilegedActionPragma
     public final Member asMember() {
         if (javaMemberHolder == null) {
             javaMemberHolder = new VmIsolateLocal<Member>();
@@ -222,15 +223,15 @@ public abstract class VmMethod extends VmMember implements VmSharedStaticsEntry 
                 if (slot == -1) {
                     throw new ClassFormatError("Invalid constructor");
                 }
-                javaMember = new Constructor(getDeclaringClass().asClass(), args, ces, getModifiers(), slot,
-                    getSignature(), getRawAnnotations(), getRawParameterAnnotations());
+                javaMember = ReflectionFactory.getReflectionFactory().newConstructor(getDeclaringClass().asClass(),
+                    args, ces, getModifiers(), slot, getSignature(), getRawAnnotations(), getRawParameterAnnotations());
             } else {
                 if (slot == -1) {
                     throw new ClassFormatError("Invalid method");
                 }
-                javaMember = new Method(getDeclaringClass().asClass(), getName(), args, getReturnType().asClass(), ces, 
-                    getModifiers(), slot, getSignature(), getRawAnnotations(), getRawParameterAnnotations(),
-                    getRawAnnotationDefault());
+                javaMember = ReflectionFactory.getReflectionFactory().newMethod(getDeclaringClass().asClass(),
+                    getName(), args, getReturnType().asClass(), ces, getModifiers(), slot, getSignature(),
+                    getRawAnnotations(), getRawParameterAnnotations(), getRawAnnotationDefault());
             }
             javaMemberHolder.set(javaMember);
         }

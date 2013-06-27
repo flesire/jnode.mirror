@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: AbstractEthernetDriver.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.ethernet.spi;
 
 import org.jnode.driver.net.NetworkException;
@@ -32,7 +32,8 @@ import org.jnode.net.ethernet.EthernetUtils;
 /**
  * @author epr
  */
-public abstract class AbstractEthernetDriver extends AbstractNetDriver implements EthernetConstants {
+public abstract class AbstractEthernetDriver extends AbstractNetDriver
+    implements EthernetConstants {
 
     /**
      * Gets the maximum transfer unit, the number of bytes this device can
@@ -66,8 +67,8 @@ public abstract class AbstractEthernetDriver extends AbstractNetDriver implement
      * @see org.jnode.driver.net.spi.AbstractNetDriver#doTransmit(org.jnode.net.SocketBuffer,
      *      org.jnode.net.HardwareAddress)
      */
-    protected final void doTransmit(SocketBuffer skbuf, HardwareAddress destination)
-        throws NetworkException {
+    protected final void doTransmit(SocketBuffer skbuf,
+                                    HardwareAddress destination) throws NetworkException {
         skbuf.insert(ETH_HLEN);
         if (destination == null) {
             destination = EthernetAddress.BROADCAST;

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: RTL8139TxBuffer.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.rtl8139;
 
 import org.jnode.net.SocketBuffer;
@@ -58,7 +58,7 @@ public class RTL8139TxBuffer implements RTL8139Constants {
 
     /**
      * Create a new instance
-     * 
+     *
      * @param rm
      */
 

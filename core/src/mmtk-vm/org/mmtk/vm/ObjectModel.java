@@ -22,11 +22,11 @@ import org.vmmagic.unboxed.Offset;
 import org.vmmagic.unboxed.Word;
 
 /**
- * $Id$
+ * $Id: ObjectModel.java 5226 2009-04-06 14:55:27Z lsantha $
  * 
  * @author <a href="http://cs.anu.edu.au/~Steve.Blackburn">Steve Blackburn</a>
  * @author Perry Cheng
- * @version $Revision$
+ * @version $Revision: 5226 $
  */
 public class ObjectModel {
     /**

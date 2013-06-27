@@ -23,7 +23,7 @@ import org.vmmagic.pragma.UninterruptiblePragma;
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  * @author <a href="http://cs.anu.edu.au/~Steve.Blackburn">Steve Blackburn</a>
  * @author Perry Cheng
- * @version $Revision$
+ * @version $Revision: 5756 $
  */
 public final class Strings {
     

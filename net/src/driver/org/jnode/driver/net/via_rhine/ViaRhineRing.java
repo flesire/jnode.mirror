@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.via_rhine;
 
 import org.jnode.system.resource.ResourceManager;
@@ -41,6 +41,7 @@ abstract class ViaRhineRing<T extends ViaRhineDesc> {
                 ringAddr = ring[0].descAddr;
             else
                 ring[i - 1].setNextDescAddr(ring[i].descAddr);
+
 
         }
         ring[RING_SIZE - 1].setNextDescAddr(ringAddr);

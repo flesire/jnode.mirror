@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: EEPRO100TxFD.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.eepro100;
 
 import org.jnode.net.SocketBuffer;
@@ -33,29 +33,30 @@ import org.vmmagic.unboxed.Address;
 public class EEPRO100TxFD {
     private int TxFDSize = 16;
     private int DataBufferSize = 1536;
-
+    
     /**
      * The actual data
      */
     private final byte[] data;
-
+    
     /**
      * MemoryResource mapper around data
      */
     private final MemoryResource mem;
-
+    
     /**
      * Offset within mem of first DPD
      */
     private final int firstDPDOffset;
-
+    
     /**
      * 32-bit address first DPD
      */
     private final Address firstDPDAddress;
-
+    
     private int bufferAddress;
 
+    
     public EEPRO100TxFD(ResourceManager rm) {
         // Create a large enough buffer
         final int size = (TxFDSize + DataBufferSize) + 16 /* alignment */;
@@ -77,7 +78,8 @@ public class EEPRO100TxFD {
         // Copy the data from the buffer
         final int len = src.getSize();
         if (len > EthernetConstants.ETH_FRAME_LEN) {
-            throw new IllegalArgumentException("Length must be <= ETH_FRAME_LEN");
+            throw new IllegalArgumentException(
+                "Length must be <= ETH_FRAME_LEN");
         }
         src.get(data, firstDPDOffset, 0, len);
     }
@@ -137,7 +139,7 @@ public class EEPRO100TxFD {
         mem.setInt(20, size);
     }
 
-    // put paramater array into the cmd buffer
+    //  put paramater array into the cmd buffer
     void setParams(byte[] p) {
         for (int i = 0; i < p.length; i++) {
             mem.setShort(i + 8, p[i]);

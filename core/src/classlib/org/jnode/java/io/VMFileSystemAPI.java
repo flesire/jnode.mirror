@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: VMFileSystemAPI.java 5956 2013-02-17 20:50:10Z lsantha $
  *
- * Copyright (C) 2003-2009 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.java.io;
 
 import java.io.IOException;

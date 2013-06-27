@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,8 +21,8 @@
 package org.jnode.partitions.gpt;
 
 import java.nio.charset.Charset;
+import org.jnode.partitions.PartitionTable;
 import org.jnode.partitions.PartitionTableEntry;
-import org.jnode.partitions.ibm.IBMPartitionTable;
 import org.jnode.util.LittleEndian;
 import org.jnode.util.NumberUtils;
 
@@ -56,6 +56,7 @@ public class GptPartitionTableEntry implements PartitionTableEntry {
         this.offset = offset;
     }
 
+    @Override
     public boolean isValid() {
         return first16KiB.length > offset + 128 && !isEmpty();
     }
@@ -63,13 +64,15 @@ public class GptPartitionTableEntry implements PartitionTableEntry {
     /**
      * @see org.jnode.partitions.PartitionTableEntry#getChildPartitionTable()
      */
-    public IBMPartitionTable getChildPartitionTable() {
+    @Override
+    public PartitionTable<?> getChildPartitionTable() {
         throw new UnsupportedOperationException("No child partitions.");
     }
 
     /**
      * @see org.jnode.partitions.PartitionTableEntry#hasChildPartitionTable()
      */
+    @Override
     public boolean hasChildPartitionTable() {
         return false;
     }
@@ -117,9 +120,7 @@ public class GptPartitionTableEntry implements PartitionTableEntry {
         return b.toString();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(32);
         builder.append('[').append(getName()).append(' ');

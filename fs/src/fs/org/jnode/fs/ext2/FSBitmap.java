@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: FSBitmap.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -43,12 +43,14 @@ public class FSBitmap {
         byte bitIndex = (byte) (index % 8);
         byte mask = (byte) (1 << bitIndex);
 
-        return ((data[byteIndex] & mask) == 0);
+        return ((data[byteIndex] & mask) == 0) ? true : false;
     }
 
     protected static boolean isFree(byte data, int index) {
+        // byte bitIndex = (byte) (index % 8);
+
         byte mask = (byte) (1 << index);
-        return ((data & mask) == 0);
+        return ((data & mask) == 0) ? true : false;
     }
 
     protected static void setBit(byte[] data, int index) {
@@ -61,6 +63,7 @@ public class FSBitmap {
 
     protected static void setBit(byte[] data, int byteIndex, int bitIndex) {
         byte mask = (byte) (1 << bitIndex);
+
         data[byteIndex] = (byte) (data[byteIndex] | mask);
     }
 

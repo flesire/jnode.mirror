@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: vm-ints.asm 2538 2006-07-25 12:00:24Z epr $
 ;
 ; Java VM interrupt support code
 ;

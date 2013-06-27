@@ -1,4 +1,4 @@
-; $Id$
+; $Id: kernel.asm 5587 2009-07-03 19:32:13Z lsantha $
 ;
 ; Main kernel startup code
 ;

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: WirelessEthernetDriver.java 5959 2013-02-17 21:33:21Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.net.wireless.spi;
 
 import java.io.PrintWriter;
@@ -34,11 +34,10 @@ import org.jnode.system.resource.ResourceNotFreeException;
 
 /**
  * Base class for wireless ethernet drivers.
- * 
+ *
  * @author Ewout Prangsma (epr@users.sourceforge.net)
  */
-public abstract class WirelessEthernetDriver extends BasicEthernetDriver implements
-        WirelessNetDeviceAPI {
+public abstract class WirelessEthernetDriver extends BasicEthernetDriver implements WirelessNetDeviceAPI {
 
     /**
      * Device prefix for ethernet devices
@@ -78,7 +77,7 @@ public abstract class WirelessEthernetDriver extends BasicEthernetDriver impleme
 
     /**
      * Gets the wireless device core.
-     * 
+     *
      * @return the WirelessDeviceCore
      */
     protected final WirelessDeviceCore getWirelessCore() {
@@ -86,8 +85,8 @@ public abstract class WirelessEthernetDriver extends BasicEthernetDriver impleme
     }
 
     /**
-     * @see org.jnode.driver.net.ethernet.spi.BasicEthernetDriver#newCore(org.jnode.driver.Device,
-     *      org.jnode.driver.net.ethernet.spi.Flags)
+     * @see org.jnode.driver.net.ethernet.spi.BasicEthernetDriver#newCore(org.jnode.driver.Device, 
+     * org.jnode.driver.net.ethernet.spi.Flags)
      */
     protected final AbstractDeviceCore newCore(Device device, Flags flags)
         throws DriverException, ResourceNotFreeException {
@@ -101,7 +100,8 @@ public abstract class WirelessEthernetDriver extends BasicEthernetDriver impleme
         throws DriverException, ResourceNotFreeException;
 
     /**
-     * @see org.jnode.driver.net.WirelessNetDeviceAPI#setAuthenticationMode(org.jnode.net.wireless.AuthenticationMode)
+     * @see org.jnode.driver.net.WirelessNetDeviceAPI#setAuthenticationMode(
+     * org.jnode.net.wireless.AuthenticationMode)
      */
     public void setAuthenticationMode(AuthenticationMode mode) throws NetworkException {
         try {

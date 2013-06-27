@@ -1,5 +1,5 @@
 ; -----------------------------------------------
-; $Id$
+; $Id: unsafe.asm 5755 2010-05-16 17:01:30Z fduminy $
 ;
 ; Native method implementation for org.jnode.vm.Unsafe
 ;

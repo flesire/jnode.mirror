@@ -1,7 +1,7 @@
 /*
- * $Id: header.txt 5714 2010-01-03 13:33:07Z lsantha $
+ * $Id$
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.protocol.nfs.nfs2;
 
 import java.io.IOException;
@@ -38,8 +38,9 @@ import org.jnode.net.nfs.nfs2.mount.MountException;
 import org.jnode.net.nfs.nfs2.mount.MountResult;
 
 /**
- * A NFS2InputStream obtains the bytes from a nfs2 connection. The URL is
- * nfs://host/remotePath The remotePath contains also the export path.
+ * A NFS2InputStream obtains the bytes from a nfs2 connection. 
+ * The URL is nfs://host/remotePath
+ * The remotePath contains also the export path.
  * 
  * @author Andrei Dore
  */
@@ -58,8 +59,7 @@ public class NFS2InputStream extends InputStream {
     private FileAttribute fileAttribute;
 
     public NFS2InputStream(URL url) throws IOException {
-        // FIXME ... exception handling in this method should be reviewed. At
-        // the very least,
+        // FIXME ... exception handling in this method should be reviewed.  At the very least,
         // there are places where finally clauses should be used.
         mountClient = new Mount1Client(InetAddress.getByName(url.getHost()), Protocol.TCP, -1, -1);
         nfsClient = new NFS2Client(InetAddress.getByName(url.getHost()), Protocol.TCP, -1, -1);

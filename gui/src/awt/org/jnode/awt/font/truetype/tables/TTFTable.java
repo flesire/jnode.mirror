@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: TTFTable.java 5958 2013-02-17 21:24:01Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -31,7 +31,7 @@ import org.jnode.awt.font.truetype.TTFInput;
  * (such as Shapes instead of point arrays).
  *
  * @author Simon Fischer
- * @version $Id$
+ * @version $Id: TTFTable.java 5958 2013-02-17 21:24:01Z lsantha $
  */
 public abstract class TTFTable {
 

@@ -1,7 +1,7 @@
 /*
- * $Id$
+ * $Id: USBStorageBulkTransport.java 5957 2013-02-17 21:12:34Z lsantha $
  *
- * Copyright (C) 2003-2012 JNode.org
+ * Copyright (C) 2003-2013 JNode.org
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,25 +17,26 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 package org.jnode.driver.block.usb.storage;
 
 import org.apache.log4j.Logger;
 import org.jnode.driver.bus.scsi.CDB;
 import org.jnode.driver.bus.usb.SetupPacket;
+import org.jnode.driver.bus.usb.USBControlPipe;
 import org.jnode.driver.bus.usb.USBDataPipe;
 import org.jnode.driver.bus.usb.USBDevice;
 import org.jnode.driver.bus.usb.USBException;
+import org.jnode.driver.bus.usb.USBPacket;
 import org.jnode.driver.bus.usb.USBRequest;
 import org.jnode.util.NumberUtils;
 
-final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageConstants {
+final class USBStorageBulkTransport implements ITransport, USBStorageConstants {
 
-    private static final int US_BULK_GET_MAX_LUN = 0xFE;
-
+    /**
+     * My logger
+     */
     private static final Logger log = Logger.getLogger(USBStorageBulkTransport.class);
-
-    private static final int US_BULK_RESET_REQUEST = 0xFF;
     /** */
     private final USBStorageDeviceData storageDeviceData;
 
@@ -48,36 +49,38 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * org.jnode.driver.block.usb.storage.UsbStorageTransport#transport(org.
-     * jnode.driver.bus.scsi.CDB, long)
+     * @see org.jnode.driver.block.usb.storage.ITransport#transport(org.jnode.driver.bus.scsi.CDB, int)
      */
     public void transport(CDB cdb, long timeout) {
         try {
             byte[] scsiCmd = cdb.toByteArray();
-            // Setup command wrapper
-            CBW cbw = getCBW(cdb, scsiCmd);
+            // Setup command wrapper 
+            CBW cbw = new CBW();
+            cbw.setSignature(US_BULK_CB_SIGN);
+            cbw.setTag(1);
+            cbw.setDataTransferLength((byte) cdb.getDataTransfertCount());
+            cbw.setFlags((byte) 0);
+            cbw.setLun((byte) 0);
+            cbw.setLength((byte) scsiCmd.length);
+            cbw.setCdb(scsiCmd);
+            log.debug(cbw.toString());
             // Sent CBW to device
             USBDataPipe outPipe = ((USBDataPipe) storageDeviceData.getBulkOutEndPoint().getPipe());
             USBRequest req = outPipe.createRequest(cbw);
-            outPipe.syncSubmit(req, timeout);
+            if (timeout <= 0) {
+                outPipe.asyncSubmit(req);
+            } else {
+                outPipe.syncSubmit(req, timeout);
+            }
             //
-            CSW csw = getCSW();
+            CSW csw = new CSW();
+            csw.setSignature(US_BULK_CS_SIGN);
             USBDataPipe inPipe = ((USBDataPipe) storageDeviceData.getBulkInEndPoint().getPipe());
             USBRequest resp = inPipe.createRequest(csw);
-            inPipe.syncSubmit(resp, timeout);
-            log.debug(csw.toString());
-            switch (csw.getStatus()) {
-                case 0:
-                    // OK
-                    break;
-                case 1:
-                    // FAIL
-                    break;
-                case 2:
-                    // PHASE
-                    break;
+            if (timeout <= 0) {
+                inPipe.asyncSubmit(resp);
+            } else {
+                inPipe.syncSubmit(resp, timeout);
             }
         } catch (USBException e) {
             e.printStackTrace();
@@ -88,51 +91,29 @@ final class USBStorageBulkTransport implements UsbStorageTransport, USBStorageCo
      * Bulk-Only mass storage reset.
      */
     public void reset() throws USBException {
-        SetupPacket setupPacket =
-                new SetupPacket(US_BULK_RESET_REQUEST, USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0, 0,
-                        0);
-        final USBRequest req = storageDeviceData.getSendControlPipe().createRequest(setupPacket);
-        storageDeviceData.getSendControlPipe().syncSubmit(req, GET_TIMEOUT);
-    }
-
-    private CSW getCSW() {
-        CSW csw = new CSW();
-        csw.setSignature(US_BULK_CS_SIGN);
-        return csw;
-    }
-
-    private CBW getCBW(CDB cdb, byte[] scsiCmd) {
-        CBW cbw = new CBW();
-        cbw.setSignature(US_BULK_CB_SIGN);
-        cbw.setTag(1);
-        cbw.setDataTransferLength((byte) cdb.getDataTransfertCount());
-        cbw.setFlags((byte) 0);
-        cbw.setLun((byte) 0);
-        cbw.setLength((byte) scsiCmd.length);
-        cbw.setCdb(scsiCmd);
-        log.debug(cbw.toString());
-        return cbw;
+        final USBControlPipe pipe = storageDeviceData.getDevice().getDefaultControlPipe();
+        final USBRequest req = pipe.createRequest(new SetupPacket(USB_DIR_OUT
+            | USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0xFF, 0, 0, 0), null);
+        pipe.syncSubmit(req, GET_TIMEOUT);
     }
 
     /**
-     * Get max logical unit allowed by device. Device not support multiple LUN
-     * <i>may</i> stall.
-     * 
+     * Get max logical unit allowed by device. Device not support multiple LUN <i>may</i> stall.
+     *
      * @param usbDev
      * @throws USBException
      */
     public void getMaxLun(USBDevice usbDev) throws USBException {
         log.info("*** Get max lun ***");
-        SetupPacket setupPacket =
-                new SetupPacket(USB_DIR_IN | USB_TYPE_CLASS | USB_RECIP_INTERFACE,
-                        US_BULK_GET_MAX_LUN, 0, 0, 1);
-        USBDataPipe pipe = storageDeviceData.getReceiveControlPipe();
-        final USBRequest req = pipe.createRequest(setupPacket);
+        final USBControlPipe pipe = usbDev.getDefaultControlPipe();
+        final USBPacket packet = new USBPacket(1);
+        final USBRequest req = pipe.createRequest(new SetupPacket(USB_DIR_IN
+            | USB_TYPE_CLASS | USB_RECIP_INTERFACE, 0xFE, 0, 0, 1), packet);
         pipe.syncSubmit(req, GET_TIMEOUT);
         log.debug("*** Request data     : " + req.toString());
         log.debug("*** Request status   : 0x" + NumberUtils.hex(req.getStatus(), 4));
         if (req.getStatus() == USBREQ_ST_COMPLETED) {
-            storageDeviceData.setMaxLun(setupPacket.getData()[0]);
+            storageDeviceData.setMaxLun(packet.getData()[0]);
         } else if (req.getStatus() == USBREQ_ST_STALLED) {
             storageDeviceData.setMaxLun((byte) 0);
         } else {
