@@ -20,8 +20,8 @@
  
 package org.jnode.fs.hfsplus.catalog;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
-
 import org.jnode.fs.hfsplus.tree.AbstractNode;
 import org.jnode.fs.hfsplus.tree.IndexRecord;
 import org.jnode.fs.hfsplus.tree.Key;
@@ -45,7 +45,7 @@ public class CatalogIndexNode extends AbstractNode<IndexRecord> {
      * @param nodeData
      * @param nodeSize
      */
-    public CatalogIndexNode(final byte[] nodeData, final int nodeSize) {
+    public CatalogIndexNode(final ByteBuffer nodeData, final int nodeSize) {
         super(nodeData, nodeSize);
 
     }

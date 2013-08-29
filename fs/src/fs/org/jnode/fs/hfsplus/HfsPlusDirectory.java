@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.jnode.fs.FSDirectory;
 import org.jnode.fs.FSEntry;
@@ -92,7 +91,7 @@ public class HfsPlusDirectory implements FSDirectory {
         //TODO implements this method.
         /*
          * if (fs.isReadOnly()) { throw new ReadOnlyFileSystemException(); }
-         * Catalog catalog = fs.getCatalog(); SuperBlock volumeHeader =
+         * Catalog catalog = fs.readCatalog(); VolumeHeader volumeHeader =
          * ((HfsPlusFileSystem) getFileSystem()).getVolumeHeader(); LeafRecord
          * fileRecord = catalog.createNode(name, this.folder .getFolderId(), new
          * CatalogNodeId(volumeHeader.getNextCatalogId()),
@@ -222,11 +221,8 @@ public class HfsPlusDirectory implements FSDirectory {
      * @throws IOException if problem occurs during catalog node creation or if system is read-only.
      */
     private FSEntry createDirectoryEntry(final String name) throws IOException {
-        if (getFileSystem().isReadOnly()) {
-            throw new ReadOnlyFileSystemException();
-        }
         Catalog catalog = ((HfsPlusFileSystem) getFileSystem()).getCatalog();
-        SuperBlock volumeHeader = ((HfsPlusFileSystem) getFileSystem()).getVolumeHeader();
+        VolumeHeader volumeHeader = ((HfsPlusFileSystem) getFileSystem()).getVolumeHeader();
         CatalogLeafNode node =
                 catalog.createNode(name, this.folder.getFolderId(),
                         new CatalogNodeId(volumeHeader.getNextCatalogId()),
@@ -234,10 +230,11 @@ public class HfsPlusDirectory implements FSDirectory {
         folder.incrementValence();
 
         HfsPlusEntry newEntry = new HfsPlusEntry((HfsPlusFileSystem) getFileSystem(), this, name, node.getNodeRecord(0));
+
         newEntry.setDirty();
+
         volumeHeader.incrementFolderCount();
-        log.debug("New volume header :\n" + volumeHeader.toString());
-        volumeHeader.update();
+        FileSystemObjectReader.writeVolumeHeader(((HfsPlusFileSystem) getFileSystem()));
 
         return newEntry;
     }

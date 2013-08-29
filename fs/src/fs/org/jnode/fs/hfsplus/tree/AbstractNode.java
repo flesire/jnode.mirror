@@ -20,9 +20,9 @@
  
 package org.jnode.fs.hfsplus.tree;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jnode.util.BigEndian;
 
 public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
@@ -39,17 +39,18 @@ public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
         this.offsets.add(Integer.valueOf(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH));
     }
 
-    public AbstractNode(final byte[] nodeData, final int nodeSize) {
+    public AbstractNode(final ByteBuffer nodeData, final int nodeSize) {
         this.descriptor = new NodeDescriptor(nodeData, 0);
         this.size = nodeSize;
         this.records = new ArrayList<T>(this.descriptor.getNumRecords());
         this.offsets = new ArrayList<Integer>(this.descriptor.getNumRecords() + 1);
         int offset;
+        byte[] data = nodeData.array();
         for (int i = 0; i < this.descriptor.getNumRecords() + 1; i++) {
-            offset = BigEndian.getInt16(nodeData, size - ((i + 1) * 2));
+            offset = BigEndian.getInt16(data, size - ((i + 1) * 2));
             offsets.add(Integer.valueOf(offset));
         }
-        loadRecords(nodeData);
+        loadRecords(data);
     }
 
     protected abstract void loadRecords(final byte[] nodeData);

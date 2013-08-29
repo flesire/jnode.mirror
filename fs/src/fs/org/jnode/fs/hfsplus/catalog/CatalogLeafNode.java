@@ -20,9 +20,9 @@
  
 package org.jnode.fs.hfsplus.catalog;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.jnode.fs.hfsplus.tree.AbstractNode;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
@@ -48,7 +48,7 @@ public class CatalogLeafNode extends AbstractNode<LeafRecord> {
 	 * @param nodeData
 	 * @param nodeSize
 	 */
-	public CatalogLeafNode(final byte[] nodeData, final int nodeSize) {
+	public CatalogLeafNode(final ByteBuffer nodeData, final int nodeSize) {
 		super(nodeData, nodeSize);
 
 	}

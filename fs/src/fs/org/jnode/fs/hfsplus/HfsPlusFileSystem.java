@@ -21,6 +21,7 @@
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.jnode.driver.Device;
 import org.jnode.fs.FSDirectory;
@@ -37,7 +38,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 	private final Logger log = Logger.getLogger(getClass());
 
 	/** HFS volume header */
-	private SuperBlock volumeHeader;
+	private VolumeHeader volumeHeader;
 
 	/** Catalog special file for this instance */
 	private Catalog catalog;
@@ -57,23 +58,22 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 	 * @throws FileSystemException
 	 */
 	public final void read() throws FileSystemException {
-		volumeHeader = new SuperBlock(this, false);
-		log.debug(volumeHeader.toString());
-		if (!volumeHeader.isAttribute(SuperBlock.HFSPLUS_VOL_UNMNT_BIT)) {
-			log.info(getDevice().getId() + " Filesystem has not been cleanly unmounted, mounting it readonly");
-			setReadOnly(true);
-		}
-		if (volumeHeader.isAttribute(SuperBlock.HFSPLUS_VOL_SOFTLOCK_BIT)) {
-			log.info(getDevice().getId() + " Filesystem is marked locked, mounting it readonly");
-			setReadOnly(true);
-		}
-		if (volumeHeader.isAttribute(SuperBlock.HFSPLUS_VOL_JOURNALED_BIT)) {
-			log.info(getDevice().getId()
-					+ " Filesystem is journaled, write access is not supported. Mounting it readonly");
-			setReadOnly(true);
-		}
-		try {
-			catalog = new Catalog(this);
+        try {
+            volumeHeader = FileSystemObjectReader.readVolumeHeader(this);
+            if (!volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_UNMNT_BIT)) {
+                log.info(getDevice().getId() + " Filesystem has not been cleanly unmounted, mounting it readonly");
+                setReadOnly(true);
+            }
+            if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_SOFTLOCK_BIT)) {
+                log.info(getDevice().getId() + " Filesystem is marked locked, mounting it readonly");
+                setReadOnly(true);
+            }
+            if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_JOURNALED_BIT)) {
+                log.info(getDevice().getId()
+                        + " Filesystem is journaled, write access is not supported. Mounting it readonly");
+                setReadOnly(true);
+            }
+			catalog = FileSystemObjectReader.readCatalog(this);
 		} catch (IOException e) {
 			throw new FileSystemException(e);
 		}
@@ -122,7 +122,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 		return catalog;
 	}
 
-	public final SuperBlock getVolumeHeader() {
+	public final VolumeHeader getVolumeHeader() {
 		return volumeHeader;
 	}
 
@@ -132,22 +132,22 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 	 * @throws FileSystemException
 	 */
 	public void create(HFSPlusParams params) throws FileSystemException {
-		volumeHeader = new SuperBlock(this, true);
+		volumeHeader = new VolumeHeader(this);
 		try {
 			params.initializeDefaultsValues(this);
 			volumeHeader.create(params);
-			log.debug("Volume header : \n" + volumeHeader.toString());
+			log.info("Volume header : \n" + volumeHeader.toString());
 			long volumeBlockUsed = volumeHeader.getTotalBlocks() - volumeHeader.getFreeBlocks()
 					- ((volumeHeader.getBlockSize() == 512) ? 2 : 1);
 			// ---
 			log.debug("Write allocation bitmap bits to disk.");
 			writeAllocationFile((int) volumeBlockUsed);
 			log.debug("Write Catalog to disk.");
-			Catalog catalog = new Catalog(params, this);
-			catalog.update();
+			Catalog catalog = FileSystemObjectReader.createCatalog(this, params);
+            catalog.createRootNode(params);
+            FileSystemObjectReader.writeCatalog(this, catalog);
 			log.debug("Write volume header to disk.");
-			volumeHeader.update();
-			flush();
+			FileSystemObjectReader.writeVolumeHeader(this);
 		} catch (IOException e) {
 			throw new FileSystemException("Unable to create HFS+ filesystem", e);
 		}
@@ -160,4 +160,16 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 		int bits = blockUsed & 0x0007;
 		// FIXME ... this should be completed
 	}
+
+    private void readVolumeHeader() throws IOException {
+        VolumeHeader volumeHeader = new VolumeHeader(this);
+        volumeHeader.read(1024,VolumeHeader.SUPERBLOCK_LENGTH);
+        volumeHeader.check();
+        this.volumeHeader = volumeHeader;
+    }
+
+    private void writeVolumeHeader() throws IOException {
+        this.getApi().write(1024, ByteBuffer.wrap(volumeHeader.getBytes()));
+        this.flush();
+    }
 }

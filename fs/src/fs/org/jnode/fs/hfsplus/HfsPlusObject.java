@@ -20,13 +20,30 @@
  
 package org.jnode.fs.hfsplus;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import org.jnode.fs.FSObject;
 
 public class HfsPlusObject implements FSObject {
+
     protected HfsPlusFileSystem fs;
+
+    private byte[] data;
 
     public HfsPlusObject(final HfsPlusFileSystem fileSystem) {
         this.fs = fileSystem;
+    }
+
+    public void read(int offset, int length) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        fs.getApi().read(offset, buffer);
+        data = new byte[length];
+        System.arraycopy(buffer.array(), 0, data, 0, length);
+    }
+
+    public void write(int offset) throws IOException {
+        fs.getApi().write(offset, ByteBuffer.wrap(data));
+        fs.flush();
     }
 
     public final HfsPlusFileSystem getFileSystem() {

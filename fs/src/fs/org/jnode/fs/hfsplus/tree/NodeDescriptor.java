@@ -20,6 +20,7 @@
  
 package org.jnode.fs.hfsplus.tree;
 
+import java.nio.ByteBuffer;
 import org.jnode.util.BigEndian;
 
 public class NodeDescriptor {
@@ -69,9 +70,9 @@ public class NodeDescriptor {
      * @param src byte array contains node descriptor data.
      * @param offset start of node descriptor data.
      */
-    public NodeDescriptor(final byte[] src, int offset) {
+    public NodeDescriptor(final ByteBuffer src, int offset) {
         byte[] data = new byte[BT_NODE_DESCRIPTOR_LENGTH];
-        System.arraycopy(src, offset, data, 0, BT_NODE_DESCRIPTOR_LENGTH);
+        System.arraycopy(src.array(), offset, data, 0, BT_NODE_DESCRIPTOR_LENGTH);
         fLink = BigEndian.getInt32(data, 0);
         bLink = BigEndian.getInt32(data, 4);
         kind = BigEndian.getInt8(data, 8);

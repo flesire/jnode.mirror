@@ -21,7 +21,6 @@
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
-
 import org.jnode.driver.ApiNotFoundException;
 import org.jnode.fs.FileSystemException;
 
@@ -66,6 +65,8 @@ public class HFSPlusParams {
     public HFSPlusParams() {
         this.catalogNodeSize = DEFAULT_CATALOG_NODE_SIZE;
         this.extentNodeSize = DEFAULT_EXTENT_NODE_SIZE;
+        this.blockSize = DEFAULT_BLOCK_SIZE;
+        this.volumeName = "";
     }
 
     /**

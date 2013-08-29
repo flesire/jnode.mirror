@@ -29,17 +29,22 @@ public class Extent {
     private final Logger log = Logger.getLogger(getClass());
 
     @SuppressWarnings("unused")
-    private NodeDescriptor btnd;
+    private NodeDescriptor descriptor;
     @SuppressWarnings("unused")
-    private BTHeaderRecord bthr;
+    private BTHeaderRecord headerRecord;
+
+    public Extent(NodeDescriptor descriptor, BTHeaderRecord headerRecord) {
+        this.descriptor =descriptor;
+        this.headerRecord=headerRecord;
+    }
 
     public Extent(HFSPlusParams params) {
         log.info("Create B-Tree extent file.");
-        btnd = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
+        descriptor = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
         //
         int totalNodes = params.getExtentClumpSize() / params.getExtentNodeSize();
         int freeNodes = totalNodes - 1;
-        bthr = new BTHeaderRecord(0, 0, 0, 0, 0, params.getExtentNodeSize(),
+        headerRecord = new BTHeaderRecord(0, 0, 0, 0, 0, params.getExtentNodeSize(),
                 ExtentKey.MAXIMUM_KEY_LENGTH, totalNodes, freeNodes, 
                 params.getExtentClumpSize(), BTHeaderRecord.BT_TYPE_HFS,
                 BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,

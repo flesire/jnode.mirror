@@ -21,13 +21,9 @@
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.jnode.fs.FileSystemException;
 import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
 import org.jnode.fs.hfsplus.extent.ExtentDescriptor;
 import org.jnode.util.BigEndian;
@@ -39,7 +35,7 @@ import org.jnode.util.NumberUtils;
  * @author Fabien Lesire
  * 
  */
-public class SuperBlock extends HfsPlusObject {
+public class VolumeHeader extends HfsPlusObject {
 
     public static final int HFSPLUS_SUPER_MAGIC = 0x482b; // H+
     public static final int HFSX_SUPER_MAGIC = 0x4858; // HX
@@ -64,38 +60,19 @@ public class SuperBlock extends HfsPlusObject {
     /** Data bytes array that contains volume header information */
     private byte[] data;
 
-    /**
-     * Create the volume header and load information for the file system passed
-     * as parameter.
-     * 
-     * @param fs The file system contains HFS+ partition.
-     * 
-     * @throws FileSystemException If magic number (0X482B) is incorrect or not
-     *             available.
-     */
-    public SuperBlock(final HfsPlusFileSystem fs, boolean create) throws FileSystemException {
-        super(fs);
-        log.setLevel(Level.INFO);
-        data = new byte[SUPERBLOCK_LENGTH];
-        try {
-            if (!create) {
-                log.info("load HFS+ volume header.");
-                // skip the first 1024 bytes (boot sector) and read the volume
-                // header.
-                ByteBuffer b = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
-                fs.getApi().read(1024, b);
-                data = new byte[SUPERBLOCK_LENGTH];
-                System.arraycopy(b.array(), 0, data, 0, SUPERBLOCK_LENGTH);
-                if (getMagic() != HFSPLUS_SUPER_MAGIC && getMagic() != HFSX_SUPER_MAGIC) {
-                    throw new FileSystemException("Not hfs+ volume header (" + getMagic() +
-                            ": bad magic)");
-                }
 
-            }
-        } catch (IOException e) {
-            throw new FileSystemException(e);
+    public VolumeHeader(HfsPlusFileSystem fs) {
+        super(fs);
+        data = new byte[SUPERBLOCK_LENGTH];
+    }
+
+    public void check() throws IOException {
+        if (this.getMagic() != VolumeHeader.HFSPLUS_SUPER_MAGIC && this.getMagic() != VolumeHeader.HFSX_SUPER_MAGIC) {
+            throw new IOException("Not hfs+ volume header (" + this.getMagic() +
+                ": bad magic)");
         }
     }
+
 
     /**
      * Create a new volume header.
@@ -435,10 +412,6 @@ public class SuperBlock extends HfsPlusObject {
 
     public byte[] getBytes() {
         return data;
-    }
-
-    public void update() throws IOException {
-        fs.getApi().write(1024, ByteBuffer.wrap(data));
     }
 
     public final String toString() {

@@ -20,6 +20,7 @@
  
 package org.jnode.fs.hfsplus.tree;
 
+import java.nio.ByteBuffer;
 import org.jnode.util.BigEndian;
 
 public class BTHeaderRecord {
@@ -83,9 +84,9 @@ public class BTHeaderRecord {
         this.attributes = attributes;
     }
 
-    public BTHeaderRecord(final byte[] src, int offset) {
+    public BTHeaderRecord(final ByteBuffer src, int offset) {
         byte[] data = new byte[BT_HEADER_RECORD_LENGTH];
-        System.arraycopy(src, offset, data, 0, BT_HEADER_RECORD_LENGTH);
+        System.arraycopy(src.array(), offset, data, 0, BT_HEADER_RECORD_LENGTH);
         treeDepth = BigEndian.getInt16(data, 0);
         rootNode = BigEndian.getInt32(data, 2);
         leafRecords = BigEndian.getInt32(data, 6);
@@ -130,6 +131,10 @@ public class BTHeaderRecord {
 
     public int getRootNode() {
         return rootNode;
+    }
+
+    public int getRootNodeOffset() {
+        return rootNode * nodeSize;
     }
 
     public int getLeafRecords() {

@@ -20,6 +20,7 @@
  
 package org.jnode.fs.hfsplus.extent;
 
+import java.nio.ByteBuffer;
 import org.jnode.fs.hfsplus.tree.AbstractNode;
 import org.jnode.fs.hfsplus.tree.IndexRecord;
 import org.jnode.fs.hfsplus.tree.NodeDescriptor;
@@ -30,7 +31,7 @@ public class ExtentNode extends AbstractNode<IndexRecord> {
         super(descriptor, nodeSize);
     }
 
-    public ExtentNode(final byte[] nodeData, final int nodeSize) {
+    public ExtentNode(final ByteBuffer nodeData, final int nodeSize) {
         super(nodeData, nodeSize);
     }
 

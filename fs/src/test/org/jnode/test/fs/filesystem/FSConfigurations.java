@@ -60,9 +60,6 @@ public class FSConfigurations implements Iterable<FSTestConfig> {
         configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.EXT2,
             FSAccessMode.BOTH, new Ext2FileSystemFormatter(BlockSize._4Kb), diskFileName, "1M"));
 
-//        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.NTFS,
-//                FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
-
         configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.HFS_PLUS,
                 FSAccessMode.BOTH, new HfsPlusFileSystemFormatter(new HFSPlusParams()), diskFileName, "1M"));
         
@@ -78,18 +75,6 @@ public class FSConfigurations implements Iterable<FSTestConfig> {
         configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.JFAT,
                 FSAccessMode.BOTH, new FatFileSystemFormatter(FatType.FAT32), diskFileName, "1M"));
 
-//        configs.addAll(createFileConfigs(OsType.OTHER_OS, FSType.ISO9660,
-//                FSAccessMode.BOTH, "", DO_FORMAT, diskFileName, "1M"));
-
-/*
-        configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
-                FSAccessMode.BOTH, "1", DO_FORMAT));
-        //<workDevice name="hdb5" />
-
-        configs.addAll(createConfigs(OsType.JNODE_OS, FSType.EXT2,
-                FSAccessMode.BOTH, null, DO_NOT_FORMAT));
-        //<workRamdisk size="1M" />
-*/
     }
 
     private List<FSTestConfig> createFileConfigs(OsType osType, FSType fsType,
