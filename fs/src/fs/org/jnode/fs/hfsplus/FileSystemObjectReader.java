@@ -93,15 +93,43 @@ public class FileSystemObjectReader {
         // create node descriptor
         NodeDescriptor descriptor = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
         // create BTree header record.
-        int totalNodes = params.getExtentClumpSize() / params.getExtentNodeSize();
+        int nodeSize = params.getExtentNodeSize();
+        int totalNodes = params.getExtentClumpSize() / nodeSize;
         int freeNodes = totalNodes - 1;
-        BTHeaderRecord headerRecord = new BTHeaderRecord(0, 0, 0, 0, 0, params.getExtentNodeSize(),
+        BTHeaderRecord headerRecord = new BTHeaderRecord(0, 0, 0, 0, 0, nodeSize,
             ExtentKey.MAXIMUM_KEY_LENGTH, totalNodes, freeNodes,
             params.getExtentClumpSize(), BTHeaderRecord.BT_TYPE_HFS,
             BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,
             BTHeaderRecord.BT_BIG_KEYS_MASK);
+        //
+        long nodeBitsInHeader = 8 * (nodeSize
+            - NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH
+            - BTHeaderRecord.BT_HEADER_RECORD_LENGTH
+            - 128 //kBTreeHeaderUserBytes
+            - 8 );
+        if(headerRecord.getTotalNodes() > nodeBitsInHeader) {
+            descriptor.setfLink(headerRecord.getLastLeafNode() + 1);
+            long nodeBitsInMapNode = 8 * (nodeSize
+                - NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH
+                - 4
+                - 2 );
+            long mapNodes = (headerRecord.getTotalNodes() - nodeBitsInHeader + (nodeBitsInMapNode - 1)) / nodeBitsInMapNode;
+            long newFreeNodesValue = headerRecord.getFreeNodes() - mapNodes;
+            headerRecord.setFreeNodes((int)newFreeNodesValue);
+        }
         // return a new Extent.
+
         return new Extent(descriptor, headerRecord);
+    }
+
+    public static void writeExtent(HfsPlusFileSystem fs, Extent extent) throws IOException {
+        VolumeHeader vh = fs.getVolumeHeader();
+        long offset = vh.getExtentsFile().getExtent(0).getStartOffset(vh.getBlockSize());
+        ByteBuffer buffer = ByteBuffer.wrap(extent.getDescriptor().getBytes());
+        fs.getApi().write(offset, buffer);
+        buffer = ByteBuffer.wrap(extent.getHeaderRecord().getBytes());
+        offset = offset + NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH;
+        fs.getApi().write(offset, buffer);
     }
 
     public static ByteBuffer readForkData(HfsPlusFileSystem fs, HfsPlusForkData data, int offset, int size) throws IOException {

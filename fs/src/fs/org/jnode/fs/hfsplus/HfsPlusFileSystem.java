@@ -22,8 +22,12 @@ package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import org.apache.log4j.Logger;
+import org.jnode.driver.ApiNotFoundException;
 import org.jnode.driver.Device;
+import org.jnode.driver.block.BlockDeviceAPI;
+import org.jnode.driver.block.FSBlockDeviceAPI;
 import org.jnode.fs.FSDirectory;
 import org.jnode.fs.FSEntry;
 import org.jnode.fs.FSFile;
@@ -31,6 +35,7 @@ import org.jnode.fs.FileSystemException;
 import org.jnode.fs.hfsplus.catalog.Catalog;
 import org.jnode.fs.hfsplus.catalog.CatalogKey;
 import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
+import org.jnode.fs.hfsplus.extent.Extent;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
 import org.jnode.fs.spi.AbstractFileSystem;
 
@@ -39,6 +44,8 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 
 	/** HFS volume header */
 	private VolumeHeader volumeHeader;
+
+    private Extent extent;
 
 	/** Catalog special file for this instance */
 	private Catalog catalog;
@@ -73,6 +80,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
                         + " Filesystem is journaled, write access is not supported. Mounting it readonly");
                 setReadOnly(true);
             }
+            extent = FileSystemObjectReader.readExtent(this);
 			catalog = FileSystemObjectReader.readCatalog(this);
 		} catch (IOException e) {
 			throw new FileSystemException(e);
@@ -142,6 +150,10 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 			// ---
 			log.debug("Write allocation bitmap bits to disk.");
 			writeAllocationFile((int) volumeBlockUsed);
+            // Create and write extent file
+            Extent extent = FileSystemObjectReader.createExtent(this, params);
+            FileSystemObjectReader.writeExtent(this,extent);
+            //
 			log.debug("Write Catalog to disk.");
 			Catalog catalog = FileSystemObjectReader.createCatalog(this, params);
             catalog.createRootNode(params);
@@ -150,16 +162,41 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 			FileSystemObjectReader.writeVolumeHeader(this);
 		} catch (IOException e) {
 			throw new FileSystemException("Unable to create HFS+ filesystem", e);
-		}
-	}
+		} catch (ApiNotFoundException e) {
+            throw new FileSystemException("Unable to create HFS+ filesystem", e);
+        }
+    }
 
-	private void writeAllocationFile(int blockUsed) {
-		@SuppressWarnings("unused")
+	private void writeAllocationFile(int blockUsed) throws IOException, ApiNotFoundException {
 		int bytes = blockUsed >> 3;
-		@SuppressWarnings("unused")
 		int bits = blockUsed & 0x0007;
-		// FIXME ... this should be completed
-	}
+        if(bits == 0) {
+            ++bytes;
+        }
+        FSBlockDeviceAPI api = (FSBlockDeviceAPI) getDevice().getAPI(BlockDeviceAPI.class);
+        int sectorSize = api.getSectorSize();
+        int bytesUsed = roundUp(bytes, sectorSize);
+        int[] bitmap;
+        if (bytesUsed > bytes) {
+            bitmap = new int[bytesUsed];
+            Arrays.fill(bitmap,0xFF);
+            if(bits == 0) {
+                bitmap[bytes - 1] = (0xFF00 >> bits) & 0xFF;
+            }
+            // put OxOO between bytes and bytesUsed indexes
+        } else {
+            bitmap = new int[bytes];
+            Arrays.fill(bitmap,0xFF);
+            if(bits == 0) {
+                bitmap[bytes - 1] = (0xFF00 >> bits) & 0xFF;
+            }
+        }
+        // Write to disk
+    }
+
+    private int roundUp(int x, int u) {
+        return (((x) % (u) == 0) ? (x) : ((x)/(u) + 1) * (u));
+    }
 
     private void readVolumeHeader() throws IOException {
         VolumeHeader volumeHeader = new VolumeHeader(this);

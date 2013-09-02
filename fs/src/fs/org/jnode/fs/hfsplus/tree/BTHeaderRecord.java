@@ -165,6 +165,10 @@ public class BTHeaderRecord {
         return freeNodes;
     }
 
+    public void setFreeNodes(int freeNodes) {
+        this.freeNodes = freeNodes;
+    }
+
     public int getClumpSize() {
         return clumpSize;
     }

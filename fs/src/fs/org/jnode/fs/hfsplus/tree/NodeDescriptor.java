@@ -103,6 +103,10 @@ public class NodeDescriptor {
         return fLink;
     }
 
+    public void setfLink(int fLink) {
+        this.fLink = fLink;
+    }
+
     public int getBLink() {
         return bLink;
     }

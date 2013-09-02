@@ -51,4 +51,12 @@ public class Extent {
                 BTHeaderRecord.BT_BIG_KEYS_MASK);
 
     }
+
+    public NodeDescriptor getDescriptor() {
+        return descriptor;
+    }
+
+    public BTHeaderRecord getHeaderRecord() {
+        return headerRecord;
+    }
 }
