@@ -37,6 +37,7 @@ import org.jnode.fs.hfsplus.tree.NodeDescriptor;
 
 public class Catalog {
 
+    public static final int HFS_FILE_THREAD_EXISTS = 0x002;
     private final Logger log = Logger.getLogger(getClass());
 
     /**
@@ -108,31 +109,40 @@ public class Catalog {
             NodeDescriptor nd = new NodeDescriptor(0, 0, NodeDescriptor.BT_LEAF_NODE, 1, 2);
             node = new CatalogLeafNode(nd, 8192);
             // Normal record
-            CatalogKey key = new CatalogKey(parentId, name);
-            if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
-                CatalogFolder folder = new CatalogFolder(0, parentId);
-                key = new CatalogKey(parentId, name);
-                record = new LeafRecord(key, folder.getBytes());
-                node.addNodeRecord(record);
-            } else {
-                // Catalog file
-            }
+            record = createRecord(parentId, name, nodeType);
+            node.addNodeRecord(record);
             // Thread record
-            key = new CatalogKey(parentId, name);
-            int threadType;
-            if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
-            	threadType = CatalogFolder.RECORD_TYPE_FOLDER_THREAD;
-            } else {
-            	threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
-            }
-            CatalogThread thread = new CatalogThread(threadType, nodeId, name);
-            record = new LeafRecord(key, thread.getBytes());
+            record = createThread(parentId, name, nodeType);
             node.addNodeRecord(record);
             
         } else {
             throw new IOException("Leaf record for parent (" + parentId.getId() + ") doesn't exist.");
         }
         return node;
+    }
+
+    private LeafRecord createThread(CatalogNodeId parentId, HfsUnicodeString name, int nodeType)    {
+        CatalogKey key = new CatalogKey(parentId, name);
+        int threadType;
+        if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
+            threadType = CatalogFolder.RECORD_TYPE_FOLDER_THREAD;
+        } else {
+            threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
+        }
+        CatalogThread thread =  new CatalogThread(threadType, parentId, name);
+        return new LeafRecord(key, thread.getBytes());
+    }
+
+    private LeafRecord createRecord(CatalogNodeId parentId, HfsUnicodeString name, int nodeType) {
+        CatalogKey key = new CatalogKey(parentId, name);
+        if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
+            CatalogFolder folder = new CatalogFolder(0, parentId);
+            key = new CatalogKey(parentId, name);
+            return new LeafRecord(key, folder.getBytes());
+        } else {
+            CatalogFile file = new CatalogFile(HFS_FILE_THREAD_EXISTS,parentId,null,null);
+            return null;
+        }
     }
 
     /**
