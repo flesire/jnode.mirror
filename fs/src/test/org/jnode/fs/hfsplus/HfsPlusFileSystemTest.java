@@ -22,6 +22,8 @@ package org.jnode.fs.hfsplus;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jnode.driver.Device;
 import org.jnode.driver.block.FileDevice;
 import org.jnode.emu.plugin.model.DummyConfigurationElement;
@@ -40,12 +42,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class HfsPlusFileSystemTest {
+
+    Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+
     
     private Device device;
     private FileSystemService fss;
     
     @Before
     public void setUp() throws Exception {
+        logger.setLevel(Level.ALL);
         // create test device.
         device = createTestDisk(false);
         // create file system service.
@@ -79,6 +86,7 @@ public class HfsPlusFileSystemTest {
         params.setJournaled(false);
         params.setJournalSize(HFSPlusParams.DEFAULT_JOURNAL_SIZE);
         fs.create(params);
+        System.out.println(fs.getVolumeHeader().toString());
         fs.close();
         fs = new HfsPlusFileSystemType().create(device, false);
         fs.read();

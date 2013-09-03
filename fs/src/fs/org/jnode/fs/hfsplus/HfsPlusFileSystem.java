@@ -21,7 +21,6 @@
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.jnode.driver.ApiNotFoundException;
@@ -66,7 +65,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 	 */
 	public final void read() throws FileSystemException {
         try {
-            volumeHeader = FileSystemObjectReader.readVolumeHeader(this);
+            readVolumeHeader();
             if (!volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_UNMNT_BIT)) {
                 log.info(getDevice().getId() + " Filesystem has not been cleanly unmounted, mounting it readonly");
                 setReadOnly(true);
@@ -159,7 +158,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
             catalog.createRootNode(params);
             FileSystemObjectReader.writeCatalog(this, catalog);
 			log.debug("Write volume header to disk.");
-			FileSystemObjectReader.writeVolumeHeader(this);
+            writeVolumeHeader();
 		} catch (IOException e) {
 			throw new FileSystemException("Unable to create HFS+ filesystem", e);
 		} catch (ApiNotFoundException e) {
@@ -206,7 +205,6 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
     }
 
     private void writeVolumeHeader() throws IOException {
-        this.getApi().write(1024, ByteBuffer.wrap(volumeHeader.getBytes()));
-        this.flush();
+        volumeHeader.write(1024);
     }
 }

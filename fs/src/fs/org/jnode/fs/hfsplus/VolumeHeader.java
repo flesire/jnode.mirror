@@ -57,18 +57,15 @@ public class VolumeHeader extends HfsPlusObject {
     /** Volume header data length */
     public static final int SUPERBLOCK_LENGTH = 1024;
 
-    /** Data bytes array that contains volume header information */
-    private byte[] data;
-
-
     public VolumeHeader(HfsPlusFileSystem fs) {
         super(fs);
         data = new byte[SUPERBLOCK_LENGTH];
     }
 
     public void check() throws IOException {
-        if (this.getMagic() != VolumeHeader.HFSPLUS_SUPER_MAGIC && this.getMagic() != VolumeHeader.HFSX_SUPER_MAGIC) {
-            throw new IOException("Not hfs+ volume header (" + this.getMagic() +
+        int magic = this.getMagic();
+        if (magic != VolumeHeader.HFSPLUS_SUPER_MAGIC && magic != VolumeHeader.HFSX_SUPER_MAGIC) {
+            throw new IOException("Not hfs+ volume header (" + magic +
                 ": bad magic)");
         }
     }
@@ -81,6 +78,7 @@ public class VolumeHeader extends HfsPlusObject {
      * @throws IOException
      */
     public void create(HFSPlusParams params) throws IOException {
+        int blockSize = params.getBlockSize();
         log.info("Create new HFS+ volume header (" + params.getVolumeName() +
                 ") with block size of " + params.getBlockSize() + " bytes.");
         int burnedBlocksBeforeVH = 0;
@@ -89,7 +87,7 @@ public class VolumeHeader extends HfsPlusObject {
          * Volume header is located at sector 2. Block before this position must
          * be invalidated.
          */
-        int blockSize = params.getBlockSize();
+
         if (blockSize == 512) {
             burnedBlocksBeforeVH = 2;
             burnedBlocksAfterAltVH = 1;
