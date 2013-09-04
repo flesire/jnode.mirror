@@ -198,7 +198,7 @@ public class Catalog {
         throws IOException {
         // Get node data
         int nodeSize = getBTHeaderRecord().getNodeSize();
-        ByteBuffer nodeData = getNodeData(nodeNumber, nodeSize);
+        ByteBuffer nodeData = getNodeData(nodeNumber * nodeSize, nodeSize);
         // extract descriptor
         NodeDescriptor descriptor = new NodeDescriptor(nodeData, 0);
         if (descriptor.isIndexNode()) {
@@ -228,7 +228,7 @@ public class Catalog {
     public final LeafRecord getRecord(final CatalogNodeId parentID, final HfsUnicodeString nodeName)
         throws IOException {
         int nodeSize = getBTHeaderRecord().getNodeSize();
-        ByteBuffer nodeData = getNodeData(getBTHeaderRecord().getRootNode(), nodeSize);
+        ByteBuffer nodeData = getNodeData(getBTHeaderRecord().getRootNodeOffset(), nodeSize);
         NodeDescriptor nd = new NodeDescriptor(nodeData, 0);
         CatalogKey cKey = new CatalogKey(parentID, nodeName);
         while (nd.isIndexNode()) {

@@ -228,7 +228,7 @@ public class HfsPlusDirectory implements FSDirectory {
         CatalogLeafNode node =
                 catalog.createNode(name, this.folder.getFolderId(),
                         new CatalogNodeId(volumeHeader.getNextCatalogId()),
-                        CatalogFolder.RECORD_TYPE_FOLDER_THREAD);
+                        CatalogFolder.RECORD_TYPE_FOLDER);
         folder.incrementValence();
 
         HfsPlusEntry newEntry =

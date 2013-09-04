@@ -55,6 +55,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
      */
     public HfsPlusEntry(HfsPlusFileSystem fs, HfsPlusDirectory parent, String name,
             LeafRecord record) {
+        this.fs = fs;
         this.parent = parent;
         this.name = name;
         this.record = record;
