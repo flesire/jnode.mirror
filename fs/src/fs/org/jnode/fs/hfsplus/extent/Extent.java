@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.extent;
 
 import org.apache.log4j.Logger;
@@ -34,8 +34,8 @@ public class Extent {
     private BTHeaderRecord headerRecord;
 
     public Extent(NodeDescriptor descriptor, BTHeaderRecord headerRecord) {
-        this.descriptor =descriptor;
-        this.headerRecord=headerRecord;
+        this.descriptor = descriptor;
+        this.headerRecord = headerRecord;
     }
 
     public Extent(HFSPlusParams params) {
@@ -44,11 +44,12 @@ public class Extent {
         //
         int totalNodes = params.getExtentClumpSize() / params.getExtentNodeSize();
         int freeNodes = totalNodes - 1;
-        headerRecord = new BTHeaderRecord(0, 0, 0, 0, 0, params.getExtentNodeSize(),
-                ExtentKey.MAXIMUM_KEY_LENGTH, totalNodes, freeNodes, 
-                params.getExtentClumpSize(), BTHeaderRecord.BT_TYPE_HFS,
-                BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,
-                BTHeaderRecord.BT_BIG_KEYS_MASK);
+        headerRecord =
+                new BTHeaderRecord(0, 0, 0, 0, 0, params.getExtentNodeSize(),
+                        ExtentKey.MAXIMUM_KEY_LENGTH, totalNodes, freeNodes,
+                        params.getExtentClumpSize(), BTHeaderRecord.BT_TYPE_HFS,
+                        BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,
+                        BTHeaderRecord.BT_BIG_KEYS_MASK);
 
     }
 

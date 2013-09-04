@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
     protected FSAccessRights rights;
 
     /**
-     *
+     * 
      * @param fs
      * @param parent
      * @param name
@@ -61,7 +61,6 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         this.type = getFSEntryType();
         this.rights = new UnixFSAccessRights(fs);
     }
-
 
     private int getFSEntryType() {
         int mode = record.getType();
@@ -102,8 +101,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         if (isFile()) {
             CatalogFile catalogFile = new CatalogFile(getData());
             return catalogFile.getContentModDate();
-        }
-        else {
+        } else {
             CatalogFolder catalogFolder = new CatalogFolder(getData());
             return catalogFolder.getContentModDate();
         }
@@ -144,7 +142,8 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
 
     public CatalogFile createCatalogFile() {
         if (!isFile()) {
-            throw new IllegalStateException("Attempted to create a catalog file but this entry is not a file!");
+            throw new IllegalStateException(
+                    "Attempted to create a catalog file but this entry is not a file!");
         }
 
         return new CatalogFile(getData());
@@ -152,7 +151,8 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
 
     public CatalogFolder createCatalogFolder() {
         if (isFile()) {
-            throw new IllegalStateException("Attempted to create a catalog folder but this entry is not a directory!");
+            throw new IllegalStateException(
+                    "Attempted to create a catalog folder but this entry is not a directory!");
         }
 
         return new CatalogFolder(getData());
@@ -164,8 +164,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
             CatalogFile catalogFile = new CatalogFile(getData());
             // catalogFile.setContentModDate();
             throw new UnsupportedOperationException("Not implemented yet.");
-        }
-        else {
+        } else {
             CatalogFolder catalogFolder = new CatalogFolder(getData());
             catalogFolder.setContentModDate(lastModified);
         }
@@ -202,8 +201,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         if (isFile()) {
             CatalogFile catalogFile = new CatalogFile(getData());
             return catalogFile.getCreateDate();
-        }
-        else {
+        } else {
             CatalogFolder catalogFolder = new CatalogFolder(getData());
             return catalogFolder.getCreateDate();
         }
@@ -214,8 +212,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         if (isFile()) {
             CatalogFile catalogFile = new CatalogFile(getData());
             return catalogFile.getAccessDate();
-        }
-        else {
+        } else {
             CatalogFolder catalogFolder = new CatalogFolder(getData());
             return catalogFolder.getAccessDate();
         }

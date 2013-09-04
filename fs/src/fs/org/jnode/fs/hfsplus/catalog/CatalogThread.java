@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import org.jnode.fs.hfsplus.HfsUnicodeString;
@@ -26,16 +26,16 @@ import org.jnode.util.BigEndian;
 public class CatalogThread {
 
     public static final int CATALOG_THREAD_SIZE = 512;
-    
+
     /** The catalog thread record type. Can be a file or a folder. */
     private int recordType;
-    
+
     /**
      * the catalog node id of the file or folder referenced by the thread
      * record.
      */
     private CatalogNodeId parentId;
-    
+
     /** the name of the file or folder reference by the thread record. */
     private HfsUnicodeString nodeName;
 

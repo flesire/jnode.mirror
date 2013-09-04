@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
@@ -65,11 +65,9 @@ public class VolumeHeader extends HfsPlusObject {
     public void check() throws IOException {
         int magic = this.getMagic();
         if (magic != VolumeHeader.HFSPLUS_SUPER_MAGIC && magic != VolumeHeader.HFSX_SUPER_MAGIC) {
-            throw new IOException("Not hfs+ volume header (" + magic +
-                ": bad magic)");
+            throw new IOException("Not hfs+ volume header (" + magic + ": bad magic)");
         }
     }
-
 
     /**
      * Create a new volume header.
@@ -402,11 +400,10 @@ public class VolumeHeader extends HfsPlusObject {
     public final boolean isAttribute(final int maskBit) {
         return (((getAttributes() >> maskBit) & 0x1) != 0);
     }
-    
-    public void incrementFolderCount(){
-    	this.setFolderCount(this.getFolderCount() + 1);
+
+    public void incrementFolderCount() {
+        this.setFolderCount(this.getFolderCount() + 1);
     }
-    		
 
     public byte[] getBytes() {
         return data;
@@ -416,17 +413,20 @@ public class VolumeHeader extends HfsPlusObject {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Magic: 0x").append(NumberUtils.hex(getMagic(), 4)).append("\n");
         buffer.append("Version: ").append(getVersion()).append("\n").append("\n");
-        buffer.append("Attributes: ").append(getAttributesAsString()).append(" (").append(
-                getAttributes()).append(")").append("\n").append("\n");
-        buffer.append("Create date: ").append(
-                HfsUtils.printDate(getCreateDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Modify date: ").append(
-                HfsUtils.printDate(getModifyDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Backup date: ").append(
-                HfsUtils.printDate(getBackupDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        buffer.append("Checked date: ").append(
-                HfsUtils.printDate(getCheckedDate(), "EEE MMM d HH:mm:ss yyyy")).append("\n")
+        buffer.append("Attributes: ").append(getAttributesAsString()).append(" (")
+                .append(getAttributes()).append(")").append("\n").append("\n");
+        buffer.append("Create date: ")
+                .append(HfsUtils.printDate(getCreateDate(), "EEE MMM d HH:mm:ss yyyy"))
                 .append("\n");
+        buffer.append("Modify date: ")
+                .append(HfsUtils.printDate(getModifyDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n");
+        buffer.append("Backup date: ")
+                .append(HfsUtils.printDate(getBackupDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n");
+        buffer.append("Checked date: ")
+                .append(HfsUtils.printDate(getCheckedDate(), "EEE MMM d HH:mm:ss yyyy"))
+                .append("\n").append("\n");
         buffer.append("File count: ").append(getFileCount()).append("\n");
         buffer.append("Folder count: ").append(getFolderCount()).append("\n").append("\n");
         buffer.append("Block size: ").append(getBlockSize()).append("\n");

@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import org.jnode.fs.hfsplus.HfsUnicodeString;
@@ -26,15 +26,17 @@ import org.jnode.fs.hfsplus.tree.Key;
 import org.jnode.util.BigEndian;
 
 /**
- * Implementation of catalog file key. The catalog file key is defined as following :
+ * Implementation of catalog file key. The catalog file key is defined as
+ * following :
  * <ul>
  * <li>The length of the key</li>
  * <li>The node identifier of the parent folder</li>
  * <li>The name of the file or folder</li>
  * </ul>
  * 
- * The minimal length for a key is 6 bytes. 2 bytes for the length and 4 bytes for the catalog node id.
- *
+ * The minimal length for a key is 6 bytes. 2 bytes for the length and 4 bytes
+ * for the catalog node id.
+ * 
  */
 public class CatalogKey extends AbstractKey {
 
@@ -60,7 +62,7 @@ public class CatalogKey extends AbstractKey {
         int currentOffset = offset;
         byte[] ck = new byte[2];
         System.arraycopy(src, currentOffset, ck, 0, 2);
-        //TODO Understand why the +2 is necessary
+        // TODO Understand why the +2 is necessary
         keyLength = BigEndian.getInt16(ck, 0) + 2;
         currentOffset += 2;
         ck = new byte[4];

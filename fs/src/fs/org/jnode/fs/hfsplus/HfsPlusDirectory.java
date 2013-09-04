@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.FileNotFoundException;
@@ -88,7 +88,7 @@ public class HfsPlusDirectory implements FSDirectory {
     }
 
     private FSEntry createFileEntry(final String name) throws IOException {
-        //TODO implements this method.
+        // TODO implements this method.
         /*
          * if (fs.isReadOnly()) { throw new ReadOnlyFileSystemException(); }
          * Catalog catalog = fs.readCatalog(); VolumeHeader volumeHeader =
@@ -190,7 +190,8 @@ public class HfsPlusDirectory implements FSDirectory {
 
     /**
      * 
-     * @return read all entries link to the current directory in the file system.
+     * @return read all entries link to the current directory in the file
+     *         system.
      * @throws IOException
      */
     private FSEntryTable readEntries() throws IOException {
@@ -217,8 +218,9 @@ public class HfsPlusDirectory implements FSDirectory {
     /**
      * 
      * @param name The name of the entry.
-     * @return  Return the newly created entry.
-     * @throws IOException if problem occurs during catalog node creation or if system is read-only.
+     * @return Return the newly created entry.
+     * @throws IOException if problem occurs during catalog node creation or if
+     *             system is read-only.
      */
     private FSEntry createDirectoryEntry(final String name) throws IOException {
         Catalog catalog = ((HfsPlusFileSystem) getFileSystem()).getCatalog();
@@ -229,7 +231,9 @@ public class HfsPlusDirectory implements FSDirectory {
                         CatalogFolder.RECORD_TYPE_FOLDER_THREAD);
         folder.incrementValence();
 
-        HfsPlusEntry newEntry = new HfsPlusEntry((HfsPlusFileSystem) getFileSystem(), this, name, node.getNodeRecord(0));
+        HfsPlusEntry newEntry =
+                new HfsPlusEntry((HfsPlusFileSystem) getFileSystem(), this, name,
+                        node.getNodeRecord(0));
 
         newEntry.setDirty();
 

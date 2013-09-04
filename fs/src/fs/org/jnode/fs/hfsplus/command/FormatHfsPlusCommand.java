@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.command;
 
 import org.jnode.fs.Formatter;
@@ -30,16 +30,15 @@ import org.jnode.shell.syntax.StringArgument;
 
 public class FormatHfsPlusCommand extends AbstractFormatCommand<HfsPlusFileSystem> {
 
-    private final StringArgument ARG_VOLUME_NAME = new StringArgument("volumeName", Argument.OPTIONAL,
-            "set volume name");
+    private final StringArgument ARG_VOLUME_NAME = new StringArgument("volumeName",
+            Argument.OPTIONAL, "set volume name");
 
     public FormatHfsPlusCommand() {
         super("Format a block device with HFS+ filesystem");
         registerArguments(ARG_VOLUME_NAME);
     }
 
-    public static void main(String[] args)
-        throws Exception {
+    public static void main(String[] args) throws Exception {
         new FormatHfsPlusCommand().execute(args);
     }
 

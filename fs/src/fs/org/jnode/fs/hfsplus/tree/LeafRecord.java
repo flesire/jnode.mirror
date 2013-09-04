@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.tree;
 
 import org.jnode.util.BigEndian;
@@ -25,7 +25,7 @@ import org.jnode.util.BigEndian;
 public class LeafRecord extends AbstractNodeRecord {
 
     private int type;
-    
+
     public LeafRecord(final Key key, final byte[] recordData) {
         this.key = key;
         this.recordData = new byte[recordData.length];
@@ -33,10 +33,12 @@ public class LeafRecord extends AbstractNodeRecord {
         type = BigEndian.getInt16(this.recordData, 0);
     }
 
-    public LeafRecord(final Key key, final byte[] nodeData, final int offset, final int recordDataSize) {
+    public LeafRecord(final Key key, final byte[] nodeData, final int offset,
+            final int recordDataSize) {
         this.key = key;
         this.recordData = new byte[recordDataSize];
-        System.arraycopy(nodeData, offset + (key.getKeyLength()-2), this.recordData, 0, recordDataSize);
+        System.arraycopy(nodeData, offset + (key.getKeyLength() - 2), this.recordData, 0,
+                recordDataSize);
         type = BigEndian.getInt16(this.recordData, 0);
     }
 

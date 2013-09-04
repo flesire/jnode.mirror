@@ -17,24 +17,24 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.tree;
 
 import java.nio.ByteBuffer;
 import org.jnode.util.BigEndian;
 
 public class BTHeaderRecord {
-    
+
     public static final int KEY_COMPARE_TYPE_CASE_FOLDING = 0xCF;
     /** B-Tree was not closed correctly and need check for consistency. */
     public static final int BT_BAD_CLOSE_MASK = 0x00000001;
     public static final int BT_BIG_KEYS_MASK = 0x00000002;
     public static final int BT_VARIABLE_INDEX_KEYS_MASK = 0x00000004;
-    
+
     public static final int BT_TYPE_HFS = 0;
     public static final int BT_TYPE_USER = 128;
     public static final int BT_TYPE_RESERVED = 256;
-    
+
     public static final int BT_HEADER_RECORD_LENGTH = 106;
     /** The depth of the current B-Tree. */
     private int treeDepth;
@@ -97,8 +97,8 @@ public class BTHeaderRecord {
         totalNodes = BigEndian.getInt32(data, 22);
         freeNodes = BigEndian.getInt32(data, 26);
         clumpSize = BigEndian.getInt32(data, 32);
-        treeType = BigEndian.getUInt8(data,36);
-        keyCompareType = BigEndian.getUInt8(data,37);
+        treeType = BigEndian.getUInt8(data, 36);
+        keyCompareType = BigEndian.getUInt8(data, 37);
         attributes = BigEndian.getInt32(data, 38);
     }
 
@@ -119,7 +119,7 @@ public class BTHeaderRecord {
         BigEndian.setInt32(data, 38, attributes);
         return data;
     }
-   
+
     public final String toString() {
         return ("Root node:  " + getRootNode() + "\n" + "First leaf: " + getFirstLeafNode() + "\n" +
                 "Last leaf:  " + getLastLeafNode() + "\n" + "node size:  " + getNodeSize() + "\n");

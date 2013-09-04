@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.tree;
 
 import org.jnode.util.BigEndian;
@@ -31,7 +31,7 @@ public class IndexRecord extends AbstractNodeRecord {
         System.arraycopy(nodeData, offset + key.getKeyLength(), recordData, 0, 4);
         index = BigEndian.getInt32(recordData, 0);
     }
-    
+
     /**
      * 
      * @param key
@@ -44,9 +44,9 @@ public class IndexRecord extends AbstractNodeRecord {
         System.arraycopy(nodeData, offset + key.getKeyLength(), recordData, 0, 4);
         index = BigEndian.getInt32(recordData, 0);
     }
-   
+
     public final int getIndex() {
         return index;
     }
-    
+
 }

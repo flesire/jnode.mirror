@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
@@ -113,15 +113,17 @@ public class HfsPlusForkData {
     public ExtentDescriptor getExtent(int index) {
         return extents[index];
     }
+
     /**
      * Read a block of data
-     *
+     * 
      * @param fileSystem the associated file system.
      * @param offset the offset to read from.
      * @param buffer the buffer to read into.
      * @throws java.io.IOException if an error occurs.
      */
-    public void read(HfsPlusFileSystem fileSystem, long offset, ByteBuffer buffer) throws IOException {
+    public void read(HfsPlusFileSystem fileSystem, long offset, ByteBuffer buffer)
+        throws IOException {
         for (ExtentDescriptor extentDescriptor : extents) {
             if (buffer.remaining() > 0 && !extentDescriptor.isEmpty()) {
                 long length = extentDescriptor.getSize(fileSystem.getVolumeHeader().getBlockSize());
@@ -130,7 +132,9 @@ public class HfsPlusForkData {
                     offset -= length;
                 } else {
 
-                    long firstOffset = extentDescriptor.getStartOffset(fileSystem.getVolumeHeader().getBlockSize());
+                    long firstOffset =
+                            extentDescriptor.getStartOffset(fileSystem.getVolumeHeader()
+                                    .getBlockSize());
                     fileSystem.getApi().read(firstOffset + offset, buffer);
 
                     offset = 0;

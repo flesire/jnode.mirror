@@ -5,6 +5,4 @@ public class ExtentRecord {
     private int startBlock;
     private int blockCount;
 
-
-
 }

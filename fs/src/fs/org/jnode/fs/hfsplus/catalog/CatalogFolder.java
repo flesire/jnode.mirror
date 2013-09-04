@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import org.jnode.fs.hfsplus.HfsPlusBSDInfo;
@@ -28,7 +28,7 @@ public class CatalogFolder {
     /* Types */
     public static final int RECORD_TYPE_FOLDER = 0x0001;
     public static final int RECORD_TYPE_FOLDER_THREAD = 0x0003;
-    
+
     public static final int CATALOG_FOLDER_SIZE = 88;
 
     private int recordType;
@@ -91,6 +91,7 @@ public class CatalogFolder {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     public String toString() {
@@ -98,12 +99,12 @@ public class CatalogFolder {
         s.append("Record type: ").append(recordType).append("\n");
         s.append("Valence: ").append(valence).append("\n");
         s.append("Folder ID: ").append(folderId.getId()).append("\n");
-        s.append("Creation Date :").append(
-                HfsUtils.printDate(createDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        s.append("Content Mod Date  :").append(
-                HfsUtils.printDate(contentModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
-        s.append("Attr Mod Date  :").append(
-                HfsUtils.printDate(attrModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Creation Date :")
+                .append(HfsUtils.printDate(createDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Content Mod Date  :")
+                .append(HfsUtils.printDate(contentModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
+        s.append("Attr Mod Date  :")
+                .append(HfsUtils.printDate(attrModDate, "EEE MMM d HH:mm:ss yyyy")).append("\n");
         return s.toString();
     }
 
@@ -166,9 +167,9 @@ public class CatalogFolder {
     public void setAttrModDate(long attrModDate) {
         this.attrModDate = (int) HfsUtils.getDate(attrModDate / 1000L, true);
     }
-    
-    public void incrementValence(){
-    	this.setValence(this.getValence() + 1);
+
+    public void incrementValence() {
+        this.setValence(this.getValence() + 1);
     }
-    
+
 }

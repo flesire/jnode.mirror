@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.hfsplus.catalog;
 
 import java.io.IOException;
@@ -56,19 +56,21 @@ public class Catalog {
 
     /**
      * Default catalog constructor.
+     * 
      * @param descriptor The node descriptor of the catalog.
      * @param headerRecord The BTree header record of the catalog.
      * @throws IOException
      */
-    public Catalog(NodeDescriptor descriptor, BTHeaderRecord headerRecord, HfsPlusForkDataFactory factory) throws IOException {
+    public Catalog(NodeDescriptor descriptor, BTHeaderRecord headerRecord,
+            HfsPlusForkDataFactory factory) throws IOException {
         this.descriptor = descriptor;
         this.headerRecord = headerRecord;
         this.factory = factory;
     }
 
-    public CatalogLeafNode createRootNode(HFSPlusParams params){
-    	int nodeSize = params.getCatalogNodeSize();
-    	NodeDescriptor nd =
+    public CatalogLeafNode createRootNode(HFSPlusParams params) {
+        int nodeSize = params.getCatalogNodeSize();
+        NodeDescriptor nd =
                 new NodeDescriptor(0, 0, NodeDescriptor.BT_LEAF_NODE, 1,
                         params.getInitializeNumRecords());
         CatalogLeafNode rootNode = new CatalogLeafNode(nd, nodeSize);
@@ -99,9 +101,9 @@ public class Catalog {
      * @param nodeType
      * @return the new node instance
      */
-    public CatalogLeafNode createNode(String filename, CatalogNodeId parentId, CatalogNodeId nodeId,
-            int nodeType) throws IOException {
-    	CatalogLeafNode node;
+    public CatalogLeafNode createNode(String filename, CatalogNodeId parentId,
+            CatalogNodeId nodeId, int nodeType) throws IOException {
+        CatalogLeafNode node;
         HfsUnicodeString name = new HfsUnicodeString(filename);
         // find parent leaf record.
         LeafRecord record = this.getRecord(parentId, name);
@@ -114,14 +116,15 @@ public class Catalog {
             // Thread record
             record = createThread(parentId, name, nodeType);
             node.addNodeRecord(record);
-            
+
         } else {
-            throw new IOException("Leaf record for parent (" + parentId.getId() + ") doesn't exist.");
+            throw new IOException("Leaf record for parent (" + parentId.getId() +
+                    ") doesn't exist.");
         }
         return node;
     }
 
-    private LeafRecord createThread(CatalogNodeId parentId, HfsUnicodeString name, int nodeType)    {
+    private LeafRecord createThread(CatalogNodeId parentId, HfsUnicodeString name, int nodeType) {
         CatalogKey key = new CatalogKey(parentId, name);
         int threadType;
         if (nodeType == CatalogFolder.RECORD_TYPE_FOLDER) {
@@ -129,7 +132,7 @@ public class Catalog {
         } else {
             threadType = CatalogFile.RECORD_TYPE_FILE_THREAD;
         }
-        CatalogThread thread =  new CatalogThread(threadType, parentId, name);
+        CatalogThread thread = new CatalogThread(threadType, parentId, name);
         return new LeafRecord(key, thread.getBytes());
     }
 
@@ -140,7 +143,7 @@ public class Catalog {
             key = new CatalogKey(parentId, name);
             return new LeafRecord(key, folder.getBytes());
         } else {
-            CatalogFile file = new CatalogFile(HFS_FILE_THREAD_EXISTS,parentId,null,null);
+            CatalogFile file = new CatalogFile(HFS_FILE_THREAD_EXISTS, parentId, null, null);
             return null;
         }
     }
@@ -251,7 +254,9 @@ public class Catalog {
     }
 
     public ByteBuffer getBytes() {
-        buffer = ByteBuffer.allocate(BTHeaderRecord.BT_HEADER_RECORD_LENGTH + NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH);
+        buffer =
+                ByteBuffer.allocate(BTHeaderRecord.BT_HEADER_RECORD_LENGTH +
+                        NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH);
         buffer.put(descriptor.getBytes());
         buffer.put(headerRecord.getBytes());
         return buffer;

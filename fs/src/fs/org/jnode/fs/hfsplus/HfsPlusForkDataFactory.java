@@ -14,7 +14,7 @@ public class HfsPlusForkDataFactory {
     public ByteBuffer readForkData(HfsPlusForkData data, int offset, int size) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(size);
         data.read(fileSystem, offset, buffer);
-        return  buffer;
+        return buffer;
     }
 
     public VolumeHeader getVolumeHeader() {
