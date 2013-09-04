@@ -251,6 +251,9 @@ public class Catalog {
     }
 
     public ByteBuffer getBytes() {
+        buffer = ByteBuffer.allocate(BTHeaderRecord.BT_HEADER_RECORD_LENGTH + NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH);
+        buffer.put(descriptor.getBytes());
+        buffer.put(headerRecord.getBytes());
         return buffer;
     }
 

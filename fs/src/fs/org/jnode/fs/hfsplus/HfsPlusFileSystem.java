@@ -33,6 +33,7 @@ import org.jnode.fs.FSFile;
 import org.jnode.fs.FileSystemException;
 import org.jnode.fs.hfsplus.catalog.Catalog;
 import org.jnode.fs.hfsplus.catalog.CatalogKey;
+import org.jnode.fs.hfsplus.catalog.CatalogLeafNode;
 import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
 import org.jnode.fs.hfsplus.extent.Extent;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
@@ -155,8 +156,8 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
             //
 			log.debug("Write Catalog to disk.");
 			Catalog catalog = FileSystemObjectReader.createCatalog(this, params);
-            catalog.createRootNode(params);
-            FileSystemObjectReader.writeCatalog(this, catalog);
+            CatalogLeafNode rootNode = catalog.createRootNode(params);
+            FileSystemObjectReader.writeCatalog(this, catalog, rootNode);
 			log.debug("Write volume header to disk.");
             writeVolumeHeader();
 		} catch (IOException e) {

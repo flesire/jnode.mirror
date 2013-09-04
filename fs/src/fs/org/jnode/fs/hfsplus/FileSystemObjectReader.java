@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.jnode.fs.hfsplus.catalog.Catalog;
 import org.jnode.fs.hfsplus.catalog.CatalogKey;
+import org.jnode.fs.hfsplus.catalog.CatalogLeafNode;
 import org.jnode.fs.hfsplus.extent.Extent;
 import org.jnode.fs.hfsplus.extent.ExtentKey;
 import org.jnode.fs.hfsplus.tree.BTHeaderRecord;
@@ -31,7 +32,7 @@ public class FileSystemObjectReader {
         // read node descriptor
         NodeDescriptor descriptor = new NodeDescriptor(readForkData(fs,catalogFork,0,NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH),0);
         // Read header record
-        BTHeaderRecord headerRecord = new BTHeaderRecord(readForkData(fs,catalogFork,0,BTHeaderRecord.BT_HEADER_RECORD_LENGTH),0);
+        BTHeaderRecord headerRecord = new BTHeaderRecord(readForkData(fs,catalogFork,NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH,BTHeaderRecord.BT_HEADER_RECORD_LENGTH),0);
         // Construct catalog
         HfsPlusForkDataFactory factory = new HfsPlusForkDataFactory(fs);
         return new Catalog(descriptor,headerRecord, factory);
@@ -63,15 +64,20 @@ public class FileSystemObjectReader {
      * @param catalog
      * @throws IOException
      */
-    public static void writeCatalog(HfsPlusFileSystem fs, Catalog catalog) throws IOException {
+    public static void writeCatalog(HfsPlusFileSystem fs, Catalog catalog, CatalogLeafNode rootNode) throws IOException {
         VolumeHeader vh = fs.getVolumeHeader();
         long offset = vh.getCatalogFile().getExtent(0).getStartOffset(vh.getBlockSize());
-        ByteBuffer buffer = ByteBuffer.wrap(catalog.getBTNodeDescriptor().getBytes());
+        ByteBuffer buffer = ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH + BTHeaderRecord.BT_HEADER_RECORD_LENGTH);
+        buffer.put(catalog.getBTNodeDescriptor().getBytes());
+        buffer.put(catalog.getBTHeaderRecord().getBytes());
+        buffer.flip();
         fs.getApi().write(offset, buffer);
-        buffer = ByteBuffer.wrap(catalog.getBTHeaderRecord().getBytes());
-        offset = offset + NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH;
+        offset = catalog.getBTHeaderRecord().getRootNodeOffset();
+        buffer = ByteBuffer.allocate(catalog.getBTHeaderRecord().getNodeSize());
+        buffer.put(rootNode.getBytes());
+        buffer.flip();
         fs.getApi().write(offset, buffer);
-    }
+   }
 
     public static Extent readExtent(HfsPlusFileSystem fs) throws IOException {
         HfsPlusForkData extentFork = fs.getVolumeHeader().getExtentsFile();
