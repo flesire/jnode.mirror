@@ -81,7 +81,7 @@ public class FileSystemObjectReader {
         buffer.put(catalog.getBTHeaderRecord().getBytes());
         buffer.flip();
         fs.getApi().write(offset, buffer);
-        offset = catalog.getBTHeaderRecord().getRootNodeOffset();
+        offset += catalog.getBTHeaderRecord().getRootNodeOffset();
         buffer = ByteBuffer.allocate(catalog.getBTHeaderRecord().getNodeSize());
         buffer.put(rootNode.getBytes());
         buffer.flip();
