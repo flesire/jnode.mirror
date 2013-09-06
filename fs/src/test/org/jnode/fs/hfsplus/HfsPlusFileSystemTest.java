@@ -31,6 +31,7 @@ import org.jnode.emu.plugin.model.DummyExtension;
 import org.jnode.emu.plugin.model.DummyExtensionPoint;
 import org.jnode.emu.plugin.model.DummyPluginDescriptor;
 import org.jnode.fs.FSDirectory;
+import org.jnode.fs.FileSystemException;
 import org.jnode.fs.service.FileSystemService;
 import org.jnode.fs.service.def.FileSystemPlugin;
 import org.jnode.test.support.TestUtils;
@@ -39,6 +40,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class HfsPlusFileSystemTest {
 
@@ -59,22 +61,14 @@ public class HfsPlusFileSystemTest {
 
     @Test
     public void testCreate() throws Exception {
-        HfsPlusFileSystemType type = fss.getFileSystemType(HfsPlusFileSystemType.ID);
-        HfsPlusFileSystem fs = new HfsPlusFileSystem(device, false, type);
-        HFSPlusParams params = new HFSPlusParams();
-        params.setVolumeName("testdrive");
-        params.setBlockSize(HFSPlusParams.OPTIMAL_BLOCK_SIZE);
-        params.setJournaled(false);
-        params.setJournalSize(HFSPlusParams.DEFAULT_JOURNAL_SIZE);
-        fs.create(params);
+        HfsPlusFileSystem fs = getFileSystem();
         VolumeHeader vh = fs.getVolumeHeader();
         vh.check();
         assertEquals(4096, vh.getBlockSize());
 
     }
 
-    @Test
-    public void testRead() throws Exception {
+    private HfsPlusFileSystem getFileSystem() throws FileSystemException {
         HfsPlusFileSystemType type = fss.getFileSystemType(HfsPlusFileSystemType.ID);
         HfsPlusFileSystem fs = new HfsPlusFileSystem(device, false, type);
         HFSPlusParams params = new HFSPlusParams();
@@ -83,12 +77,18 @@ public class HfsPlusFileSystemTest {
         params.setJournaled(false);
         params.setJournalSize(HFSPlusParams.DEFAULT_JOURNAL_SIZE);
         fs.create(params);
-        System.out.println(fs.getVolumeHeader().toString());
+        return fs;
+    }
+
+    @Test
+    public void testRead() throws Exception {
+        HfsPlusFileSystem fs = getFileSystem();
+        FSDirectory root = fs.getRootEntry().getDirectory();
+        assertFalse("Must be empty", root.iterator().hasNext());
         fs.close();
         fs = new HfsPlusFileSystemType().create(device, false);
         fs.read();
-        fs.createRootEntry();
-        FSDirectory root = fs.getRootEntry().getDirectory();
+        root = fs.getRootEntry().getDirectory();
         assertFalse("Must be empty", root.iterator().hasNext());
         root.addDirectory("test");
         fs.flush();
@@ -98,7 +98,7 @@ public class HfsPlusFileSystemTest {
         assertEquals(1, fs.getVolumeHeader().getFolderCount());
         fs.createRootEntry();
         root = fs.getRootEntry().getDirectory();
-        // assertTrue("Must contains one directory", root.iterator().hasNext());
+        assertTrue("Must contains one directory", root.iterator().hasNext());
     }
 
     private Device createTestDisk(boolean formatted) throws IOException {

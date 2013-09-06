@@ -24,22 +24,18 @@ import java.nio.ByteBuffer;
 import org.jnode.util.BigEndian;
 
 public class NodeDescriptor {
-    public static final int BT_LEAF_NODE = -1;
-    public static final int BT_INDEX_NODE = 0;
-    public static final int BT_HEADER_NODE = 1;
-    public static final int BT_MAP_NODE = 2;
 
     /** The size of the node descriptor. */
     public static final int BT_NODE_DESCRIPTOR_LENGTH = 14;
 
     /** The number of the next node. */
-    private int fLink;
+    private int next;
 
     /** The number of the previous node. */
-    private int bLink;
+    private int previous;
 
     /** The type of the node. */
-    private int kind;
+    private NodeType kind;
 
     /** The depth of this node in the B-Tree. */
     private int height;
@@ -50,15 +46,15 @@ public class NodeDescriptor {
     /**
      * Creates a new node descriptor.
      * 
-     * @param fLink
-     * @param bLink
+     * @param next
+     * @param previous
      * @param kind
      * @param height
      * @param numRecords
      */
-    public NodeDescriptor(int fLink, int bLink, int kind, int height, int numRecords) {
-        this.fLink = fLink;
-        this.bLink = bLink;
+    public NodeDescriptor(int next, int previous, NodeType kind, int height, int numRecords) {
+        this.next = next;
+        this.previous = previous;
         this.kind = kind;
         this.height = height;
         this.numRecords = numRecords;
@@ -73,9 +69,9 @@ public class NodeDescriptor {
     public NodeDescriptor(final ByteBuffer src, int offset) {
         byte[] data = new byte[BT_NODE_DESCRIPTOR_LENGTH];
         System.arraycopy(src.array(), offset, data, 0, BT_NODE_DESCRIPTOR_LENGTH);
-        fLink = BigEndian.getInt32(data, 0);
-        bLink = BigEndian.getInt32(data, 4);
-        kind = BigEndian.getInt8(data, 8);
+        next = BigEndian.getInt32(data, 0);
+        previous = BigEndian.getInt32(data, 4);
+        kind = NodeType.valueOf(BigEndian.getInt8(data, 8));
         height = BigEndian.getInt8(data, 9);
         numRecords = BigEndian.getInt16(data, 10);
     }
@@ -86,33 +82,46 @@ public class NodeDescriptor {
      */
     public byte[] getBytes() {
         byte[] data = new byte[BT_NODE_DESCRIPTOR_LENGTH];
-        BigEndian.setInt32(data, 0, fLink);
-        BigEndian.setInt32(data, 4, bLink);
-        BigEndian.setInt8(data, 8, kind);
+        BigEndian.setInt32(data, 0, next);
+        BigEndian.setInt32(data, 4, previous);
+        BigEndian.setInt8(data, 8, kind.getIntValue());
         BigEndian.setInt8(data, 9, height);
         BigEndian.setInt16(data, 10, numRecords);
         return data;
     }
 
     public final String toString() {
-        return ("FLink:  " + getFLink() + "\n" + "BLink:  " + getBLink() + "\n" + "Kind:   " +
-                getKind() + "\n" + "height: " + getHeight() + "\n" + "#rec:   " + getNumRecords() + "\n");
+        return ("[Previous : " + getFLink() + " " + "Next : " + getBLink() + " " + "Node type: " +
+                getKind().getStringValue() + " " + "Height: " + getHeight() + " " + "#records:   " +
+                getNumRecords() + "]");
     }
 
     public int getFLink() {
-        return fLink;
+        return next;
     }
 
-    public void setfLink(int fLink) {
-        this.fLink = fLink;
+    public void setNext(int next) {
+        this.next = next;
     }
 
     public int getBLink() {
-        return bLink;
+        return previous;
     }
 
-    public int getKind() {
+    public NodeType getKind() {
         return kind;
+    }
+
+    public boolean isValid(int treeHeigth) {
+        /*
+         * if (descriptor.getKind().getIntValue() < -1 ||
+         * descriptor.getKind().getIntValue() > 2) { return false; }
+         */
+
+        if (getHeight() > treeHeigth) {
+            return false;
+        }
+        return true;
     }
 
     public int getHeight() {
@@ -124,15 +133,15 @@ public class NodeDescriptor {
     }
 
     public boolean isIndexNode() {
-        return kind == NodeDescriptor.BT_INDEX_NODE;
+        return kind.equals(NodeType.BT_INDEX_NODE);
     }
 
     public boolean isLeafNode() {
-        return kind == NodeDescriptor.BT_LEAF_NODE;
+        return kind.equals(NodeType.BT_LEAF_NODE);
     }
 
     public boolean isMapNode() {
-        return kind == NodeDescriptor.BT_MAP_NODE;
+        return kind.equals(NodeType.BT_MAP_NODE);
     }
 
 }

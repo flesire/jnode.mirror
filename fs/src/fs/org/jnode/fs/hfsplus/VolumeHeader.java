@@ -124,6 +124,7 @@ public class VolumeHeader extends HfsPlusObject {
         ExtentDescriptor desc = new ExtentDescriptor(startBlock, blockCount);
         forkdata.addDescriptor(0, desc);
         forkdata.write(data, 112);
+        log.debug(forkdata.toString());
         // Journal creation
         long nextBlock = 0;
         if (params.isJournaled()) {
@@ -144,8 +145,10 @@ public class VolumeHeader extends HfsPlusObject {
         desc = new ExtentDescriptor(nextBlock, forkdata.getTotalBlocks());
         forkdata.addDescriptor(0, desc);
         forkdata.write(data, 192);
+        log.debug(forkdata.toString());
         blockUsed += forkdata.getTotalBlocks();
         nextBlock = desc.getNext();
+
         // Catalog B-Tree initialization
         log.info("Init catalog file.");
         int totalBlocks = params.getCatalogClumpSize() / blockSize;
@@ -155,11 +158,14 @@ public class VolumeHeader extends HfsPlusObject {
         desc = new ExtentDescriptor(nextBlock, totalBlocks);
         forkdata.addDescriptor(0, desc);
         forkdata.write(data, 272);
+        log.debug(forkdata.toString());
         blockUsed += totalBlocks;
 
         this.setFreeBlocks(this.getFreeBlocks() - (int) blockUsed);
         this.setNextAllocation((int) blockUsed - 1 - burnedBlocksAfterAltVH + 10 *
                 (this.getCatalogFile().getClumpSize() / this.getBlockSize()));
+        this.setDirty();
+        log.debug(this.toString());
     }
 
     /**

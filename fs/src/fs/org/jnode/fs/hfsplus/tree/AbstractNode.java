@@ -26,6 +26,7 @@ import java.util.List;
 import org.jnode.util.BigEndian;
 
 public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
+    private int nodeId;
     protected NodeDescriptor descriptor;
     protected List<T> records;
     protected List<Integer> offsets;
@@ -53,13 +54,6 @@ public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
         loadRecords(data);
     }
 
-    protected abstract void loadRecords(final byte[] nodeData);
-
-    @Override
-    public NodeDescriptor getNodeDescriptor() {
-        return descriptor;
-    }
-
     @Override
     public int getRecordOffset(int index) {
         return offsets.get(index);
@@ -85,15 +79,7 @@ public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
 
     public boolean check(int treeHeigth) {
         // Node type is correct.
-        if (this.getNodeDescriptor().getKind() < NodeDescriptor.BT_LEAF_NODE ||
-                this.getNodeDescriptor().getKind() > NodeDescriptor.BT_MAP_NODE) {
-            return false;
-        }
-
-        if (this.getNodeDescriptor().getHeight() > treeHeigth) {
-            return false;
-        }
-        return true;
+        return descriptor.isValid(treeHeigth);
     }
 
     /**
@@ -126,10 +112,27 @@ public abstract class AbstractNode<T extends NodeRecord> implements Node<T> {
 
     public String toString() {
         StringBuffer b = new StringBuffer();
-        b.append((this.getNodeDescriptor().isLeafNode()) ? "Leaf node" : "Index node").append("\n");
-        b.append(this.getNodeDescriptor().toString()).append("\n");
-        b.append("Offsets : ").append(offsets.toString());
+        b.append((descriptor.isLeafNode()) ? "Leaf node" : "Index node").append(" descriptor:")
+                .append(descriptor.toString()).append(" ").append("Offsets :")
+                .append(offsets.toString());
         return b.toString();
 
     }
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    protected NodeDescriptor splitDescriptor() {
+        return new NodeDescriptor(descriptor.getFLink(), nodeId, descriptor.getKind(),
+                descriptor.getHeight(), 0);
+    }
+
+    protected abstract void loadRecords(final byte[] nodeData);
+
+    public abstract void split();
 }

@@ -47,4 +47,10 @@ public class ExtentNode extends AbstractNode<IndexRecord> {
 
     }
 
+    @Override
+    public void split() {
+        // To change body of implemented methods use File | Settings | File
+        // Templates.
+    }
+
 }

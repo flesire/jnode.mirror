@@ -1,78 +1,52 @@
-/*
- * $Id$
- *
- * Copyright (C) 2003-2013 JNode.org
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2.1 of the License, or
- * (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; If not, write to the Free Software Foundation, Inc., 
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
-
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.jnode.fs.FSFile;
 import org.jnode.fs.FSFileSlackSpace;
-import org.jnode.fs.FileSystem;
 import org.jnode.fs.hfsplus.catalog.CatalogFile;
+import org.jnode.fs.spi.AbstractFSFile;
+import org.jnode.fs.spi.AbstractFileSystem;
 
-public class HfsPlusFile implements FSFile, FSFileSlackSpace {
-
-    private HfsPlusEntry entry;
+public class HfsPlusFile extends AbstractFSFile implements FSFileSlackSpace {
 
     private CatalogFile file;
 
-    public HfsPlusFile(HfsPlusEntry entry) {
-        this.entry = entry;
-        this.file = new CatalogFile(entry.getData());
+    /**
+     * Constructor for a new AbstractFSFile
+     * 
+     * @param fs
+     */
+    public HfsPlusFile(AbstractFileSystem<?> fs, CatalogFile file) {
+        super(fs);
+        this.file = file;
     }
 
     @Override
-    public void flush() throws IOException {
-
-    }
-
-    @Override
-    public final long getLength() {
+    public long getLength() {
         return file.getDatas().getTotalSize();
     }
 
     @Override
-    public void setLength(final long length) throws IOException {
-        // TODO Auto-generated method stub
+    public void setLength(long length) throws IOException {
+        // TODO
     }
 
     @Override
-    public final void read(final long fileOffset, final ByteBuffer dest) throws IOException {
+    public void read(long fileOffset, ByteBuffer dest) throws IOException {
         HfsPlusFileSystem fs = (HfsPlusFileSystem) getFileSystem();
         file.getDatas().read(fs, fileOffset, dest);
     }
 
     @Override
-    public void write(final long fileOffset, final ByteBuffer src) throws IOException {
-        // TODO Auto-generated method stub
-
+    public void write(long fileOffset, ByteBuffer src) throws IOException {
+        HfsPlusFileSystem fs = (HfsPlusFileSystem) getFileSystem();
+        // TODO
     }
 
     @Override
-    public boolean isValid() {
-        return entry.isValid();
-    }
-
-    @Override
-    public FileSystem<?> getFileSystem() {
-        return entry.getFileSystem();
+    public void flush() throws IOException {
+        // To change body of implemented methods use File | Settings | File
+        // Templates.
     }
 
     @Override

@@ -21,6 +21,7 @@
 package org.jnode.fs.hfsplus;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.jnode.driver.ApiNotFoundException;
@@ -36,7 +37,11 @@ import org.jnode.fs.hfsplus.catalog.CatalogKey;
 import org.jnode.fs.hfsplus.catalog.CatalogLeafNode;
 import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
 import org.jnode.fs.hfsplus.extent.Extent;
+import org.jnode.fs.hfsplus.extent.ExtentKey;
+import org.jnode.fs.hfsplus.tree.BTHeaderRecord;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
+import org.jnode.fs.hfsplus.tree.NodeDescriptor;
+import org.jnode.fs.hfsplus.tree.NodeType;
 import org.jnode.fs.spi.AbstractFileSystem;
 
 public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
@@ -44,69 +49,22 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
 
     /** HFS volume header */
     private VolumeHeader volumeHeader;
-
-    private Extent extent;
-
     /** Catalog special file for this instance */
     private Catalog catalog;
 
-    /**
-     * @param device
-     * @param readOnly
-     * @param type
-     * @throws FileSystemException
-     */
+    private Extent extent;
+
     public HfsPlusFileSystem(final Device device, final boolean readOnly,
             final HfsPlusFileSystemType type) throws FileSystemException {
         super(device, readOnly, type);
     }
 
-    /**
-     * @throws FileSystemException
-     */
-    public final void read() throws FileSystemException {
-        try {
-            readVolumeHeader();
-            if (!volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_UNMNT_BIT)) {
-                log.info(getDevice().getId() +
-                        " Filesystem has not been cleanly unmounted, mounting it readonly");
-                setReadOnly(true);
-            }
-            if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_SOFTLOCK_BIT)) {
-                log.info(getDevice().getId() + " Filesystem is marked locked, mounting it readonly");
-                setReadOnly(true);
-            }
-            if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_JOURNALED_BIT)) {
-                log.info(getDevice().getId() +
-                        " Filesystem is journaled, write access is not supported. Mounting it readonly");
-                setReadOnly(true);
-            }
-            extent = FileSystemObjectReader.readExtent(this);
-            catalog = FileSystemObjectReader.readCatalog(this);
-        } catch (IOException e) {
-            throw new FileSystemException(e);
-        }
+    public final Catalog getCatalog() {
+        return catalog;
     }
 
-    @Override
-    protected final FSDirectory createDirectory(final FSEntry entry) throws IOException {
-        return entry.getDirectory();
-    }
-
-    @Override
-    protected final FSFile createFile(final FSEntry entry) throws IOException {
-        return entry.getFile();
-    }
-
-    @Override
-    protected final HfsPlusEntry createRootEntry() throws IOException {
-        log.info("Create root entry.");
-        LeafRecord record = catalog.getRecord(CatalogNodeId.HFSPLUS_POR_CNID);
-        if (record != null) {
-            return new HfsPlusEntry(this, null, "/", record);
-        }
-        log.error("Root entry : No record found.");
-        return null;
+    public final VolumeHeader getVolumeHeader() {
+        return volumeHeader;
     }
 
     public final long getFreeSpace() {
@@ -127,12 +85,17 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
         return ((CatalogKey) record.getKey()).getNodeName().getUnicodeString();
     }
 
-    public final Catalog getCatalog() {
-        return catalog;
+    public void flush() throws IOException {
     }
 
-    public final VolumeHeader getVolumeHeader() {
-        return volumeHeader;
+    /**
+     * @throws FileSystemException
+     */
+    public final void read() throws FileSystemException {
+        readVolumeHeader();
+        checkAttributes();
+        readCatalog();
+        readExtent();
     }
 
     /**
@@ -146,28 +109,46 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
         try {
             params.initializeDefaultsValues(this);
             volumeHeader.create(params);
-            log.info("Volume header : \n" + volumeHeader.toString());
             long volumeBlockUsed =
                     volumeHeader.getTotalBlocks() - volumeHeader.getFreeBlocks() -
                             ((volumeHeader.getBlockSize() == 512) ? 2 : 1);
             // ---
-            log.debug("Write allocation bitmap bits to disk.");
             writeAllocationFile((int) volumeBlockUsed);
             // Create and write extent file
-            Extent extent = FileSystemObjectReader.createExtent(this, params);
-            FileSystemObjectReader.writeExtent(this, extent);
+            extent = createExtent(this, params);
+            writeExtent(this, extent);
             //
-            log.debug("Write Catalog to disk.");
-            Catalog catalog = FileSystemObjectReader.createCatalog(this, params);
+            catalog = createCatalog(this, params);
             CatalogLeafNode rootNode = catalog.createRootNode(params);
-            FileSystemObjectReader.writeCatalog(this, catalog, rootNode);
-            log.debug("Write volume header to disk.");
+            writeCatalog(this, catalog, rootNode);
             writeVolumeHeader();
         } catch (IOException e) {
             throw new FileSystemException("Unable to create HFS+ filesystem", e);
         } catch (ApiNotFoundException e) {
             throw new FileSystemException("Unable to create HFS+ filesystem", e);
         }
+    }
+
+    @Override
+    protected final FSDirectory createDirectory(final FSEntry entry) throws IOException {
+        return entry.getDirectory();
+    }
+
+    @Override
+    protected final FSFile createFile(final FSEntry entry) throws IOException {
+        return entry.getFile();
+    }
+
+    @Override
+    protected final HfsPlusEntry createRootEntry() throws IOException {
+        log.info("Create root entry.");
+        CatalogNodeId cnid = CatalogNodeId.HFSPLUS_POR_CNID;
+        LeafRecord record = catalog.getRecord(cnid);
+        if (record != null) {
+            return new HfsPlusEntry(this, null, "/", record, cnid);
+        }
+        log.error("Root entry : No record found.");
+        return null;
     }
 
     private void writeAllocationFile(int blockUsed) throws IOException, ApiNotFoundException {
@@ -178,7 +159,7 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
         }
         FSBlockDeviceAPI api = (FSBlockDeviceAPI) getDevice().getAPI(BlockDeviceAPI.class);
         int sectorSize = api.getSectorSize();
-        int bytesUsed = roundUp(bytes, sectorSize);
+        int bytesUsed = HfsUtils.roundUp(bytes, sectorSize);
         int[] bitmap;
         if (bytesUsed > bytes) {
             bitmap = new int[bytesUsed];
@@ -197,18 +178,186 @@ public class HfsPlusFileSystem extends AbstractFileSystem<HfsPlusEntry> {
         // Write to disk
     }
 
-    private int roundUp(int x, int u) {
-        return (((x) % (u) == 0) ? (x) : ((x) / (u) + 1) * (u));
+    /**
+     * 
+     * @throws FileSystemException
+     */
+    private void readVolumeHeader() throws FileSystemException {
+        volumeHeader = new VolumeHeader(this);
+        try {
+            volumeHeader.read(1024, VolumeHeader.SUPERBLOCK_LENGTH);
+            volumeHeader.check();
+        } catch (IOException e) {
+            throw new FileSystemException(e);
+        }
     }
 
-    private void readVolumeHeader() throws IOException {
-        VolumeHeader volumeHeader = new VolumeHeader(this);
-        volumeHeader.read(1024, VolumeHeader.SUPERBLOCK_LENGTH);
-        volumeHeader.check();
-        this.volumeHeader = volumeHeader;
+    private ByteBuffer readForkData(HfsPlusForkData data, int offset, int size) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        data.read(this, offset, buffer);
+        return buffer;
+
     }
 
-    private void writeVolumeHeader() throws IOException {
-        volumeHeader.write(1024);
+    public void readCatalog() throws FileSystemException {
+        try {
+            HfsPlusForkData catalogFork = volumeHeader.getCatalogFile();
+            // read node descriptor
+            NodeDescriptor descriptor =
+                    new NodeDescriptor(readForkData(catalogFork, 0,
+                            NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH), 0);
+            // Read header record
+            BTHeaderRecord headerRecord =
+                    new BTHeaderRecord(readForkData(catalogFork,
+                            NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH,
+                            BTHeaderRecord.BT_HEADER_RECORD_LENGTH), 0);
+            // Construct catalog
+            HfsPlusForkDataFactory factory = new HfsPlusForkDataFactory(this);
+            catalog = new Catalog(descriptor, headerRecord, factory);
+        } catch (IOException e) {
+            throw new FileSystemException(e);
+        }
     }
+
+    public void readExtent() throws FileSystemException {
+        try {
+            HfsPlusForkData extentFork = volumeHeader.getExtentsFile();
+            // read node descriptor
+            NodeDescriptor descriptor =
+                    new NodeDescriptor(readForkData(extentFork, 0,
+                            NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH), 0);
+            // Read header record
+            BTHeaderRecord headerRecord =
+                    new BTHeaderRecord(readForkData(extentFork, 0,
+                            BTHeaderRecord.BT_HEADER_RECORD_LENGTH), 0);
+            // Construct extent
+            extent = new Extent(descriptor, headerRecord);
+        } catch (IOException e) {
+            throw new FileSystemException(e);
+        }
+    }
+
+    /**
+     * 
+     * @throws FileSystemException
+     */
+    protected void writeVolumeHeader() throws IOException {
+        if (volumeHeader.isDirty()) {
+            volumeHeader.write(1024);
+            volumeHeader.resetDirty();
+            log.info("Volume header is written correctly.");
+        }
+    }
+
+    private void checkAttributes() {
+        if (!volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_UNMNT_BIT)) {
+            log.info(getDevice().getId() +
+                    " Filesystem has not been cleanly unmounted, mounting it readonly");
+            setReadOnly(true);
+        }
+        if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_SOFTLOCK_BIT)) {
+            log.info(getDevice().getId() + " Filesystem is marked locked, mounting it readonly");
+            setReadOnly(true);
+        }
+        if (volumeHeader.isAttribute(VolumeHeader.HFSPLUS_VOL_JOURNALED_BIT)) {
+            log.info(getDevice().getId() +
+                    " Filesystem is journaled, write access is not supported. Mounting it readonly");
+            setReadOnly(true);
+        }
+    }
+
+    private Catalog createCatalog(HfsPlusFileSystem fs, HFSPlusParams params) throws IOException {
+        int nodeSize = params.getCatalogNodeSize();
+        int bufferLength = 0;
+        // create node descriptor
+        NodeDescriptor descriptor = new NodeDescriptor(0, 0, NodeType.BT_HEADER_NODE, 0, 3);
+        // create header record
+        int totalNodes = params.getCatalogClumpSize() / params.getCatalogNodeSize();
+        int freeNodes = totalNodes - 2;
+        BTHeaderRecord headerRecord =
+                new BTHeaderRecord(1, 1, params.getInitializeNumRecords(), 1, 1, nodeSize,
+                        CatalogKey.MAXIMUM_KEY_LENGTH, totalNodes, freeNodes,
+                        params.getCatalogClumpSize(), BTHeaderRecord.BT_TYPE_HFS,
+                        BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,
+                        BTHeaderRecord.BT_VARIABLE_INDEX_KEYS_MASK +
+                                BTHeaderRecord.BT_BIG_KEYS_MASK);
+        //
+        HfsPlusForkDataFactory factory = new HfsPlusForkDataFactory(fs);
+        return new Catalog(descriptor, headerRecord, factory);
+    }
+
+    /**
+     * 
+     * @param fs
+     * @param catalog
+     * @throws IOException
+     */
+    private void writeCatalog(HfsPlusFileSystem fs, Catalog catalog, CatalogLeafNode rootNode)
+        throws IOException {
+        VolumeHeader vh = fs.getVolumeHeader();
+        long offset = vh.getCatalogFile().getExtent(0).getStartOffset(vh.getBlockSize());
+        ByteBuffer buffer =
+                ByteBuffer.allocate(NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH +
+                        BTHeaderRecord.BT_HEADER_RECORD_LENGTH);
+        buffer.put(catalog.getBTNodeDescriptor().getBytes());
+        buffer.put(catalog.getBTHeaderRecord().getBytes());
+        buffer.flip();
+        fs.getApi().write(offset, buffer);
+        offset += catalog.getBTHeaderRecord().getRootNodeOffset();
+        buffer = ByteBuffer.allocate(catalog.getBTHeaderRecord().getNodeSize());
+        buffer.put(rootNode.getBytes());
+        buffer.flip();
+        fs.getApi().write(offset, buffer);
+        log.info("catalog is written correctly.");
+    }
+
+    /**
+     * 
+     * @param fs
+     * @param params
+     * @return
+     */
+    private Extent createExtent(HfsPlusFileSystem fs, HFSPlusParams params) {
+        // create node descriptor
+        NodeDescriptor descriptor = new NodeDescriptor(0, 0, NodeType.BT_HEADER_NODE, 0, 3);
+        // create BTree header record.
+        int nodeSize = params.getExtentNodeSize();
+        int totalNodes = params.getExtentClumpSize() / nodeSize;
+        int freeNodes = totalNodes - 1;
+        BTHeaderRecord headerRecord =
+                new BTHeaderRecord(0, 0, 0, 0, 0, nodeSize, ExtentKey.MAXIMUM_KEY_LENGTH,
+                        totalNodes, freeNodes, params.getExtentClumpSize(),
+                        BTHeaderRecord.BT_TYPE_HFS, BTHeaderRecord.KEY_COMPARE_TYPE_CASE_FOLDING,
+                        BTHeaderRecord.BT_BIG_KEYS_MASK);
+        //
+        long nodeBitsInHeader =
+                8 * (nodeSize - NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH -
+                        BTHeaderRecord.BT_HEADER_RECORD_LENGTH - 128 // kBTreeHeaderUserBytes
+                - 8);
+        if (headerRecord.getTotalNodes() > nodeBitsInHeader) {
+            descriptor.setNext(headerRecord.getLastLeafNode() + 1);
+            long nodeBitsInMapNode =
+                    8 * (nodeSize - NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH - 4 - 2);
+            long mapNodes =
+                    (headerRecord.getTotalNodes() - nodeBitsInHeader + (nodeBitsInMapNode - 1)) /
+                            nodeBitsInMapNode;
+            long newFreeNodesValue = headerRecord.getFreeNodes() - mapNodes;
+            headerRecord.setFreeNodes((int) newFreeNodesValue);
+        }
+        // return a new Extent.
+
+        return new Extent(descriptor, headerRecord);
+    }
+
+    private void writeExtent(HfsPlusFileSystem fs, Extent extent) throws IOException {
+        VolumeHeader vh = fs.getVolumeHeader();
+        long offset = vh.getExtentsFile().getExtent(0).getStartOffset(vh.getBlockSize());
+        ByteBuffer buffer = ByteBuffer.wrap(extent.getDescriptor().getBytes());
+        fs.getApi().write(offset, buffer);
+        buffer = ByteBuffer.wrap(extent.getHeaderRecord().getBytes());
+        offset = offset + NodeDescriptor.BT_NODE_DESCRIPTOR_LENGTH;
+        fs.getApi().write(offset, buffer);
+        log.info("Extents file is written correctly.");
+    }
+
 }

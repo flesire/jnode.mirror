@@ -86,7 +86,7 @@ public class CatalogLeafNode extends AbstractNode<LeafRecord> {
      */
     public final LeafRecord[] findAll(final CatalogNodeId parentId) {
         List<LeafRecord> list = new LinkedList<LeafRecord>();
-        for (int index = 0; index < this.getNodeDescriptor().getNumRecords(); index++) {
+        for (int index = 0; index < descriptor.getNumRecords(); index++) {
             LeafRecord record = this.getNodeRecord(index);
             log.debug("Record : " + record.toString() + " Parent ID : " + parentId.getId());
             CatalogKey key = (CatalogKey) record.getKey();
@@ -95,6 +95,13 @@ public class CatalogLeafNode extends AbstractNode<LeafRecord> {
             }
         }
         return list.toArray(new LeafRecord[list.size()]);
+    }
+
+    @Override
+    public void split() {
+        CatalogLeafNode node = new CatalogLeafNode(splitDescriptor(), size);
+        descriptor.setNext(node.getNodeId());
+
     }
 
 }

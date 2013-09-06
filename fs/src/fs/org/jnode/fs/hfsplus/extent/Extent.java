@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.jnode.fs.hfsplus.HFSPlusParams;
 import org.jnode.fs.hfsplus.tree.BTHeaderRecord;
 import org.jnode.fs.hfsplus.tree.NodeDescriptor;
+import org.jnode.fs.hfsplus.tree.NodeType;
 
 public class Extent {
     private final Logger log = Logger.getLogger(getClass());
@@ -40,7 +41,7 @@ public class Extent {
 
     public Extent(HFSPlusParams params) {
         log.info("Create B-Tree extent file.");
-        descriptor = new NodeDescriptor(0, 0, NodeDescriptor.BT_HEADER_NODE, 0, 3);
+        descriptor = new NodeDescriptor(0, 0, NodeType.BT_HEADER_NODE, 0, 3);
         //
         int totalNodes = params.getExtentClumpSize() / params.getExtentNodeSize();
         int freeNodes = totalNodes - 1;

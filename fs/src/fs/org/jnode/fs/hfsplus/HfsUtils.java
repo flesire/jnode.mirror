@@ -69,4 +69,8 @@ public class HfsUtils {
         now.setTime(new Date());
         return (int) HfsUtils.getDate(now.getTimeInMillis() / 1000, true);
     }
+
+    public static int roundUp(int x, int u) {
+        return (((x) % (u) == 0) ? (x) : ((x) / (u) + 1) * (u));
+    }
 }

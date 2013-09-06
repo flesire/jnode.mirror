@@ -47,7 +47,7 @@ public class LeafRecord extends AbstractNodeRecord {
     }
 
     public final String toString() {
-        return "Type : " + type + "\nKey : " + getKey().toString() + "\n";
+        return "Type : " + type + " Key : " + getKey().toString() + " ";
     }
 
 }

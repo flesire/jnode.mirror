@@ -30,8 +30,11 @@ public class HfsPlusObject implements FSObject {
 
     protected byte[] data;
 
+    private boolean dirty;
+
     public HfsPlusObject(final HfsPlusFileSystem fileSystem) {
         this.fs = fileSystem;
+        this.dirty = false;
     }
 
     public void read(int offset, int length) throws IOException {
@@ -52,4 +55,29 @@ public class HfsPlusObject implements FSObject {
     public final boolean isValid() {
         return false;
     }
+
+    /**
+     * Is this object dirty (ie some data need to be saved to device)
+     * 
+     * @return if this object is dirty
+     * @throws IOException
+     */
+    public boolean isDirty() throws IOException {
+        return dirty;
+    }
+
+    /**
+     * Mark this object as dirty.
+     */
+    protected final void setDirty() {
+        this.dirty = true;
+    }
+
+    /**
+     * Mark this object as not dirty.
+     */
+    protected final void resetDirty() {
+        this.dirty = false;
+    }
+
 }

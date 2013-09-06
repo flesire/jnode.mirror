@@ -30,6 +30,7 @@ import org.jnode.fs.FSFile;
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.hfsplus.catalog.CatalogFile;
 import org.jnode.fs.hfsplus.catalog.CatalogFolder;
+import org.jnode.fs.hfsplus.catalog.CatalogNodeId;
 import org.jnode.fs.hfsplus.tree.LeafRecord;
 import org.jnode.fs.spi.AbstractFSEntry;
 import org.jnode.fs.spi.UnixFSAccessRights;
@@ -39,6 +40,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
     protected HfsPlusFileSystem fs;
     protected HfsPlusDirectory parent;
     protected String name;
+    protected CatalogNodeId parentId;
     protected LeafRecord record;
     private int type;
 
@@ -49,16 +51,17 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
     /**
      * 
      * @param fs
-     * @param parent
-     * @param name
-     * @param record
+     * @param parent Parent directory contains the entry.
+     * @param name Name of the entry.
+     * @param record Leaf record corresponding to the entry.
      */
     public HfsPlusEntry(HfsPlusFileSystem fs, HfsPlusDirectory parent, String name,
-            LeafRecord record) {
+            LeafRecord record, CatalogNodeId parentId) {
         this.fs = fs;
         this.parent = parent;
         this.name = name;
         this.record = record;
+        this.parentId = parentId;
         this.type = getFSEntryType();
         this.rights = new UnixFSAccessRights(fs);
     }
@@ -86,7 +89,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         if (!isDirectory()) {
             throw new IOException("It is not a Directory");
         }
-        return new HfsPlusDirectory(this);
+        return new HfsPlusDirectory(fs, new CatalogFolder(getData()));
     }
 
     @Override
@@ -94,7 +97,7 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
         if (!isFile()) {
             throw new IOException("It is not a file");
         }
-        return new HfsPlusFile(this);
+        return new HfsPlusFile(fs, new CatalogFile(getData()));
     }
 
     @Override
@@ -217,5 +220,13 @@ public class HfsPlusEntry implements FSEntry, FSEntryCreated, FSEntryLastAccesse
             CatalogFolder catalogFolder = new CatalogFolder(getData());
             return catalogFolder.getAccessDate();
         }
+    }
+
+    public LeafRecord getRecord() {
+        return record;
+    }
+
+    public CatalogNodeId getParentId() {
+        return parentId;
     }
 }

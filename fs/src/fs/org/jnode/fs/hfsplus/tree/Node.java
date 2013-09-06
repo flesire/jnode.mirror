@@ -24,8 +24,6 @@ public interface Node<T extends NodeRecord> {
 
     public static final int OFFSET_SIZE = 2;
 
-    public NodeDescriptor getNodeDescriptor();
-
     public int getRecordOffset(int index);
 
     public T getNodeRecord(int index);

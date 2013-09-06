@@ -85,7 +85,7 @@ public class CatalogIndexNode extends AbstractNode<IndexRecord> {
      */
     public IndexRecord find(final CatalogKey key) {
         IndexRecord largestMatchingRecord = null;
-        for (int index = 0; index < this.getNodeDescriptor().getNumRecords(); index++) {
+        for (int index = 0; index < descriptor.getNumRecords(); index++) {
             IndexRecord record = this.getNodeRecord(index);
             if ((record.getKey().compareTo(key) <= 0)) {
                 if (largestMatchingRecord != null &&
@@ -122,4 +122,8 @@ public class CatalogIndexNode extends AbstractNode<IndexRecord> {
         return result.toArray(new IndexRecord[result.size()]);
     }
 
+    @Override
+    public void split() {
+        CatalogLeafNode node = new CatalogLeafNode(splitDescriptor(), size);
+    }
 }
