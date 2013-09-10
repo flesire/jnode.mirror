@@ -112,6 +112,10 @@ public class ExtentDescriptor {
         return blockCount * nodeSize;
     }
 
+    public long getBlockCount(){
+        return blockCount;
+    }
+
     /**
      * Returns <tt>true</tt> if the extent is empty.
      * 

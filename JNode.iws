@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="831fae2f-0489-44bb-8e11-492e95d54e0f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/Catalog.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/Catalog.java" />
+    <list id="831fae2f-0489-44bb-8e11-492e95d54e0f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JNode.ipr" afterPath="$PROJECT_DIR$/JNode.ipr" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JNode.iws" afterPath="$PROJECT_DIR$/JNode.iws" />
+    </list>
+    <list id="9a65f5d8-ad5a-4b5a-a221-e30deada3a26" name="HFS improvements" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentDescriptor.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentDescriptor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusForkData.java" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusForkData.java" />
+    </list>
+    <list default="true" id="ef722ae8-9855-49ba-a70d-bcc327dc36fc" name="minix implementation" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixDirectory.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixEntry.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixFileSystem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/SuperBlock.java" />
     </list>
     <ignored path="JNode.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378210633264" ignored="false" />
+    <file path="/Dummy.txt" changelist="ef722ae8-9855-49ba-a70d-bcc327dc36fc" time="1378806639690" ignored="false" />
     <file path="/Catalog.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378214491836" ignored="false" />
     <file path="/BTHeaderRecord.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378124515943" ignored="false" />
     <file path="/FileSystemObjectReader.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378131219374" ignored="false" />
     <file path="/NodeDescriptor.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378124264828" ignored="false" />
-    <file path="/SuperBlock.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1377702044413" ignored="false" />
+    <file path="/SuperBlock.java" changelist="ef722ae8-9855-49ba-a70d-bcc327dc36fc" time="1378816972886" ignored="false" />
     <file path="/HfsPlusFileSystem.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378133620642" ignored="false" />
     <file path="/Ext2FileSystem.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1377767193836" ignored="false" />
     <file path="/HfsPlusObject.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1377701902575" ignored="false" />
@@ -35,6 +45,11 @@
     <file path="/log4j.xml" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1377782916908" ignored="false" />
     <file path="/ExtentRecord.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378125720567" ignored="false" />
     <file path="/a.dummy" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378132726507" ignored="false" />
+    <file path="/HfsPlusForkData.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378736580992" ignored="false" />
+    <file path="/ExtentDescriptor.java" changelist="831fae2f-0489-44bb-8e11-492e95d54e0f" time="1378736517929" ignored="false" />
+    <file path="/MinixFileSystem.java" changelist="ef722ae8-9855-49ba-a70d-bcc327dc36fc" time="1378813772071" ignored="false" />
+    <file path="/MinixEntry.java" changelist="ef722ae8-9855-49ba-a70d-bcc327dc36fc" time="1378806698144" ignored="false" />
+    <file path="/MinixDirectory.java" changelist="ef722ae8-9855-49ba-a70d-bcc327dc36fc" time="1378809705401" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +64,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -87,6 +101,7 @@
       </breakpoint>
     </breakpoint_any>
     <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -100,47 +115,33 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="HfsPlusFileSystem.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusFileSystem.java">
+      <file leaf-file-name="MinixFileSystem.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixFileSystem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="19" selection-start="1806" selection-end="1813" vertical-scroll-proportion="0.0">
+            <state line="78" column="0" selection-start="2633" selection-end="2633" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MinixDirectory.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixDirectory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="50" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Catalog.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/Catalog.java">
+      <file leaf-file-name="SuperBlock.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/SuperBlock.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="111" column="50" selection-start="4252" selection-end="4252" vertical-scroll-proportion="0.1420765">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CatalogThread.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogThread.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="11" selection-start="2172" selection-end="2172" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CatalogFile.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogFile.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="13" selection-start="1258" selection-end="1258" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CatalogFolder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogFolder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="11" selection-start="2188" selection-end="2188" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="55" column="160" selection-start="1643" selection-end="1643" vertical-scroll-proportion="0.4385965">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -163,12 +164,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsForkDataFactory.java" />
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/VolumeHeader.java" />
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusForkDataFactory.java" />
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentNode.java" />
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INodeTable.java" />
-        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HFSPlusParams.java" />
         <option value="$PROJECT_DIR$/fs/src/test/org/jnode/test/fs/filesystem/FSConfigurations.java" />
         <option value="$PROJECT_DIR$/fs/src/test/org/jnode/fs/hfsplus/HfsPlusFileSystemTest.java" />
         <option value="$PROJECT_DIR$/all/conf/log4j.xml" />
@@ -179,14 +174,19 @@
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/FileSystemObjectReader.java" />
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusFileSystem.java" />
         <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/Catalog.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentDescriptor.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusForkData.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixEntry.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixDirectory.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixFileSystem.java" />
+        <option value="$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/SuperBlock.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="3" />
-    <option name="y" value="10" />
-    <option name="width" value="1674" />
-    <option name="height" value="1005" />
+    <option name="y" value="25" />
+    <option name="width" value="1680" />
+    <option name="height" value="1025" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -214,6 +214,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -263,26 +264,8 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="JNode" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jnode.mirror" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
+              <option name="myItemId" value="test" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -315,6 +298,32 @@
               <option name="myItemId" value="jnode" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jnode.mirror" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jnode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="fs" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -350,45 +359,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="hfsplus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="JNode" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jnode.mirror" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jnode" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="hfsplus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="extent" />
+              <option name="myItemId" value="minix" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -441,47 +412,27 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jnode" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fs" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ext2" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cache" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.0" />
-    <property name="MemberChooser.sorted" value="false" />
     <property name="recentsLimit" value="5" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/all/conf" />
-    <property name="MemberChooser.showClasses" value="true" />
-    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../simplejisho/pom.xml" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GoToClass.includeLibraries" value="false" />
     <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
@@ -671,6 +622,8 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="831fae2f-0489-44bb-8e11-492e95d54e0f" name="Default" comment="" />
+      <changelist id="9a65f5d8-ad5a-4b5a-a221-e30deada3a26" name="HFS improvements" comment="" />
+      <changelist id="ef722ae8-9855-49ba-a70d-bcc327dc36fc" name="minix implementation" comment="" />
       <created>1372338745372</created>
       <updated>1372338745372</updated>
     </task>
@@ -686,10 +639,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="3" y="10" width="1674" height="1005" extended-state="0" />
-    <editor active="false" />
+    <frame x="0" y="25" width="1680" height="1025" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3321719" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33144155" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -698,10 +651,10 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32990867" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6685585" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2653941" sideWeight="0.6678281" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26474202" sideWeight="0.6685585" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32990867" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -754,7 +707,7 @@
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
     <option name="LAST_COMMIT_MESSAGE" value="#4 : HFS+ extent file implementation + Allocation file implementation (WIP)" />
-    <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
+    <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
@@ -819,109 +772,121 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="56" selection-start="1056" selection-end="1067" vertical-scroll-proportion="0.16393442">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/tree/NodeDescriptor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="27" selection-start="3382" selection-end="3382" vertical-scroll-proportion="0.027322404" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/xfs/XfsSuperBlock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="13" selection-start="264" selection-end="264" vertical-scroll-proportion="0.10928962" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/xfs/XfsFileSystem.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="13" selection-start="381" selection-end="381" vertical-scroll-proportion="0.07103825" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/Extent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="43" selection-start="2102" selection-end="2102" vertical-scroll-proportion="0.0">
+        <state line="54" column="43" selection-start="2143" selection-end="2143" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/FileSystemObjectReader.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="129" column="57" selection-start="6038" selection-end="6038" vertical-scroll-proportion="0.0">
+        <state line="27" column="44" selection-start="1042" selection-end="1054" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentKey.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/extent/ExtentDescriptor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="42" selection-start="1040" selection-end="1051" vertical-scroll-proportion="0.0">
+        <state line="115" column="26" selection-start="3598" selection-end="3598" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/BlockBitmap.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusForkData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="13" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0">
+        <state line="113" column="46" selection-start="3858" selection-end="3858" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixEntry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="221" column="32" selection-start="9334" selection-end="9334" vertical-scroll-proportion="0.0">
+        <state line="7" column="4" selection-start="170" selection-end="170" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="90" column="23" selection-start="2499" selection-end="2499" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2Entry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="13" selection-start="1480" selection-end="1480" vertical-scroll-proportion="0.3321492">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Superblock.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="54" selection-start="1151" selection-end="1151" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/INode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="13" selection-start="1344" selection-end="1344" vertical-scroll-proportion="-0.39964476">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/cache/Block.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="13" selection-start="1061" selection-end="1061" vertical-scroll-proportion="-0.7992895">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/FSBitmap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="28" selection-start="1878" selection-end="1884" vertical-scroll-proportion="0.0">
+        <state line="29" column="13" selection-start="1045" selection-end="1045" vertical-scroll-proportion="0.29307282">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/fat/FatFileSystemFormatter.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2DirectoryRecord.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="90" selection-start="2033" selection-end="2161" vertical-scroll-proportion="0.0">
+        <state line="33" column="13" selection-start="1130" selection-end="1130" vertical-scroll-proportion="-3.5825932">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/HfsPlusFileSystem.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/ext2/Ext2FileSystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="19" selection-start="1806" selection-end="1813" vertical-scroll-proportion="0.0">
+        <state line="188" column="16" selection-start="8057" selection-end="8057" vertical-scroll-proportion="-0.19715808">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogFile.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixDirectory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="13" selection-start="1258" selection-end="1258" vertical-scroll-proportion="0.0">
+        <state line="3" column="50" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogFolder.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/MinixFileSystem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="11" selection-start="2188" selection-end="2188" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="78" column="0" selection-start="2633" selection-end="2633" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/CatalogThread.java">
+    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/minix/SuperBlock.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="11" selection-start="2172" selection-end="2172" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fs/src/fs/org/jnode/fs/hfsplus/catalog/Catalog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="50" selection-start="4252" selection-end="4252" vertical-scroll-proportion="0.1420765">
-          <folding />
+        <state line="55" column="160" selection-start="1643" selection-end="1643" vertical-scroll-proportion="0.4385965">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -110,6 +110,17 @@ public class HfsPlusForkData {
         return totalBlock;
     }
 
+    /**
+     * @return Total of blocks for all extents.
+     */
+    public long getBlockCount() {
+        long count = 0L;
+        for(ExtentDescriptor descriptor : extents){
+              count += descriptor.getBlockCount();
+        }
+        return count;
+    }
+
     public ExtentDescriptor getExtent(int index) {
         return extents[index];
     }

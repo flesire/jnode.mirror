@@ -197,8 +197,8 @@
     <option name="id" value="1355311468141" />
     <option name="name" value="default" />
     <option name="optimizeImports" value="false" />
-    <option name="pathToConfigFileJava" value="$USER_HOME$/documentation/others/isabel_codingFormat.xml" />
-    <option name="selectedJavaProfile" value="isabel" />
+    <option name="pathToConfigFileJava" value="$USER_HOME$/project/perso/code/jnode.mirror/jnode-eclipse-formatter-settings.xml" />
+    <option name="selectedJavaProfile" value="Eclipse [jnode]" />
   </component>
   <component name="EclipseCompilerSettings">
     <option name="GENERATE_NO_WARNINGS" value="true" />
