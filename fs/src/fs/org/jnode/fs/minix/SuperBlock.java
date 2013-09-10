@@ -27,6 +27,8 @@ public class SuperBlock {
     private static final int MINIX2_SUPER_MAGIC2 = 0x2478;
     public static final int VALID_FS = 0x0001;
 
+    private Version version;
+
     private byte[] datas;
 
     public SuperBlock() {
@@ -45,17 +47,24 @@ public class SuperBlock {
      * @param inodes
      */
     public void create(MinixFileSystem fs, Version version, int magic, long blockSize, long inodes) throws IOException {
+        this.version = version;
         this.setMagic(magic);
         this.setSZones(blockSize);
         this.setState(VALID_FS);
         long maxSize = (version.equals(Version.V2)) ? 0x7fffffff : (7+512+512*512) * 1024 ;
         this.setMaxSize(maxSize);
+        // Calculate number of inodes to allocate.
         if(inodes != 0){
             inodes = blockSize / 3;
         }
-        //TODO inodes number computation
+        inodes = ((inodes + getInodePerBlock() - 1) & ~(getInodePerBlock() - 1));
         if (inodes > 65535) inodes = 65535;
-        //
+        long requested = blockSize * 9 / 10 + 5;
+        if (getInodeBlocks() > requested){
+            throw new IOException("Too many inodes requested (requested : " + requested + " available : " +  getInodeBlocks());
+        }
+        // Create root block
+        //TODO move this part out of the superblock creation.
         CharBuffer rootBlock = CharBuffer.allocate(BLOCK_SIZE);
         rootBlock.append((char)MINIX_ROOT_INO);
         rootBlock.append('.');
@@ -70,6 +79,21 @@ public class SuperBlock {
     }
 
     //
+
+    public void setInodesCount(int size) {
+        Ext2Utils.set16(datas,0,size);
+    }
+
+    public int getInodeBlocks(){
+        int inodes = Ext2Utils.get16(datas,0);
+        int inodesPerBlock = getInodePerBlock();
+        return ((inodes+((inodesPerBlock)-1))/(inodesPerBlock));
+    }
+
+    public int getInodePerBlock() {
+        int inodeSize = (version.equals(Version.V2)) ? 64 : 32 ;
+        return BLOCK_SIZE/inodeSize;
+    }
 
     public void setMagic(int magic) {
         Ext2Utils.set16(datas,36,magic);
