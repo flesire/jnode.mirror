@@ -8,6 +8,10 @@ import org.jnode.fs.ext2.Ext2Utils;
 
 public class SuperBlock {
 
+    public static final int INODES_ALLOCATION_LIMIT = 65535;
+    public static final int MINIX2_MAX_SIZE = 0x7fffffff;
+    public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
+
     enum Version {
         V1, V2
     }
@@ -15,6 +19,7 @@ public class SuperBlock {
     private static final int SUPERBLOCK_LENGTH = 1024;
     private static final int BLOCK_SIZE_BITS = 10;
     private static final int BLOCK_SIZE = (1 << BLOCK_SIZE_BITS);
+    private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
     /** Inode number for the root block */
     private static final int MINIX_ROOT_INO = 1;
     /* original minix fs */
@@ -71,6 +76,18 @@ public class SuperBlock {
         Ext2Utils.set16(datas, 36, magic);
     }
 
+    public void setIMapBlocks(int blocks) {
+        Ext2Utils.set16(datas, 8, blocks);
+    }
+
+    public void setZMapBlocks(int blocks) {
+        Ext2Utils.set16(datas, 12, blocks);
+    }
+
+    public void setFirstDataZone(int zone) {
+        Ext2Utils.set16(datas, 16, zone);
+    }
+
     /**
      * Set device size in blocks. This field is set only in version 2 of minix
      * file system.
@@ -101,36 +118,48 @@ public class SuperBlock {
 
     /**
      * 
-     * @param version
-     * @param blockSize
-     * @param inodes
+     * @param version Version of the file system.
+     * @param magic Value to check filesystem is a valid minix file system.
+     * @param filesystemSize size of the filesystem in blocks.
+     * @param iNodes number of iNodes to allocate.
      */
-    public void create(MinixFileSystem fs, Version version, int magic, long blockSize, long inodes)
+    public void create(Version version, int magic, long filesystemSize, long iNodes)
         throws IOException {
         this.version = version;
         this.setMagic(magic);
         if (version.equals(Version.V2)) {
-            this.setSZones(blockSize);
+            this.setSZones(filesystemSize);
         } else {
-            this.setZonesCount((int) blockSize);
+            this.setZonesCount((int) filesystemSize);
         }
         this.setState(VALID_FS);
-        long maxSize = (version.equals(Version.V2)) ? 0x7fffffff : (7 + 512 + 512 * 512) * 1024;
+        long maxSize = (version.equals(Version.V2)) ? MINIX2_MAX_SIZE : MINIX_MAX_SIZE;
         this.setMaxSize(maxSize);
-        // Calculate number of inodes to allocate.
-        if (inodes != 0) {
-            inodes = blockSize / 3;
+        // Calculate number of iNodes to allocate.
+        if (iNodes != 0) {
+            iNodes = filesystemSize / 3;
         }
-        inodes = ((inodes + getInodePerBlock() - 1) & ~(getInodePerBlock() - 1));
-        if (inodes > 65535)
-            inodes = 65535;
-        long requested = blockSize * 9 / 10 + 5;
+        iNodes = upper(iNodes, getInodePerBlock());
+        if (iNodes > INODES_ALLOCATION_LIMIT)
+            iNodes = INODES_ALLOCATION_LIMIT;
+        long requested = filesystemSize * 9 / 10 + 5;
         if (getInodeBlocks() > requested) {
-            throw new IOException("Too many inodes requested (requested : " + requested +
+            throw new IOException("Too many iNodes requested (requested : " + requested +
                     " available : " + getInodeBlocks());
         }
+
+        // Initialize bitmaps
+        int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
+        long size = filesystemSize - (1 + iMaps + getInodeBlocks());
+        int zMaps = (int) upper(size, BITS_PER_BLOCK + 1);
+        this.setIMapBlocks(iMaps);
+        this.setZMapBlocks(zMaps);
+        int firstDataZone = 2 + iMaps + zMaps + getInodeBlocks();
+        this.setFirstDataZone(firstDataZone);
+    }
+
+    public void createRootBlock(MinixFileSystem fs, int magic) throws IOException {
         // Create root block
-        // TODO move this part out of the superblock creation.
         CharBuffer rootBlock = CharBuffer.allocate(BLOCK_SIZE);
         rootBlock.append((char) MINIX_ROOT_INO);
         rootBlock.append('.');
@@ -142,6 +171,10 @@ public class SuperBlock {
         Charset latin1Charset = Charset.forName("ISO-8859-1");
         ByteBuffer buffer = latin1Charset.encode(rootBlock);
         fs.getApi().write(MINIX_ROOT_INO * BLOCK_SIZE, buffer);
+    }
+
+    private long upper(long size, int n) {
+        return (size + n - 1) & ~(n - 1);
     }
 
 }
