@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import org.jnode.fs.ext2.Ext2Utils;
 
 public class SuperBlock {
@@ -18,7 +19,7 @@ public class SuperBlock {
 
     private static final int SUPERBLOCK_LENGTH = 1024;
     private static final int BLOCK_SIZE_BITS = 10;
-    private static final int BLOCK_SIZE = (1 << BLOCK_SIZE_BITS);
+    private static final int BLOCK_SIZE = 1024;
     private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
     /** Inode number for the root block */
     private static final int MINIX_ROOT_INO = 1;
@@ -142,20 +143,18 @@ public class SuperBlock {
         iNodes = upper(iNodes, getInodePerBlock());
         if (iNodes > INODES_ALLOCATION_LIMIT)
             iNodes = INODES_ALLOCATION_LIMIT;
-        long requested = filesystemSize * 9 / 10 + 5;
+        int requested = (int) (filesystemSize * 9 / 10 + 5);
         if (getInodeBlocks() > requested) {
             throw new IOException("Too many iNodes requested (requested : " + requested +
                     " available : " + getInodeBlocks());
         }
+        this.setInodesCount(requested);
 
         // Initialize bitmaps
-        int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
-        long size = filesystemSize - (1 + iMaps + getInodeBlocks());
-        int zMaps = (int) upper(size, BITS_PER_BLOCK + 1);
-        this.setIMapBlocks(iMaps);
-        this.setZMapBlocks(zMaps);
-        int firstDataZone = 2 + iMaps + zMaps + getInodeBlocks();
-        this.setFirstDataZone(firstDataZone);
+        initBitmaps(filesystemSize, iNodes, requested);
+
+        // Initialize inode table;
+
     }
 
     public void createRootBlock(MinixFileSystem fs, int magic) throws IOException {
@@ -171,6 +170,30 @@ public class SuperBlock {
         Charset latin1Charset = Charset.forName("ISO-8859-1");
         ByteBuffer buffer = latin1Charset.encode(rootBlock);
         fs.getApi().write(MINIX_ROOT_INO * BLOCK_SIZE, buffer);
+    }
+
+    private void initBitmaps(long filesystemSize, long iNodes, int requested) {
+        int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
+        long size = filesystemSize - (1 + iMaps + getInodeBlocks());
+        int zMaps = (int) upper(size, BITS_PER_BLOCK + 1);
+        this.setIMapBlocks(iMaps);
+        this.setZMapBlocks(zMaps);
+        int firstDataZone = 2 + iMaps + zMaps + getInodeBlocks();
+        this.setFirstDataZone(firstDataZone);
+
+        byte[] inodeBitmap = new byte[iMaps * BLOCK_SIZE];
+        byte[] zoneBitmap = new byte[zMaps * BLOCK_SIZE];
+
+        Arrays.fill(inodeBitmap, (byte) 0xff);
+        Arrays.fill(zoneBitmap, (byte) 0xff);
+
+        for (int i = firstDataZone; i < filesystemSize; i++) {
+            int n = i - firstDataZone + 1;
+            zoneBitmap[n >> 3] &= ~(1 << (n & 7));
+        }
+        for (int i = MINIX_ROOT_INO; i <= requested; i++) {
+            inodeBitmap[i >> 3] &= ~(1 << (i & 7));
+        }
     }
 
     private long upper(long size, int n) {
