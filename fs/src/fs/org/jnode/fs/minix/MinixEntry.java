@@ -7,7 +7,7 @@ public class MinixEntry extends AbstractFSEntry {
 
     private INode iNode;
 
-    public MinixEntry(INode iNode, String name, int type, MinixFileSystem fs, FSDirectory parent) {
+    public MinixEntry(INode iNode, String name, MinixFileSystem fs, FSDirectory parent) {
         super(fs, null, parent, name, getFSEntryType(name, iNode));
     }
 

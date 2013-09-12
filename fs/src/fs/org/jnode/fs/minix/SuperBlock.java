@@ -2,38 +2,39 @@ package org.jnode.fs.minix;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
+import org.apache.log4j.Logger;
 import org.jnode.fs.ext2.Ext2Utils;
 
 public class SuperBlock {
+
+    private final Logger log = Logger.getLogger(getClass());
 
     public static final int INODES_ALLOCATION_LIMIT = 65535;
     public static final int MINIX2_MAX_SIZE = 0x7fffffff;
     public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
 
-    enum Version {
+    public enum Version {
         V1, V2
     }
 
     private static final int SUPERBLOCK_LENGTH = 1024;
     private static final int BLOCK_SIZE_BITS = 10;
-    private static final int BLOCK_SIZE = 1024;
+    public static final int BLOCK_SIZE = 1024;
     private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
     /** Inode number for the root block */
     private static final int MINIX_ROOT_INO = 1;
     /* original minix fs */
-    private static final int MINIX_SUPER_MAGIC = 0x137F;
+    public static final int MINIX_SUPER_MAGIC = 0x137F;
     /* minix fs, 30 char names */
-    private static final int MINIX_SUPER_MAGIC2 = 0x138F;
+    public static final int MINIX_SUPER_MAGIC2 = 0x138F;
     /* minix V2 fs */
-    private static final int MINIX2_SUPER_MAGIC = 0x2468;
+    public static final int MINIX2_SUPER_MAGIC = 0x2468;
     /* minix V2 fs, 30 char names */
-    private static final int MINIX2_SUPER_MAGIC2 = 0x2478;
+    public static final int MINIX2_SUPER_MAGIC2 = 0x2478;
     public static final int VALID_FS = 0x0001;
 
-    private Version version;
+    private Version version = Version.V1;
 
     private byte[] datas;
 
@@ -44,6 +45,9 @@ public class SuperBlock {
 
     public SuperBlock(byte[] datas) {
         this.datas = datas;
+        if (getMagic() == MINIX2_SUPER_MAGIC || getMagic() == MINIX2_SUPER_MAGIC2) {
+            version = Version.V2;
+        }
     }
 
     //
@@ -62,12 +66,6 @@ public class SuperBlock {
         Ext2Utils.set16(datas, 4, size);
     }
 
-    public int getInodeBlocks() {
-        int inodes = Ext2Utils.get16(datas, 0);
-        int inodesPerBlock = getInodePerBlock();
-        return ((inodes + ((inodesPerBlock) - 1)) / (inodesPerBlock));
-    }
-
     public int getInodePerBlock() {
         int inodeSize = (version.equals(Version.V2)) ? 64 : 32;
         return BLOCK_SIZE / inodeSize;
@@ -77,12 +75,24 @@ public class SuperBlock {
         Ext2Utils.set16(datas, 36, magic);
     }
 
+    private int getMagic() {
+        return Ext2Utils.get16(datas, 36);
+    }
+
     public void setIMapBlocks(int blocks) {
         Ext2Utils.set16(datas, 8, blocks);
     }
 
+    public int getImapBlocks() {
+        return Ext2Utils.get16(datas, 8);
+    }
+
     public void setZMapBlocks(int blocks) {
         Ext2Utils.set16(datas, 12, blocks);
+    }
+
+    public int getZMapBlocks() {
+        return Ext2Utils.get16(datas, 12);
     }
 
     public void setFirstDataZone(int zone) {
@@ -107,6 +117,16 @@ public class SuperBlock {
         Ext2Utils.set32(datas, 28, size);
     }
 
+    public String toString() {
+        return "[Version : " + version + ", Magic : 0x" + Integer.toHexString(getMagic()) +
+                ", inodes/block : " + getInodePerBlock() + "]";
+    }
+
+    public ByteBuffer toByteBuffer() {
+        ByteBuffer buffer = ByteBuffer.wrap(datas);
+        return buffer;
+    }
+
     //
 
     public int getDirSize() {
@@ -115,6 +135,12 @@ public class SuperBlock {
 
     public int getSize() {
         return SUPERBLOCK_LENGTH;
+    }
+
+    public int getInodeBlocks() {
+        int inodes = Ext2Utils.get16(datas, 0);
+        int inodesPerBlock = getInodePerBlock();
+        return ((inodes + ((inodesPerBlock) - 1)) / (inodesPerBlock));
     }
 
     /**
@@ -148,6 +174,7 @@ public class SuperBlock {
             throw new IOException("Too many iNodes requested (requested : " + requested +
                     " available : " + getInodeBlocks());
         }
+        log.debug("Allocated inodes : " + requested);
         this.setInodesCount(requested);
 
         // Initialize bitmaps
@@ -157,19 +184,18 @@ public class SuperBlock {
 
     }
 
-    public void createRootBlock(MinixFileSystem fs, int magic) throws IOException {
+    public ByteBuffer createRootBlock(int magic) throws IOException {
         // Create root block
-        CharBuffer rootBlock = CharBuffer.allocate(BLOCK_SIZE);
-        rootBlock.append((char) MINIX_ROOT_INO);
-        rootBlock.append('.');
-        rootBlock.rewind();
-        int dirSize = (magic == MINIX_SUPER_MAGIC2 || magic == MINIX2_SUPER_MAGIC2) ? 32 : 16;
-        rootBlock.position(dirSize);
-        rootBlock.append((char) MINIX_ROOT_INO);
-        rootBlock.append("..");
-        Charset latin1Charset = Charset.forName("ISO-8859-1");
-        ByteBuffer buffer = latin1Charset.encode(rootBlock);
-        fs.getApi().write(MINIX_ROOT_INO * BLOCK_SIZE, buffer);
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        MinixDirectoryEntry dir = new MinixDirectoryEntry();
+        dir.setInodeNumber(MINIX_ROOT_INO);
+        dir.setName(".");
+        buffer.put(dir.getData());
+        dir = new MinixDirectoryEntry();
+        dir.setInodeNumber(MINIX_ROOT_INO);
+        dir.setName("..");
+        buffer.put(dir.getData());
+        return buffer;
     }
 
     private void initBitmaps(long filesystemSize, long iNodes, int requested) {
@@ -194,6 +220,7 @@ public class SuperBlock {
         for (int i = MINIX_ROOT_INO; i <= requested; i++) {
             inodeBitmap[i >> 3] &= ~(1 << (i & 7));
         }
+        log.debug(zoneBitmap.length + ", " + inodeBitmap.length);
     }
 
     private long upper(long size, int n) {
