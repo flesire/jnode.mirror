@@ -5,24 +5,25 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.jnode.fs.ext2.Ext2Utils;
 
+import static org.jnode.fs.minix.MinixFileSystem.MINIX_ROOT_INODE_NUMBER;
+
 public class SuperBlock {
 
     private final Logger log = Logger.getLogger(getClass());
-
-    public static final int INODES_ALLOCATION_LIMIT = 65535;
-    public static final int MINIX2_MAX_SIZE = 0x7fffffff;
-    public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
 
     public enum Version {
         V1, V2
     }
 
-    private static final int SUPERBLOCK_LENGTH = 1024;
     private static final int BLOCK_SIZE_BITS = 10;
+
+    public static final int SUPERBLOCK_LENGTH = 1024;
+
+    /** Size of a block in a minix file system is fixed to 1024 bytes. */
     public static final int BLOCK_SIZE = 1024;
+
     private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
-    /** Inode number for the root block */
-    public static final int MINIX_ROOT_INODE_NUMBER = 1;
+
     /* original minix fs */
     public static final int MINIX_SUPER_MAGIC = 0x137F;
     /* minix fs, 30 char names */
@@ -32,6 +33,9 @@ public class SuperBlock {
     /* minix V2 fs, 30 char names */
     public static final int MINIX2_SUPER_MAGIC2 = 0x2478;
     public static final int VALID_FS = 0x0001;
+    public static final int INODES_ALLOCATION_LIMIT = 65535;
+    public static final int MINIX2_MAX_SIZE = 0x7fffffff;
+    public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
 
     private Version version = Version.V1;
 
@@ -66,7 +70,7 @@ public class SuperBlock {
      * @param size size in blocks.
      */
     public void setZonesCount(int size) {
-        Ext2Utils.set16(datas, 4, size);
+        Ext2Utils.set16(datas, 2, size);
     }
 
     public int getInodePerBlock() {
@@ -75,35 +79,35 @@ public class SuperBlock {
     }
 
     public void setMagic(int magic) {
-        Ext2Utils.set16(datas, 36, magic);
+        Ext2Utils.set16(datas, 16, magic);
     }
 
     private int getMagic() {
-        return Ext2Utils.get16(datas, 36);
+        return Ext2Utils.get16(datas, 16);
     }
 
     public void setIMapBlocks(int blocks) {
-        Ext2Utils.set16(datas, 8, blocks);
+        Ext2Utils.set16(datas, 4, blocks);
     }
 
     public int getImapBlocks() {
-        return Ext2Utils.get16(datas, 8);
+        return Ext2Utils.get16(datas, 4);
     }
 
     public void setZMapBlocks(int blocks) {
-        Ext2Utils.set16(datas, 12, blocks);
+        Ext2Utils.set16(datas, 6, blocks);
     }
 
     public int getZMapBlocks() {
-        return Ext2Utils.get16(datas, 12);
+        return Ext2Utils.get16(datas, 6);
     }
 
     public void setFirstDataZone(int zone) {
-        Ext2Utils.set16(datas, 16, zone);
+        Ext2Utils.set16(datas, 8, zone);
     }
 
     public int getFirstDataZone() {
-        return Ext2Utils.get16(datas, 16);
+        return Ext2Utils.get16(datas, 8);
     }
 
     /**
@@ -120,13 +124,18 @@ public class SuperBlock {
         Ext2Utils.set16(datas, 40, state);
     }
 
+    public long getMaxSize() {
+        return Ext2Utils.get32(datas, 12);
+    }
+
     public void setMaxSize(long size) {
-        Ext2Utils.set32(datas, 28, size);
+        Ext2Utils.set32(datas, 12, size);
     }
 
     public String toString() {
         return "[Version : " + version + ", Magic : 0x" + Integer.toHexString(getMagic()) +
-                ", inodes/block : " + getInodePerBlock() + "]";
+                ", IMap Blocks : " + getImapBlocks() + ", ZMap Blocks : " + getZMapBlocks() +
+                ", First Data Zone : " + getFirstDataZone() + ", Max size : " + getMaxSize() + "]";
     }
 
     public ByteBuffer toByteBuffer() {

@@ -13,11 +13,22 @@ import org.jnode.fs.FileSystemException;
 import org.jnode.fs.FileSystemType;
 import org.jnode.fs.spi.AbstractFileSystem;
 
+import static org.jnode.fs.minix.INode.S_IFDIR;
+import static org.jnode.fs.minix.SuperBlock.BLOCK_SIZE;
+import static org.jnode.fs.minix.SuperBlock.SUPERBLOCK_LENGTH;
+
 public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
+
+    /** Inode number for the root block */
+    public static final int MINIX_ROOT_INODE_NUMBER = 1;
 
     private final Logger log = Logger.getLogger(getClass());
 
     private SuperBlock superBlock;
+
+    private byte[] inodeBitmap;
+
+    private byte[] zoneBitmap;
 
     // TODO INode bitmap
     // TODO Zones bitmap
@@ -48,7 +59,8 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     @Override
     protected MinixEntry createRootEntry() throws IOException {
-        INode rootINode = getINode(1);
+        INode rootINode = getINode(MINIX_ROOT_INODE_NUMBER);
+        long rootBlock = rootINode.getZones()[0];
         MinixEntry entry = new MinixEntry(rootINode, "/", this, null);
         return entry;
     }
@@ -76,6 +88,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     public void read() throws FileSystemException {
         try {
             readSuperBlock();
+            readBitmaps();
         } catch (IOException e) {
             throw new FileSystemException(e);
         }
@@ -104,14 +117,14 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
         superBlock = new SuperBlock();
         try {
-            long filesystemSize = this.getApi().getLength() / SuperBlock.BLOCK_SIZE;
+            long filesystemSize = this.getApi().getLength() / BLOCK_SIZE;
             superBlock.create(version, magic, filesystemSize, 0);
             log.debug("SuperBlock :" + superBlock.toString());
             populateBitmaps(filesystemSize);
             this.getApi().write(1024, superBlock.toByteBuffer());
             ByteBuffer rootBlock = superBlock.createRootBlock(magic);
             rootBlock.flip();
-            this.getApi().write(1024 + SuperBlock.BLOCK_SIZE, rootBlock);
+            this.getApi().write(1024 + BLOCK_SIZE, rootBlock);
         } catch (IOException e) {
             throw new FileSystemException(e);
         }
@@ -120,18 +133,23 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     //
 
     private void readSuperBlock() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(superBlock.getSize());
+
+        ByteBuffer buffer = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
         this.getApi().read(1024, buffer);
         superBlock = new SuperBlock(buffer.array());
-        log.debug("SuperBlock :" + superBlock.toString());
+        log.info("Read SuperBlock content.");
+        if (log.isDebugEnabled()) {
+            log.debug(superBlock);
+        }
     }
 
     private INode getINode(int iNodeNumber) throws IOException {
         int block =
                 2 + superBlock.getImapBlocks() + superBlock.getZMapBlocks() + iNodeNumber /
                         superBlock.getInodePerBlock();
-        ByteBuffer blockData = ByteBuffer.allocate(SuperBlock.BLOCK_SIZE);
-        this.getApi().read(block, blockData);
+        log.debug("Read block " + block);
+        ByteBuffer blockData = ByteBuffer.allocate(BLOCK_SIZE);
+        this.getApi().read(block * BLOCK_SIZE, blockData);
         blockData.flip();
         byte[] iNodeData = new byte[64];
         blockData.get(iNodeData, 0, 64);
@@ -139,25 +157,62 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     }
 
     private void populateBitmaps(long filesystemSize) throws FileSystemException {
-        byte[] inodeBitmap = new byte[superBlock.getImapBlocks() * SuperBlock.BLOCK_SIZE];
-        byte[] zoneBitmap = new byte[superBlock.getZMapBlocks() * SuperBlock.BLOCK_SIZE];
-
+        inodeBitmap = new byte[superBlock.getImapBlocks() * BLOCK_SIZE];
+        zoneBitmap = new byte[superBlock.getZMapBlocks() * BLOCK_SIZE];
+        //
         Arrays.fill(inodeBitmap, (byte) 0xff);
         Arrays.fill(zoneBitmap, (byte) 0xff);
-
+        //
+        for (int i = MINIX_ROOT_INODE_NUMBER; i <= superBlock.getInodesCount(); i++) {
+            MinixBitmap.unmark(inodeBitmap, i);
+        }
         int firstDataZone = superBlock.getFirstDataZone();
         for (int i = firstDataZone; i < filesystemSize; i++) {
             int index = i - firstDataZone + 1;
             MinixBitmap.unmark(zoneBitmap, index);
         }
-        for (int i = superBlock.MINIX_ROOT_INODE_NUMBER; i <= superBlock.getInodesCount(); i++) {
-            MinixBitmap.unmark(zoneBitmap, i);
-        }
+        //
+        MinixBitmap.mark(inodeBitmap, MINIX_ROOT_INODE_NUMBER);
+        long rootBlock =
+                MinixBitmap.findFreeBlock(zoneBitmap, superBlock.getZMapBlocks() + firstDataZone -
+                        1);
+        INode inode = new INode(MINIX_ROOT_INODE_NUMBER, S_IFDIR);
+        inode.setZone(0, rootBlock);
+        MinixBitmap.mark(zoneBitmap, (int) rootBlock);
 
         ByteBuffer buffer = ByteBuffer.wrap(inodeBitmap);
-        // this.getApi().write(superBlock.);
+        //
+        try {
+            int offset = 2 * BLOCK_SIZE;
+            this.getApi().write(offset, buffer);
+            offset += superBlock.getImapBlocks() * BLOCK_SIZE;
+            buffer = ByteBuffer.wrap(zoneBitmap);
+            this.getApi().write(offset, buffer);
+        } catch (IOException e) {
+            e.printStackTrace(); // To change body of catch statement use File |
+                                 // Settings | File Templates.
+        }
 
-        log.debug(zoneBitmap.length + ", " + inodeBitmap.length);
+    }
+
+    private void readBitmaps() {
+        inodeBitmap = new byte[superBlock.getImapBlocks() * BLOCK_SIZE];
+        zoneBitmap = new byte[superBlock.getZMapBlocks() * BLOCK_SIZE];
+        int offset = 2 * BLOCK_SIZE;
+        int size = superBlock.getImapBlocks() * BLOCK_SIZE;
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        try {
+            this.getApi().read(offset, buffer);
+            inodeBitmap = buffer.array();
+            offset += superBlock.getImapBlocks() * BLOCK_SIZE;
+            size = superBlock.getZMapBlocks() * BLOCK_SIZE;
+            buffer = ByteBuffer.allocate(size);
+            this.getApi().read(offset, buffer);
+            zoneBitmap = buffer.array();
+        } catch (IOException e) {
+            e.printStackTrace(); // To change body of catch statement use File |
+                                 // Settings | File Templates.
+        }
     }
 
 }

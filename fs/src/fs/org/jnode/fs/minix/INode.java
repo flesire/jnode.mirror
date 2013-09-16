@@ -22,8 +22,10 @@ public class INode {
         return number;
     }
 
-    public INode() {
+    public INode(int number, int mode) {
         this.datas = new byte[INODE_V2_SIZE];
+        this.number = number;
+        Ext2Utils.set16(datas, 0, mode);
     }
 
     public INode(byte[] data) {
@@ -66,7 +68,17 @@ public class INode {
         return Ext2Utils.get32(datas, 20);
     }
 
-    // TODO zones getter
+    public void setZone(int index, long value) {
+        Ext2Utils.set32(datas, 24 + (index * 4), value);
+    }
+
+    public long[] getZones() {
+        long[] zones = new long[7];
+        for (int i = 0; i < 7; i++) {
+            zones[i] = Ext2Utils.get32(datas, 24 + (i * 4));
+        }
+        return zones;
+    }
 
     public long getIndirectionZone() {
         return Ext2Utils.get32(datas, 52);
