@@ -17,7 +17,7 @@
  * along with this library; If not, write to the Free Software Foundation, Inc., 
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
- 
+
 package org.jnode.fs.ext2;
 
 /**
@@ -28,7 +28,7 @@ public class BlockBitmap extends FSBitmap {
      * Test whether the block is free, and if yes: - mark it as used - prealloc
      * the next free blocks, at most 7
      * 
-     * SYNCHRONIZATION: BlockBitmap.testAndSetBlock() is not synchronized, so
+     * SYNCHRONIZATION: MinixBitmap.testAndSetBlock() is not synchronized, so
      * Ext2FileSystem.testAndSetBlock() is synchronized to the bitmap block it
      * operates on.
      */
@@ -55,7 +55,7 @@ public class BlockBitmap extends FSBitmap {
      * over the group boundary (because the bitmap data is only available for a
      * single block group).
      * 
-     * SYNCHRONIZATION: BlockBitmap.findFreeBlocks() is not synchronized, so
+     * SYNCHRONIZATION: MinixBitmap.findFreeBlocks() is not synchronized, so
      * Ext2FileSystem.findFreeBlocks() is synchronized to the bitmap block it
      * operates on.
      */
@@ -91,7 +91,7 @@ public class BlockBitmap extends FSBitmap {
             if (isFree(data[nonfullBitmap], i)) {
                 setBit(data, nonfullBitmap, i);
                 int block = nonfullBitmap * 8 + i;
-                //do preallocation:
+                // do preallocation:
                 int j = 0;
                 while ((j < Ext2Constants.EXT2_PREALLOC_BLOCK) && isFree(data, block + 1 + j)) {
                     setBit(data, block + 1 + j);

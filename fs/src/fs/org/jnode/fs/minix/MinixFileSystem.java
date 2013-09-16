@@ -2,6 +2,7 @@ package org.jnode.fs.minix;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.jnode.driver.Device;
 import org.jnode.fs.FSDirectory;
@@ -106,10 +107,10 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
             long filesystemSize = this.getApi().getLength() / SuperBlock.BLOCK_SIZE;
             superBlock.create(version, magic, filesystemSize, 0);
             log.debug("SuperBlock :" + superBlock.toString());
+            populateBitmaps(filesystemSize);
             this.getApi().write(1024, superBlock.toByteBuffer());
             ByteBuffer rootBlock = superBlock.createRootBlock(magic);
             rootBlock.flip();
-            // TODO write rootBlock
             this.getApi().write(1024 + SuperBlock.BLOCK_SIZE, rootBlock);
         } catch (IOException e) {
             throw new FileSystemException(e);
@@ -136,4 +137,27 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         blockData.get(iNodeData, 0, 64);
         return new INode(iNodeData);
     }
+
+    private void populateBitmaps(long filesystemSize) throws FileSystemException {
+        byte[] inodeBitmap = new byte[superBlock.getImapBlocks() * SuperBlock.BLOCK_SIZE];
+        byte[] zoneBitmap = new byte[superBlock.getZMapBlocks() * SuperBlock.BLOCK_SIZE];
+
+        Arrays.fill(inodeBitmap, (byte) 0xff);
+        Arrays.fill(zoneBitmap, (byte) 0xff);
+
+        int firstDataZone = superBlock.getFirstDataZone();
+        for (int i = firstDataZone; i < filesystemSize; i++) {
+            int index = i - firstDataZone + 1;
+            MinixBitmap.unmark(zoneBitmap, index);
+        }
+        for (int i = superBlock.MINIX_ROOT_INODE_NUMBER; i <= superBlock.getInodesCount(); i++) {
+            MinixBitmap.unmark(zoneBitmap, i);
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(inodeBitmap);
+        // this.getApi().write(superBlock.);
+
+        log.debug(zoneBitmap.length + ", " + inodeBitmap.length);
+    }
+
 }

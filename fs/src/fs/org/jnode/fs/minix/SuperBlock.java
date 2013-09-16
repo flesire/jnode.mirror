@@ -2,7 +2,6 @@ package org.jnode.fs.minix;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.jnode.fs.ext2.Ext2Utils;
 
@@ -23,7 +22,7 @@ public class SuperBlock {
     public static final int BLOCK_SIZE = 1024;
     private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
     /** Inode number for the root block */
-    private static final int MINIX_ROOT_INO = 1;
+    public static final int MINIX_ROOT_INODE_NUMBER = 1;
     /* original minix fs */
     public static final int MINIX_SUPER_MAGIC = 0x137F;
     /* minix fs, 30 char names */
@@ -54,6 +53,10 @@ public class SuperBlock {
 
     public void setInodesCount(int size) {
         Ext2Utils.set16(datas, 0, size);
+    }
+
+    public int getInodesCount() {
+        return Ext2Utils.get16(datas, 0);
     }
 
     /**
@@ -97,6 +100,10 @@ public class SuperBlock {
 
     public void setFirstDataZone(int zone) {
         Ext2Utils.set16(datas, 16, zone);
+    }
+
+    public int getFirstDataZone() {
+        return Ext2Utils.get16(datas, 16);
     }
 
     /**
@@ -154,14 +161,17 @@ public class SuperBlock {
         throws IOException {
         this.version = version;
         this.setMagic(magic);
+        this.setState(VALID_FS);
+        long maxSize = (version.equals(Version.V2)) ? MINIX2_MAX_SIZE : MINIX_MAX_SIZE;
+        this.setMaxSize(maxSize);
+
+        // Set device size in blocks depending on the file system version;
         if (version.equals(Version.V2)) {
             this.setSZones(filesystemSize);
         } else {
             this.setZonesCount((int) filesystemSize);
         }
-        this.setState(VALID_FS);
-        long maxSize = (version.equals(Version.V2)) ? MINIX2_MAX_SIZE : MINIX_MAX_SIZE;
-        this.setMaxSize(maxSize);
+
         // Calculate number of iNodes to allocate.
         if (iNodes != 0) {
             iNodes = filesystemSize / 3;
@@ -178,7 +188,13 @@ public class SuperBlock {
         this.setInodesCount(requested);
 
         // Initialize bitmaps
-        initBitmaps(filesystemSize, iNodes, requested);
+        int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
+        long size = filesystemSize - (1 + iMaps + getInodeBlocks());
+        int zMaps = (int) upper(size, BITS_PER_BLOCK + 1);
+        this.setIMapBlocks(iMaps);
+        this.setZMapBlocks(zMaps);
+        int firstDataZone = 2 + iMaps + zMaps + getInodeBlocks();
+        this.setFirstDataZone(firstDataZone);
 
         // Initialize inode table;
 
@@ -188,39 +204,14 @@ public class SuperBlock {
         // Create root block
         ByteBuffer buffer = ByteBuffer.allocate(64);
         MinixDirectoryEntry dir = new MinixDirectoryEntry();
-        dir.setInodeNumber(MINIX_ROOT_INO);
+        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
         dir.setName(".");
         buffer.put(dir.getData());
         dir = new MinixDirectoryEntry();
-        dir.setInodeNumber(MINIX_ROOT_INO);
+        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
         dir.setName("..");
         buffer.put(dir.getData());
         return buffer;
-    }
-
-    private void initBitmaps(long filesystemSize, long iNodes, int requested) {
-        int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
-        long size = filesystemSize - (1 + iMaps + getInodeBlocks());
-        int zMaps = (int) upper(size, BITS_PER_BLOCK + 1);
-        this.setIMapBlocks(iMaps);
-        this.setZMapBlocks(zMaps);
-        int firstDataZone = 2 + iMaps + zMaps + getInodeBlocks();
-        this.setFirstDataZone(firstDataZone);
-
-        byte[] inodeBitmap = new byte[iMaps * BLOCK_SIZE];
-        byte[] zoneBitmap = new byte[zMaps * BLOCK_SIZE];
-
-        Arrays.fill(inodeBitmap, (byte) 0xff);
-        Arrays.fill(zoneBitmap, (byte) 0xff);
-
-        for (int i = firstDataZone; i < filesystemSize; i++) {
-            int n = i - firstDataZone + 1;
-            zoneBitmap[n >> 3] &= ~(1 << (n & 7));
-        }
-        for (int i = MINIX_ROOT_INO; i <= requested; i++) {
-            inodeBitmap[i >> 3] &= ~(1 << (i & 7));
-        }
-        log.debug(zoneBitmap.length + ", " + inodeBitmap.length);
     }
 
     private long upper(long size, int n) {
