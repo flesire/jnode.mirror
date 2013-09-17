@@ -32,6 +32,7 @@ public class SuperBlock {
     public static final int MINIX2_SUPER_MAGIC = 0x2468;
     /* minix V2 fs, 30 char names */
     public static final int MINIX2_SUPER_MAGIC2 = 0x2478;
+
     public static final int VALID_FS = 0x0001;
     public static final int INODES_ALLOCATION_LIMIT = 65535;
     public static final int MINIX2_MAX_SIZE = 0x7fffffff;
@@ -154,9 +155,7 @@ public class SuperBlock {
     }
 
     public int getInodeBlocks() {
-        int inodes = Ext2Utils.get16(datas, 0);
-        int inodesPerBlock = getInodePerBlock();
-        return ((inodes + ((inodesPerBlock) - 1)) / (inodesPerBlock));
+        return (int) upper(getInodesCount(), getInodePerBlock());
     }
 
     /**
@@ -182,19 +181,22 @@ public class SuperBlock {
         }
 
         // Calculate number of iNodes to allocate.
-        if (iNodes != 0) {
+        if (iNodes == 0) {
             iNodes = filesystemSize / 3;
         }
-        iNodes = upper(iNodes, getInodePerBlock());
-        if (iNodes > INODES_ALLOCATION_LIMIT)
+        iNodes = ((iNodes + getInodePerBlock() - 1) & ~(getInodePerBlock() - 1));
+
+        if (iNodes > INODES_ALLOCATION_LIMIT) {
             iNodes = INODES_ALLOCATION_LIMIT;
-        int requested = (int) (filesystemSize * 9 / 10 + 5);
-        if (getInodeBlocks() > requested) {
-            throw new IOException("Too many iNodes requested (requested : " + requested +
-                    " available : " + getInodeBlocks());
         }
-        log.debug("Allocated inodes : " + requested);
-        this.setInodesCount(requested);
+        this.setInodesCount((int) iNodes);
+        int available = (int) (filesystemSize * 9 / 10 + 5);
+        if (getInodeBlocks() > available) {
+            throw new IOException("Try to request " + getInodeBlocks() + " blocks but only " +
+                    available + " blocks are available.");
+        }
+        log.debug(String.format("%d inodes (%d blocks) allocated by the system.", iNodes,
+                (iNodes / getInodePerBlock())));
 
         // Initialize bitmaps
         int iMaps = (int) upper(iNodes + 1, BITS_PER_BLOCK);
@@ -224,7 +226,7 @@ public class SuperBlock {
     }
 
     private long upper(long size, int n) {
-        return (size + n - 1) & ~(n - 1);
+        return (size + (n - 1)) / n;
     }
 
 }

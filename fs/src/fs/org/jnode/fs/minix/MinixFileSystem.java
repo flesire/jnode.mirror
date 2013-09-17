@@ -119,7 +119,10 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         try {
             long filesystemSize = this.getApi().getLength() / BLOCK_SIZE;
             superBlock.create(version, magic, filesystemSize, 0);
-            log.debug("SuperBlock :" + superBlock.toString());
+            log.info("New SuperBlock created.");
+            if (log.isDebugEnabled()) {
+                log.debug(superBlock);
+            }
             populateBitmaps(filesystemSize);
             this.getApi().write(1024, superBlock.toByteBuffer());
             ByteBuffer rootBlock = superBlock.createRootBlock(magic);
@@ -147,7 +150,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         int block =
                 2 + superBlock.getImapBlocks() + superBlock.getZMapBlocks() + iNodeNumber /
                         superBlock.getInodePerBlock();
-        log.debug("Read block " + block);
+        log.debug("Read block " + block + " corresponding to inode number " + iNodeNumber);
         ByteBuffer blockData = ByteBuffer.allocate(BLOCK_SIZE);
         this.getApi().read(block * BLOCK_SIZE, blockData);
         blockData.flip();
