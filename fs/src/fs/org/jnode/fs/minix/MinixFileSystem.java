@@ -15,7 +15,6 @@ import org.jnode.fs.spi.AbstractFileSystem;
 
 import static org.jnode.fs.minix.INode.S_IFDIR;
 import static org.jnode.fs.minix.SuperBlock.BLOCK_SIZE;
-import static org.jnode.fs.minix.SuperBlock.SUPERBLOCK_LENGTH;
 
 public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
@@ -41,7 +40,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     public MinixFileSystem(Device device, boolean readOnly,
             FileSystemType<? extends FileSystem<MinixEntry>> type) throws FileSystemException {
         super(device, readOnly, type);
-
+        superBlock = new SuperBlock();
     }
 
     @Override
@@ -113,7 +112,6 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         log.info("Create a new minix file system " + version + " with name length set to " +
                 namelen);
 
-        superBlock = new SuperBlock();
         try {
             long filesystemSize = this.getApi().getLength() / BLOCK_SIZE;
             superBlock.create(version, magic, filesystemSize, 0);
@@ -157,10 +155,8 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     //
 
     private void readSuperBlock() throws IOException {
-
-        ByteBuffer buffer = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
-        this.getApi().read(1024, buffer);
-        superBlock = new SuperBlock(buffer.array());
+        superBlock = new SuperBlock();
+        superBlock.read(this);
         log.info("Read SuperBlock content.");
         if (log.isDebugEnabled()) {
             log.debug(superBlock);

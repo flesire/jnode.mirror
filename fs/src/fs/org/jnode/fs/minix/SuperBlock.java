@@ -32,6 +32,8 @@ public class SuperBlock {
     public static final int MINIX2_SUPER_MAGIC2 = 0x2478;
 
     public static final int VALID_FS = 0x0001;
+    public static final int ERROR_FS = 0x0002;
+
     public static final int INODES_ALLOCATION_LIMIT = 65535;
     public static final int MINIX2_MAX_SIZE = 0x7fffffff;
     public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
@@ -45,8 +47,10 @@ public class SuperBlock {
 
     }
 
-    public SuperBlock(byte[] datas) {
-        this.datas = datas;
+    public void read(MinixFileSystem fs) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(SUPERBLOCK_LENGTH);
+        fs.getApi().read(1024, buffer);
+        datas = buffer.array();
         if (getMagic() == MINIX2_SUPER_MAGIC || getMagic() == MINIX2_SUPER_MAGIC2) {
             version = Version.V2;
         }

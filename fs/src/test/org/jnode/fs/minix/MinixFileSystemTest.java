@@ -8,23 +8,27 @@ import org.jnode.emu.plugin.model.DummyConfigurationElement;
 import org.jnode.emu.plugin.model.DummyExtension;
 import org.jnode.emu.plugin.model.DummyExtensionPoint;
 import org.jnode.emu.plugin.model.DummyPluginDescriptor;
+import org.jnode.fs.FSDirectory;
 import org.jnode.fs.service.FileSystemService;
 import org.jnode.fs.service.def.FileSystemPlugin;
 import org.jnode.test.support.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class MinixFileSystemTest {
 
-    private Device device;
+    private Device newDevice;
+    private Device existingDevice;
     private FileSystemService fss;
 
     @Before
     public void setUp() throws Exception {
-        // create test device.
-        device = createTestDisk(false);
+        // create test newDevice.
+        newDevice = createTestDisk(false);
+        existingDevice = getExistingDisk();
         // create file system service.
         fss = createFSService();
 
@@ -32,23 +36,42 @@ public class MinixFileSystemTest {
 
     @Test
     public void testCreate() throws Exception {
-        MinixFileSystem fs = getFileSystem();
+        MinixFileSystemType type = fss.getFileSystemType(MinixFileSystemType.ID);
+        MinixFileSystem fs = new MinixFileSystem(newDevice, false, type);
+        fs.create(SuperBlock.Version.V2, 30);
+        fs.close();
+        fs = new MinixFileSystem(newDevice, false, type);
         fs.read();
+        // assertEquals(10485760L, fs.getTotalSpace());
+        assertEquals(Long.valueOf(10261504), Long.valueOf(fs.getFreeSpace()));
+        MinixEntry entry = fs.createRootEntry();
+        assertNotNull(entry);
+        FSDirectory directory = entry.getDirectory();
+        assertNotNull(directory);
+    }
+
+    @Test
+    public void readAnExistingFileSystem() throws Exception {
+        MinixFileSystemType type = fss.getFileSystemType(MinixFileSystemType.ID);
+        MinixFileSystem fs = new MinixFileSystem(existingDevice, false, type);
+        fs.read();
+        // assertEquals(10485760, fs.getTotalSpace());
+        assertEquals(10261504L, fs.getFreeSpace());
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
     }
 
     //
 
-    private MinixFileSystem getFileSystem() throws Exception {
-        MinixFileSystemType type = fss.getFileSystemType(MinixFileSystemType.ID);
-        MinixFileSystem fs = new MinixFileSystem(device, false, type);
-        fs.create(SuperBlock.Version.V2, 30);
-        return fs;
-    }
-
     private Device createTestDisk(boolean formatted) throws IOException {
         File file = TestUtils.makeTempFile("minixDevice", "10M");
+        Device device = new FileDevice(file, "rw");
+        return device;
+
+    }
+
+    private Device getExistingDisk() throws IOException {
+        File file = new File("/home/flesire/minix");
         Device device = new FileDevice(file, "rw");
         return device;
 
