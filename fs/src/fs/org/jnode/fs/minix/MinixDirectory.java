@@ -16,8 +16,7 @@ public class MinixDirectory extends AbstractFSDirectory {
 
     @Override
     protected FSEntryTable readEntries() throws IOException {
-        return null; // To change body of implemented methods use File |
-                     // Settings | File Templates.
+        return null;
     }
 
     @Override

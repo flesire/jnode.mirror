@@ -116,7 +116,15 @@ public class SuperBlock {
      * @param size size in blocks.
      */
     public void setSZones(long size) {
-        Ext2Utils.set32(datas, 44, size);
+        Ext2Utils.set32(datas, 20, size);
+    }
+
+    public long getDeviceSizeInBlocks() {
+        if (version == Version.V2) {
+            return Ext2Utils.get32(datas, 20);
+        } else {
+            return Ext2Utils.get16(datas, 2);
+        }
     }
 
     public void setState(int state) {

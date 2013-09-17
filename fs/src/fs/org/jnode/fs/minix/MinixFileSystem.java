@@ -51,7 +51,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     @Override
     protected FSDirectory createDirectory(FSEntry entry) throws IOException {
-        return null;
+        return new MinixDirectory((MinixEntry) entry);
     }
 
     @Override
@@ -64,12 +64,13 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     @Override
     public long getTotalSpace() throws IOException {
-        return 0;
+        return superBlock.getDeviceSizeInBlocks() * BLOCK_SIZE;
     }
 
     @Override
     public long getFreeSpace() throws IOException {
-        return 0;
+        return superBlock.getDeviceSizeInBlocks() * BLOCK_SIZE - superBlock.getFirstDataZone() *
+                BLOCK_SIZE;
     }
 
     @Override
