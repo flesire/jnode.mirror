@@ -15,6 +15,14 @@ public class MinixEntry extends AbstractFSEntry {
         return iNode.getNumber();
     }
 
+    public long[] getZones() {
+        return iNode.getZones();
+    }
+
+    public long getFileSize() {
+        return iNode.getFileSize();
+    }
+
     //
 
     private static int getFSEntryType(String name, INode iNode) {
