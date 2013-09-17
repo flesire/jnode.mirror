@@ -33,7 +33,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     /**
      * Construct an AbstractFileSystem in specified readOnly mode
      * 
-     * @param device device contains file system. This paramter is mandatory.
+     * @param device device contains file system. This parameter is mandatory.
      * @param readOnly file system should be read-only.
      * @throws org.jnode.fs.FileSystemException device is null or device has no
      *             {@link org.jnode.driver.block.BlockDeviceAPI} defined.
@@ -69,18 +69,18 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     @Override
     public long getFreeSpace() throws IOException {
+        return -1;
+    }
+
+    @Override
+    public long getUsableSpace() throws IOException {
         return superBlock.getDeviceSizeInBlocks() * BLOCK_SIZE - superBlock.getFirstDataZone() *
                 BLOCK_SIZE;
     }
 
     @Override
-    public long getUsableSpace() throws IOException {
-        return 0;
-    }
-
-    @Override
     public String getVolumeName() throws IOException {
-        return null;
+        return "";
     }
 
     public void read() throws FileSystemException {
