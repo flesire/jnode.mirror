@@ -5,8 +5,6 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.jnode.fs.ext2.Ext2Utils;
 
-import static org.jnode.fs.minix.MinixFileSystem.MINIX_ROOT_INODE_NUMBER;
-
 public class SuperBlock {
 
     private final Logger log = Logger.getLogger(getClass());
@@ -209,20 +207,6 @@ public class SuperBlock {
 
         // Initialize inode table;
 
-    }
-
-    public ByteBuffer createRootBlock(int magic) throws IOException {
-        // Create root block
-        ByteBuffer buffer = ByteBuffer.allocate(64);
-        MinixDirectoryEntry dir = new MinixDirectoryEntry();
-        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
-        dir.setName(".");
-        buffer.put(dir.getData());
-        dir = new MinixDirectoryEntry();
-        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
-        dir.setName("..");
-        buffer.put(dir.getData());
-        return buffer;
     }
 
     private long upper(long size, int n) {

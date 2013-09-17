@@ -1,5 +1,7 @@
 package org.jnode.fs.minix;
 
+import java.nio.ByteBuffer;
+import java.util.Date;
 import org.jnode.fs.ext2.Ext2Utils;
 
 public class INode {
@@ -22,10 +24,18 @@ public class INode {
         return number;
     }
 
-    public INode(int number, int mode) {
+    public INode(int number, int mode, int links, long size) {
         this.datas = new byte[INODE_V2_SIZE];
         this.number = number;
         Ext2Utils.set16(datas, 0, mode);
+        Ext2Utils.set16(datas, 2, links);
+        Ext2Utils.set32(datas, 8, size);
+        // Set dates
+        long now = new Date().getTime();
+        Ext2Utils.set32(datas, 12, now);
+        Ext2Utils.set32(datas, 16, now);
+        Ext2Utils.set32(datas, 20, now);
+
     }
 
     public INode(byte[] data) {
@@ -90,5 +100,9 @@ public class INode {
 
     public int getMaskedMode() {
         return getMode() & S_IFMT;
+    }
+
+    public ByteBuffer toByteBuffer() {
+        return ByteBuffer.wrap(datas);
     }
 }

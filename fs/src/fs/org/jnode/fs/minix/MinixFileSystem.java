@@ -30,9 +30,6 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     private byte[] zoneBitmap;
 
-    // TODO INode bitmap
-    // TODO Zones bitmap
-
     /**
      * Construct an AbstractFileSystem in specified readOnly mode
      * 
@@ -125,12 +122,35 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
             }
             populateBitmaps(filesystemSize);
             this.getApi().write(1024, superBlock.toByteBuffer());
-            ByteBuffer rootBlock = superBlock.createRootBlock(magic);
-            rootBlock.flip();
-            this.getApi().write(1024 + BLOCK_SIZE, rootBlock);
+            createRootBlock();
         } catch (IOException e) {
             throw new FileSystemException(e);
         }
+    }
+
+    public void createRootBlock() throws IOException, FileSystemException {
+        MinixBitmap.mark(inodeBitmap, MINIX_ROOT_INODE_NUMBER);
+        long rootBlock =
+                MinixBitmap.findFreeBlock(zoneBitmap, superBlock.getZMapBlocks()) +
+                        superBlock.getFirstDataZone() - 1;
+        INode inode = new INode(MINIX_ROOT_INODE_NUMBER, S_IFDIR, 64, 2);
+        inode.setZone(0, rootBlock);
+        // FIXME no correct (WIP)
+        int rootInodeOffset = 2 + superBlock.getImapBlocks() + superBlock.getZMapBlocks();
+        this.getApi().write(rootInodeOffset * BLOCK_SIZE, inode.toByteBuffer());
+        MinixBitmap.mark(zoneBitmap, (int) rootBlock);
+        // Create root block
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        MinixDirectoryEntry dir = new MinixDirectoryEntry();
+        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
+        dir.setName(".");
+        buffer.put(dir.getData());
+        dir = new MinixDirectoryEntry();
+        dir.setInodeNumber(MINIX_ROOT_INODE_NUMBER);
+        dir.setName("..");
+        buffer.put(dir.getData());
+        buffer.flip();
+        this.getApi().write(rootBlock, buffer);
     }
 
     //
@@ -175,13 +195,6 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
             MinixBitmap.unmark(zoneBitmap, index);
         }
         //
-        MinixBitmap.mark(inodeBitmap, MINIX_ROOT_INODE_NUMBER);
-        long rootBlock =
-                MinixBitmap.findFreeBlock(zoneBitmap, superBlock.getZMapBlocks() + firstDataZone -
-                        1);
-        INode inode = new INode(MINIX_ROOT_INODE_NUMBER, S_IFDIR);
-        inode.setZone(0, rootBlock);
-        MinixBitmap.mark(zoneBitmap, (int) rootBlock);
 
         ByteBuffer buffer = ByteBuffer.wrap(inodeBitmap);
         //
@@ -192,8 +205,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
             buffer = ByteBuffer.wrap(zoneBitmap);
             this.getApi().write(offset, buffer);
         } catch (IOException e) {
-            e.printStackTrace(); // To change body of catch statement use File |
-                                 // Settings | File Templates.
+            throw new FileSystemException(e);
         }
 
     }
