@@ -9,7 +9,10 @@ import org.jnode.naming.InitialNaming;
 
 public class MinixFileSystemFormatter extends Formatter<MinixFileSystem> {
 
-    protected MinixFileSystemFormatter() {
+    private SuperBlock.Version version;
+    private int nameLen;
+
+    public MinixFileSystemFormatter() {
         super(new MinixFileSystemType());
     }
 

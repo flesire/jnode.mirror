@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Id$
+
+    Copyright (C) 2003-2013 JNode.org
+
+    This library is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as published
+    by the Free Software Foundation; either version 2.1 of the License, or
+    (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+    License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this library; If not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+-->
+<!DOCTYPE plugin SYSTEM "jnode.dtd">
+
+<plugin id="org.jnode.fs.minix.command"
+        name="Minix specific commands"
+        version="@VERSION@"
+        provider-name="JNode.org"
+        license-name="lgpl">
+
+    <requires>
+        <import plugin="org.jnode.fs.minix"/>
+        <import plugin="org.jnode.fs.command"/>
+        <import plugin="org.jnode.shell.help"/>
+    </requires>
+
+    <runtime>
+        <library name="jnode-fs.jar">
+            <export name="org.jnode.fs.minix.command.*"/>
+        </library>
+    </runtime>
+
+    <extension point="org.jnode.shell.aliases">
+        <alias name="formatMinix" class="org.jnode.fs.minix.command.FormatMinixCommand"/>
+    </extension>
+
+    <extension point="org.jnode.shell.syntaxes">
+        <syntax alias="formatMinix">
+            <sequence description="format a Minix v2 file system">
+                <argument argLabel="device"/>
+            </sequence>
+        </syntax>
+    </extension>
+</plugin>

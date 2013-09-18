@@ -56,7 +56,6 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     @Override
     protected MinixEntry createRootEntry() throws IOException {
         INode rootINode = getINode(MINIX_ROOT_INODE_NUMBER);
-        long rootBlock = rootINode.getZones()[0];
         MinixEntry entry = new MinixEntry(rootINode, "/", this, null);
         return entry;
     }
