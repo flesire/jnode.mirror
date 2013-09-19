@@ -1,14 +1,19 @@
 package org.jnode.fs.minix;
 
+import java.io.IOException;
 import org.jnode.fs.FSDirectory;
+import org.jnode.fs.minix.inode.INode;
 import org.jnode.fs.spi.AbstractFSEntry;
 
 public class MinixEntry extends AbstractFSEntry {
 
     private INode iNode;
 
-    public MinixEntry(INode iNode, String name, MinixFileSystem fs, FSDirectory parent) {
+    public MinixEntry(INode iNode, String name, MinixFileSystem fs, FSDirectory parent)
+            throws IOException {
         super(fs, null, parent, name, getFSEntryType(name, iNode));
+        this.iNode = iNode;
+        this.setLastModified(iNode.getMTime());
     }
 
     public int getNumber() {

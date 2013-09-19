@@ -11,10 +11,12 @@ import org.jnode.fs.FSFile;
 import org.jnode.fs.FileSystem;
 import org.jnode.fs.FileSystemException;
 import org.jnode.fs.FileSystemType;
+import org.jnode.fs.minix.inode.INode;
+import org.jnode.fs.minix.inode.INodeFactory;
 import org.jnode.fs.spi.AbstractFileSystem;
 
-import static org.jnode.fs.minix.INode.S_IFDIR;
 import static org.jnode.fs.minix.SuperBlock.BLOCK_SIZE;
+import static org.jnode.fs.minix.inode.INode.S_IFDIR;
 
 public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
@@ -55,7 +57,7 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
 
     @Override
     protected MinixEntry createRootEntry() throws IOException {
-        INode rootINode = getINode(MINIX_ROOT_INODE_NUMBER);
+        INode rootINode = INodeFactory.getINode(this, MINIX_ROOT_INODE_NUMBER);
         MinixEntry entry = new MinixEntry(rootINode, "/", this, null);
         return entry;
     }
@@ -79,6 +81,10 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
     @Override
     public String getVolumeName() throws IOException {
         return "";
+    }
+
+    public SuperBlock getSuperBlock() {
+        return superBlock;
     }
 
     public void read() throws FileSystemException {
@@ -160,19 +166,6 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         if (log.isDebugEnabled()) {
             log.debug(superBlock);
         }
-    }
-
-    private INode getINode(int iNodeNumber) throws IOException {
-        int block =
-                2 + superBlock.getImapBlocks() + superBlock.getZMapBlocks() + iNodeNumber /
-                        superBlock.getInodePerBlock();
-        log.debug("Read block " + block + " corresponding to inode number " + iNodeNumber);
-        ByteBuffer blockData = ByteBuffer.allocate(BLOCK_SIZE);
-        this.getApi().read(block * BLOCK_SIZE, blockData);
-        blockData.flip();
-        byte[] iNodeData = new byte[64];
-        blockData.get(iNodeData, 0, 64);
-        return new INode(iNodeData);
     }
 
     private void populateBitmaps(long filesystemSize) throws FileSystemException {

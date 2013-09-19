@@ -1,4 +1,4 @@
-package org.jnode.fs.minix;
+package org.jnode.fs.minix.inode;
 
 import java.nio.ByteBuffer;
 import java.util.Date;

@@ -34,4 +34,18 @@ public class MinixBitmap extends FSBitmap {
 
     }
 
+    public static int findFreeINode(byte[] bitmapBlock) {
+        for (int i = 0; i < bitmapBlock.length; i++) {
+            if (bitmapBlock[i] != 0xFF) {
+                for (int j = 0; j < 8; j++) {
+                    if (isFree(bitmapBlock[i], j)) {
+                        setBit(bitmapBlock, i, j);
+                        return i * 8 + j + 1;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
 }

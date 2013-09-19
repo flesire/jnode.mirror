@@ -15,7 +15,6 @@ import org.jnode.test.support.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 public class MinixFileSystemTest {
@@ -42,12 +41,11 @@ public class MinixFileSystemTest {
         fs.close();
         fs = new MinixFileSystem(newDevice, false, type);
         fs.read();
-        // assertEquals(10485760L, fs.getTotalSpace());
-        assertEquals(Long.valueOf(10261504), Long.valueOf(fs.getFreeSpace()));
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
         FSDirectory directory = entry.getDirectory();
         assertNotNull(directory);
+        directory.getEntry(".");
     }
 
     @Test
@@ -55,10 +53,11 @@ public class MinixFileSystemTest {
         MinixFileSystemType type = fss.getFileSystemType(MinixFileSystemType.ID);
         MinixFileSystem fs = new MinixFileSystem(existingDevice, false, type);
         fs.read();
-        // assertEquals(10485760, fs.getTotalSpace());
-        assertEquals(10261504L, fs.getFreeSpace());
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
+        FSDirectory directory = entry.getDirectory();
+        assertNotNull(directory);
+        directory.getEntry(".");
     }
 
     //
