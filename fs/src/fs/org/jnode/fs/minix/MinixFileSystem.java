@@ -15,6 +15,7 @@ import org.jnode.fs.minix.inode.INode;
 import org.jnode.fs.minix.inode.INodeFactory;
 import org.jnode.fs.spi.AbstractFileSystem;
 
+import static org.jnode.fs.minix.MinixVersion.V2;
 import static org.jnode.fs.minix.SuperBlock.BLOCK_SIZE;
 import static org.jnode.fs.minix.inode.INode.S_IFDIR;
 
@@ -96,10 +97,10 @@ public class MinixFileSystem extends AbstractFileSystem<MinixEntry> {
         }
     }
 
-    public void create(SuperBlock.Version version, int namelen) throws FileSystemException {
+    public void create(MinixVersion version, int namelen) throws FileSystemException {
 
         int magic;
-        if (version.equals(SuperBlock.Version.V2)) {
+        if (version.equals(V2)) {
             if (namelen == 30) {
                 magic = SuperBlock.MINIX2_SUPER_MAGIC2;
             } else {

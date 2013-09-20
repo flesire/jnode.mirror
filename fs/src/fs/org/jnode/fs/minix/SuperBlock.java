@@ -5,13 +5,12 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.jnode.fs.ext2.Ext2Utils;
 
+import static org.jnode.fs.minix.MinixVersion.V1;
+import static org.jnode.fs.minix.MinixVersion.V2;
+
 public class SuperBlock {
 
     private final Logger log = Logger.getLogger(getClass());
-
-    public enum Version {
-        V1, V2
-    }
 
     private static final int BLOCK_SIZE_BITS = 10;
 
@@ -38,7 +37,7 @@ public class SuperBlock {
     public static final int MINIX2_MAX_SIZE = 0x7fffffff;
     public static final int MINIX_MAX_SIZE = (7 + 512 + 512 * 512) * 1024;
 
-    private Version version = Version.V1;
+    private MinixVersion version = V1;
 
     private byte[] datas;
 
@@ -52,7 +51,7 @@ public class SuperBlock {
         fs.getApi().read(1024, buffer);
         datas = buffer.array();
         if (getMagic() == MINIX2_SUPER_MAGIC || getMagic() == MINIX2_SUPER_MAGIC2) {
-            version = Version.V2;
+            version = V2;
         }
     }
 
@@ -77,7 +76,7 @@ public class SuperBlock {
     }
 
     public int getInodePerBlock() {
-        int inodeSize = (version.equals(Version.V2)) ? 64 : 32;
+        int inodeSize = (version.equals(V2)) ? 64 : 32;
         return BLOCK_SIZE / inodeSize;
     }
 
@@ -124,7 +123,7 @@ public class SuperBlock {
     }
 
     public long getDeviceSizeInBlocks() {
-        if (version == Version.V2) {
+        if (version == V2) {
             return Ext2Utils.get32(datas, 20);
         } else {
             return Ext2Utils.get16(datas, 2);
@@ -175,16 +174,16 @@ public class SuperBlock {
      * @param filesystemSize size of the filesystem in blocks.
      * @param iNodes number of iNodes to allocate.
      */
-    public void create(Version version, int magic, long filesystemSize, long iNodes)
+    public void create(MinixVersion version, int magic, long filesystemSize, long iNodes)
         throws IOException {
         this.version = version;
         this.setMagic(magic);
         this.setState(VALID_FS);
-        long maxSize = (version.equals(Version.V2)) ? MINIX2_MAX_SIZE : MINIX_MAX_SIZE;
+        long maxSize = (version == V2) ? MINIX2_MAX_SIZE : MINIX_MAX_SIZE;
         this.setMaxSize(maxSize);
 
         // Set device size in blocks depending on the file system version;
-        if (version.equals(Version.V2)) {
+        if (version == V2) {
             this.setSZones(filesystemSize);
         } else {
             this.setZonesCount((int) filesystemSize);

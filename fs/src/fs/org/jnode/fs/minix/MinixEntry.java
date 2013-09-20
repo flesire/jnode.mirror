@@ -13,7 +13,7 @@ public class MinixEntry extends AbstractFSEntry {
             throws IOException {
         super(fs, null, parent, name, getFSEntryType(name, iNode));
         this.iNode = iNode;
-        this.setLastModified(iNode.getMTime());
+        this.setLastModified(iNode.getMtime());
     }
 
     public int getNumber() {
@@ -25,7 +25,7 @@ public class MinixEntry extends AbstractFSEntry {
     }
 
     public long getFileSize() {
-        return iNode.getFileSize();
+        return iNode.getSize();
     }
 
     //
