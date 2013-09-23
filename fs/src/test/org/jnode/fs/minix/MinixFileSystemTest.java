@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.jnode.fs.minix.MinixVersion.V2;
 
 public class MinixFileSystemTest {
 
@@ -37,15 +38,12 @@ public class MinixFileSystemTest {
     public void testCreate() throws Exception {
         MinixFileSystemType type = fss.getFileSystemType(MinixFileSystemType.ID);
         MinixFileSystem fs = new MinixFileSystem(newDevice, false, type);
-        fs.create(SuperBlock.Version.V2, 30);
+        fs.create(V2, 30);
         fs.close();
         fs = new MinixFileSystem(newDevice, false, type);
         fs.read();
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
-        FSDirectory directory = entry.getDirectory();
-        assertNotNull(directory);
-        directory.getEntry(".");
     }
 
     @Test
@@ -55,9 +53,6 @@ public class MinixFileSystemTest {
         fs.read();
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
-        FSDirectory directory = entry.getDirectory();
-        assertNotNull(directory);
-        directory.getEntry(".");
     }
 
     //
