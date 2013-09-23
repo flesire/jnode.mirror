@@ -54,7 +54,10 @@ public class MinixFileSystemTest {
         MinixEntry entry = fs.createRootEntry();
         assertNotNull(entry);
         FSDirectory directory = entry.getDirectory();
-        entry = (MinixEntry) directory.getEntry(".");
+        entry = (MinixEntry) directory.getEntry("testdir1");
+        assertNotNull(entry);
+        directory = entry.getDirectory();
+        entry = (MinixEntry) directory.getEntry("test2.txt");
         assertNotNull(entry);
     }
 

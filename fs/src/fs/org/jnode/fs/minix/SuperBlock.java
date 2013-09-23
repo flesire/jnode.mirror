@@ -19,7 +19,7 @@ public class SuperBlock {
     /** Size of a block in a minix file system is fixed to 1024 bytes. */
     public static final int BLOCK_SIZE = 1024;
 
-    private static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
+    public static final int BITS_PER_BLOCK = (BLOCK_SIZE << 3);
 
     /* original minix fs */
     public static final int MINIX_SUPER_MAGIC = 0x137F;

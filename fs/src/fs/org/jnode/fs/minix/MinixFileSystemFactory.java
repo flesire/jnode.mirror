@@ -130,9 +130,17 @@ public class MinixFileSystemFactory {
         }
 
         INode iNode = readInode(number);
+        iNode.setNumber(number);
         inodeCache.put(number, iNode);
         return iNode;
     }
+
+    /*
+     * public INode getNewInode() { SuperBlock superBlock = fs.superBlock; for
+     * (int i = 0; i < superBlock.getImapBlocks(); i++) { bh = sbi->s_imap[i]; j
+     * = minix_find_first_zero_bit(bh->b_data, BITS_PER_BLOCK); if (j <
+     * BITS_PER_BLOCK) break; } }
+     */
 
     private INode readInode(int number) throws IOException {
         SuperBlock superBlock = fs.getSuperBlock();

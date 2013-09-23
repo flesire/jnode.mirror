@@ -38,7 +38,7 @@ public class MinixDirectory extends AbstractFSDirectory {
                                 MinixDirectoryEntry.DENTRY_SIZE));
                 inode = dentry.getInodeNumber();
                 entries.add(new MinixEntry(fileSystem.getFactory().getINode(inode), dentry
-                        .getName(), fileSystem, this));
+                        .getName().trim(), fileSystem, this));
                 i += MinixDirectoryEntry.DENTRY_SIZE;
             }
         }
