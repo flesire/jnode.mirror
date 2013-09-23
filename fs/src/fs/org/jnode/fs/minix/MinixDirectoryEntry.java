@@ -32,7 +32,13 @@ public class MinixDirectoryEntry {
     public String getName() {
         char[] buffer = new char[30];
         for (int i = 0; i < 30; i++) {
-            buffer[i] = (char) Ext2Utils.get8(data, 2 + i);
+            short character = Ext2Utils.get8(data, 2 + i);
+            if (character == 0) {
+                buffer[i] = ' ';
+            } else {
+                buffer[i] = (char) character;
+            }
+
         }
         return new String(buffer);
     }

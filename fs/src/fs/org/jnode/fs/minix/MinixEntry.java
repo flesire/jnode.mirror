@@ -2,7 +2,6 @@ package org.jnode.fs.minix;
 
 import java.io.IOException;
 import org.jnode.fs.FSDirectory;
-import org.jnode.fs.minix.inode.INode;
 import org.jnode.fs.spi.AbstractFSEntry;
 
 public class MinixEntry extends AbstractFSEntry {
@@ -16,16 +15,12 @@ public class MinixEntry extends AbstractFSEntry {
         this.setLastModified(iNode.getMtime());
     }
 
-    public int getNumber() {
-        return iNode.getNumber();
+    public INode getiNode() {
+        return iNode;
     }
 
-    public long[] getZones() {
-        return iNode.getZones();
-    }
-
-    public long getFileSize() {
-        return iNode.getSize();
+    public void incrementLinks() {
+        iNode.setLinks(iNode.getLinks() + 1);
     }
 
     //

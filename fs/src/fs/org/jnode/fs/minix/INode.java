@@ -1,8 +1,5 @@
-package org.jnode.fs.minix.inode;
+package org.jnode.fs.minix;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import org.jnode.fs.ext2.Ext2Utils;
@@ -35,7 +32,6 @@ public class INode {
     private long[] zones;
     private long indirectionZone;
     private long doubleIndirectionZone;
-
 
     public INode(int number, int mode, int links, long size) {
         this.number = number;
@@ -168,7 +164,7 @@ public class INode {
         Ext2Utils.set32(data, 16, ctime);
         Ext2Utils.set32(data, 20, mtime);
         for (int i = 0; i < 7; i++) {
-             Ext2Utils.set32(data, 24 + (i * 4), zones[i]);
+            Ext2Utils.set32(data, 24 + (i * 4), zones[i]);
         }
         return data;
     }

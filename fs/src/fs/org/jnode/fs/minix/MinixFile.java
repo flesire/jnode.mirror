@@ -21,7 +21,7 @@ public class MinixFile extends AbstractFSFile {
 
     @Override
     public long getLength() {
-        return entry.getFileSize();
+        return entry.getiNode().getSize();
     }
 
     @Override

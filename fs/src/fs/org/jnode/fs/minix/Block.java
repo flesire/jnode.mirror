@@ -2,7 +2,6 @@ package org.jnode.fs.minix;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import org.jnode.fs.minix.inode.INode;
 import org.jnode.fs.spi.AbstractFSObject;
 
 public class Block extends AbstractFSObject {
@@ -19,14 +18,14 @@ public class Block extends AbstractFSObject {
         data = new byte[BLOCK_SIZE];
     }
 
-    /*public void setInode(INode inode, int offset) {
-        byte[] src = inode.toByteArray();
-        System.arraycopy(src,0,data,offset,src.length);
-    } */
+    /*
+     * public void setInode(INode inode, int offset) { byte[] src =
+     * inode.toByteArray(); System.arraycopy(src,0,data,offset,src.length); }
+     */
 
     public void read(MinixFileSystem fs) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
-        fs.getApi().read(number * BLOCK_SIZE,buffer);
+        fs.getApi().read(number * BLOCK_SIZE, buffer);
         data = buffer.array();
     }
 
@@ -36,7 +35,7 @@ public class Block extends AbstractFSObject {
 
     public byte[] getData(int offset, int size) {
         byte[] dest = new byte[size];
-        System.arraycopy(data,offset,dest,0,size);
+        System.arraycopy(data, offset, dest, 0, size);
         return dest;
     }
 
